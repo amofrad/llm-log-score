@@ -1,0 +1,375 @@
+"""Shared utilities for the log-scoring top-p vs penalty-rubric analysis.
+
+Reads the graded simpleqa_topp_results.jsonl files produced by the runner
+(runner/run.py) and grading stage (grading/grade.py) and provides:
+
+- run loading / candidate parsing,
+- top-p' confidence-set construction from the elicited distribution,
+- post-hoc threshold decisions (the penalty-rubric family applied offline),
+- Wilson confidence intervals and a paired question-level bootstrap.
+
+Result files may be stored either as plain ``*.jsonl`` or gzip-compressed
+``*.jsonl.gz``; every loader in this module resolves both transparently.
+
+Conventions
+-----------
+A "candidate" is a dict with keys: answer (str), probability (float),
+points (float), grade ("correct" | "incorrect" | "not_attempted").
+Candidates with grade == "not_attempted" are IDK-type entries; the rest are
+"concrete" answers.  Grades come from the LLM grader (grading/graders.py)
+and are treated as authoritative.
+"""
+
+from __future__ import annotations
+
+import gzip
+import json
+import os
+import math
+import random
+from functools import lru_cache
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Default to the primary (OpenAI-graded) result tree; point this at
+# results/graded_by_gemini to reproduce the second-grader numbers.
+OUTPUTS_DIR = Path(
+    os.environ.get("GRADED_RESULTS_DIR", REPO_ROOT / "results" / "graded_by_openai")
+)
+SIMPLEQA_TEST_SPLIT_SIZE = 4321
+
+# The four production runs analyzed in the paper.
+RUNS = {
+    "gemini35flash": {
+        "full": "gemini35flash",
+        "log200": "gemini35flash",
+        "residual": "gemini35flash",
+        "model_id": "google/gemini-3.5-flash",
+        "label": "Gemini 3.5 Flash",
+    },
+    "sonnet46": {
+        "full": "claudesonnet46",
+        "log200": "claudesonnet46",
+        "residual": "claudesonnet46",
+        "model_id": "claude-sonnet-4-6",
+        "label": "Claude Sonnet 4.6",
+    },
+    "deepseekv32maas": {
+        "full": "deepseekv32",
+        "log200": "deepseekv32",
+        "residual": "deepseekv32",
+        "model_id": "deepseek-ai/deepseek-v3.2-maas",
+        "label": "DeepSeek V3.2",
+    },
+    "qwen3_235b": {
+        "full": "qwen3_235b",
+        "log200": "qwen3_235b",
+        "residual": "qwen3_235b",
+        "model_id": "qwen/qwen3-235b-a22b-instruct-2507-maas",
+        "label": "Qwen3 235B-A22B",
+    },
+}
+
+MODEL_ORDER = ["gemini35flash", "sonnet46", "deepseekv32maas", "qwen3_235b"]
+MODEL_COLORS = {
+    "gemini35flash": "#1a73e8",
+    "sonnet46": "#d97706",
+    "deepseekv32maas": "#009E73",
+    "qwen3_235b": "#CC79A7",
+}
+
+
+# ---------------------------------------------------------------------------
+# Loading
+# ---------------------------------------------------------------------------
+
+def norm_answer(s: str) -> str:
+    """Light answer-string normalization used for within-report matching."""
+    return " ".join(str(s).lower().replace(".", " ").replace(",", " ").split())
+
+
+def result_file(path: Path) -> Path | None:
+    """Resolve a result path, accepting a gzip-compressed variant."""
+    path = Path(path)
+    if path.exists():
+        return path
+    gz = path.with_name(path.name + ".gz")
+    if gz.exists():
+        return gz
+    return None
+
+
+def open_result(path: Path):
+    """Open a (possibly gzip-compressed) result file for text reading."""
+    path = Path(path)
+    if path.suffix == ".gz":
+        return gzip.open(path, "rt")
+    return open(path)
+
+
+@lru_cache(maxsize=1)
+def simpleqa_full_question_order() -> tuple[str, ...]:
+    """Canonical full SimpleQA order used for running-prefix diagnostics.
+
+    Result files are append/resume artifacts: an extended run can contain the
+    original completed prefix followed by newly completed rows.  Running curves
+    should instead follow the deterministic SimpleQA order used by the runner.
+    """
+    question_ids = [f"simpleqa-{i}" for i in range(SIMPLEQA_TEST_SPLIT_SIZE)]
+    random.Random(17).shuffle(question_ids)
+    question_ids.extend(
+        f"simpleqa-{i}" for i in range(SIMPLEQA_TEST_SPLIT_SIZE, SIMPLEQA_TEST_SPLIT_SIZE + 5)
+    )
+    return tuple(question_ids)
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    resolved = result_file(path)
+    if resolved is None:
+        raise FileNotFoundError(path)
+    records = []
+    with open_result(resolved) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                records.append(json.loads(line))
+    return records
+
+
+def parse_candidates(rec: dict) -> list[dict]:
+    """Parse log_candidates_json into a list of candidate dicts.
+
+    Candidates are returned in reported order.
+    """
+    raw = rec.get("log_candidates_json")
+    if not raw:
+        return []
+    cands = json.loads(raw) if isinstance(raw, str) else raw
+    out = []
+    for c in cands:
+        prob = c.get("probability")
+        if prob is None:
+            continue
+        out.append(
+            {
+                "answer": str(c.get("answer", "")),
+                "probability": float(prob),
+                "points": float(c.get("points", 0.0)),
+                "grade": str(c.get("grade", "")),
+            }
+        )
+    return out
+
+
+def load_run(run_dir_name: str) -> pd.DataFrame:
+    """Load one run directory into a tidy per-question DataFrame."""
+    path = OUTPUTS_DIR / run_dir_name / "simpleqa_topp_results.jsonl"
+    records = load_jsonl(path)
+    rows = []
+    for rec in records:
+        cands = parse_candidates(rec)
+        concrete = [c for c in cands if c["grade"] != "not_attempted"]
+        idk_mass = sum(c["probability"] for c in cands if c["grade"] == "not_attempted")
+        q_true = sum(c["probability"] for c in concrete if c["grade"] == "correct")
+        hallucination_mass = sum(
+            c["probability"] for c in concrete if c["grade"] == "incorrect"
+        )
+        reported_mass = sum(c["probability"] for c in cands)
+        top = max(cands, key=lambda c: c["probability"]) if cands else None
+        rows.append(
+            {
+                "question_id": str(rec["question_id"]),
+                "model": rec["model"],
+                "category": rec.get("category"),
+                "answer_type": rec.get("answer_type"),
+                "gold_answer": rec.get("gold_answer"),
+                "question": rec.get("question"),
+                "candidates": cands,
+                "n_candidates": len(cands),
+                "n_concrete": len(concrete),
+                "log_q_true": q_true,
+                "log_hallucination_mass": hallucination_mass,
+                "log_idk_mass": idk_mass,
+                "log_reported_mass": reported_mass,
+                "log_top_answer": top["answer"] if top else None,
+                "log_top_grade": top["grade"] if top else None,
+                "log_top_prob": top["probability"] if top else np.nan,
+                "log_total_tokens": _float(rec.get("log_total_tokens")),
+                "log_generation_error": rec.get("log_generation_error"),
+                # empirical (baseline) arm — present only in the full runs
+                "empirical_accuracy_overall": _float(rec.get("empirical_accuracy_overall")),
+                "empirical_hallucination_rate": _float(rec.get("empirical_hallucination_rate")),
+                "empirical_not_attempted_rate": _float(rec.get("empirical_not_attempted_rate")),
+                "empirical_total_tokens": _float(rec.get("empirical_total_tokens")),
+                # penalty arm — present only in the full runs
+                "penalty_value": _float(rec.get("penalty_value")),
+                "penalty_threshold": _float(rec.get("penalty_threshold")),
+                "penalty_accuracy_overall": _float(rec.get("penalty_accuracy_overall")),
+                "penalty_accuracy_when_answered": _float(rec.get("penalty_accuracy_when_answered")),
+                "penalty_hallucination_rate": _float(rec.get("penalty_hallucination_rate")),
+                "penalty_abstention_rate": _float(rec.get("penalty_abstention_rate")),
+                "penalty_total_tokens": _float(rec.get("penalty_total_tokens")),
+                "imported_from": rec.get("imported_from"),
+                # scoring-rule provenance
+                "log_idk_rule": rec.get("log_idk_rule") or "naive",
+                "log_idk_rho": _float(rec.get("log_idk_rho")),
+            }
+        )
+    df = pd.DataFrame(rows)
+    df["run_dir"] = run_dir_name
+    return df
+
+
+def load_all_residual() -> dict[str, pd.DataFrame]:
+    """Load the residual-rho runs: {model_key: df}."""
+    return {key: load_run(cfg["residual"]) for key, cfg in RUNS.items()}
+
+
+def _float(x):
+    if x is None or x == "":
+        return np.nan
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return np.nan
+
+
+def load_all() -> dict[str, dict[str, pd.DataFrame]]:
+    """Load all four production runs: {model_key: {"full": df, "log200": df}}."""
+    out = {}
+    for key, cfg in RUNS.items():
+        out[key] = {
+            "full": load_run(cfg["full"]),
+            "log200": load_run(cfg["log200"]),
+        }
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Confidence sets and post-hoc decisions
+# ---------------------------------------------------------------------------
+
+def sorted_candidates(cands: list[dict]) -> list[dict]:
+    """Sort candidates by reported probability, descending (stable)."""
+    return sorted(cands, key=lambda c: -c["probability"])
+
+
+@dataclass
+class TopPSet:
+    members: list[dict] = field(default_factory=list)
+    cum_mass: float = 0.0
+
+    @property
+    def covers(self) -> bool:
+        return any(c["grade"] == "correct" for c in self.members)
+
+    @property
+    def has_idk(self) -> bool:
+        return any(c["grade"] == "not_attempted" for c in self.members)
+
+    @property
+    def n_concrete(self) -> int:
+        return sum(1 for c in self.members if c["grade"] != "not_attempted")
+
+
+def top_p_set(cands: list[dict], p: float) -> TopPSet:
+    """Smallest prefix of probability-sorted candidates with cumulative
+    reported mass >= p (or all candidates if total reported mass < p)."""
+    s = TopPSet()
+    for c in sorted_candidates(cands):
+        if s.cum_mass >= p:
+            break
+        s.members.append(c)
+        s.cum_mass += c["probability"]
+    return s
+
+
+def posthoc_decision(cands: list[dict], t: float) -> str:
+    """Apply the penalty-rubric decision rule offline to the elicited
+    distribution: answer with the top *concrete* candidate iff its reported
+    probability >= t (with t=0 meaning always answer); otherwise abstain.
+
+    Returns "correct" | "incorrect" | "abstain".
+    """
+    concrete = [c for c in cands if c["grade"] != "not_attempted"]
+    if not concrete:
+        return "abstain"
+    top = max(concrete, key=lambda c: c["probability"])
+    if t > 0 and top["probability"] < t:
+        return "abstain"
+    return "correct" if top["grade"] == "correct" else "incorrect"
+
+
+def frontier(df: pd.DataFrame, thresholds: np.ndarray) -> pd.DataFrame:
+    """Post-hoc decision frontier over a threshold grid.
+
+    For each t: abstention rate, accuracy, hallucination rate,
+    accuracy-when-answered, and mean abstention-reward score
+    s_t = 1[correct] + t * 1[abstain].
+    """
+    rows = []
+    for t in thresholds:
+        outcomes = df["candidates"].map(lambda c, t=t: posthoc_decision(c, t))
+        n = len(outcomes)
+        n_corr = (outcomes == "correct").sum()
+        n_inc = (outcomes == "incorrect").sum()
+        n_abs = (outcomes == "abstain").sum()
+        answered = n_corr + n_inc
+        rows.append(
+            {
+                "t": t,
+                "abstention_rate": n_abs / n,
+                "accuracy_overall": n_corr / n,
+                "hallucination_rate": n_inc / n,
+                "accuracy_when_answered": (n_corr / answered) if answered else np.nan,
+                "mean_score_st": (n_corr + t * n_abs) / n,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Inference helpers
+# ---------------------------------------------------------------------------
+
+def wilson_ci(k: int, n: int, alpha: float = 0.05) -> tuple[float, float]:
+    """Wilson score interval for a binomial proportion."""
+    if n == 0:
+        return (np.nan, np.nan)
+    from scipy.stats import norm
+
+    z = norm.ppf(1 - alpha / 2)
+    phat = k / n
+    denom = 1 + z**2 / n
+    center = (phat + z**2 / (2 * n)) / denom
+    half = z * math.sqrt(phat * (1 - phat) / n + z**2 / (4 * n**2)) / denom
+    return (max(0.0, center - half), min(1.0, center + half))
+
+
+def paired_bootstrap(
+    df: pd.DataFrame,
+    stat_fn,
+    n_boot: int = 2000,
+    seed: int = 123,
+    alpha: float = 0.05,
+) -> dict:
+    """Question-level paired bootstrap.
+
+    stat_fn maps a (resampled) DataFrame to a scalar.  Returns point estimate
+    and percentile CI.
+    """
+    rng = np.random.default_rng(seed)
+    n = len(df)
+    point = stat_fn(df)
+    stats = np.empty(n_boot)
+    idx = np.arange(n)
+    for b in range(n_boot):
+        take = rng.choice(idx, size=n, replace=True)
+        stats[b] = stat_fn(df.iloc[take])
+    lo, hi = np.quantile(stats, [alpha / 2, 1 - alpha / 2])
+    return {"point": point, "lo": lo, "hi": hi, "boot": stats}

@@ -1,0 +1,37 @@
+model,model_label,mode,penalty_level,penalty_outcome,log_top_p_outcome,count_or_expected_count,percent
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,abstain,3.8200000000000007,0.08830328247803967
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,correct,0.16,0.0036985668053629178
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,incorrect,0.1,0.0023116042533518236
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,abstain,63.54000000000005,1.46879334257975
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,correct,2226.680000000003,51.472029588534454
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,incorrect,39.87999999999999,0.921867776236707
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,abstain,1071.6400000000008,24.772075820619502
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,correct,558.1600000000001,12.90245030050854
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,incorrect,362.02000000000004,8.368469717984274
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,abstain,12.059999999999992,0.2787794729542297
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,correct,0.34,0.0078594544613962
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,incorrect,0.0,0.0
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,abstain,99.48000000000003,2.299583911234395
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,correct,1155.1000000000004,26.701340730466924
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,incorrect,0.3,0.006934812760055471
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,abstain,2209.460000000004,51.0739713361073
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,correct,818.5600000000003,18.921867776236695
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,incorrect,30.700000000000003,0.70966250577901
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,abstain,58.960000000000115,1.3629218677762325
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,correct,2.7000000000000006,0.06241331484049901
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,incorrect,2.2600000000000007,0.05224225612575102
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,abstain,105.58000000000007,2.4405917706888474
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,correct,567.6399999999999,13.121590383726236
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,incorrect,49.52000000000004,1.1447064262598194
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,abstain,2126.4600000000196,49.15533980582545
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,correct,557.66,12.89089227924173
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,incorrect,855.2200000000029,19.769301895515454
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,abstain,492.0600000000002,11.374479889042991
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,correct,7.679999999999996,0.17753120665742006
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,incorrect,6.679999999999999,0.15441516412390185
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,abstain,307.1400000000004,7.099861303744803
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,correct,1164.3000000000013,26.914008321775324
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,incorrect,138.92000000000002,3.2112806287563553
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,abstain,1051.8000000000004,24.3134535367545
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,correct,245.0200000000001,5.663892741562643
+qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,incorrect,912.4000000000002,21.091077207582053

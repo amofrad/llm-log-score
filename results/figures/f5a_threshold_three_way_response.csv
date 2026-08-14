@@ -1,0 +1,1237 @@
+model,model_label,method,penalty_level,threshold,metric,value
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.0,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.01,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.02,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.03,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.04,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.05,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.06,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.07,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.08,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.09,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.1,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.11,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.12,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.13,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.14,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.15,accuracy_rate,0.5524734165510865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.16,accuracy_rate,0.5520110957004161
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.17,accuracy_rate,0.5520110957004161
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.18,accuracy_rate,0.5520110957004161
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.19,accuracy_rate,0.5520110957004161
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.2,accuracy_rate,0.5520110957004161
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.21,accuracy_rate,0.5515487748497457
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.22,accuracy_rate,0.5515487748497457
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.23,accuracy_rate,0.5515487748497457
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.24,accuracy_rate,0.5515487748497457
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.25,accuracy_rate,0.5515487748497457
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.26,accuracy_rate,0.5508552935737402
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.27,accuracy_rate,0.5508552935737402
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.28,accuracy_rate,0.5508552935737402
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.29,accuracy_rate,0.5508552935737402
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.3,accuracy_rate,0.5508552935737402
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.31,accuracy_rate,0.5464632454923717
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.32,accuracy_rate,0.5464632454923717
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.33,accuracy_rate,0.5464632454923717
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.34,accuracy_rate,0.5464632454923717
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.35000000000000003,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.36,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.37,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.38,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.39,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.4,accuracy_rate,0.5446139620896903
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.41000000000000003,accuracy_rate,0.4650947757743874
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.42,accuracy_rate,0.4650947757743874
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.43,accuracy_rate,0.4650947757743874
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.44,accuracy_rate,0.4650947757743874
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.45,accuracy_rate,0.4650947757743874
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.46,accuracy_rate,0.46070272769301895
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.47000000000000003,accuracy_rate,0.46070272769301895
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.48,accuracy_rate,0.46070272769301895
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.49,accuracy_rate,0.46070272769301895
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5,accuracy_rate,0.4604715672676838
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.51,accuracy_rate,0.4586222838650023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.52,accuracy_rate,0.4586222838650023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.53,accuracy_rate,0.4586222838650023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.54,accuracy_rate,0.4586222838650023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.55,accuracy_rate,0.4586222838650023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.56,accuracy_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5700000000000001,accuracy_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.58,accuracy_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.59,accuracy_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6,accuracy_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.61,accuracy_rate,0.4186315302820157
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.62,accuracy_rate,0.4186315302820157
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.63,accuracy_rate,0.4186315302820157
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.64,accuracy_rate,0.4186315302820157
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.65,accuracy_rate,0.4186315302820157
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.66,accuracy_rate,0.415164123901988
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.67,accuracy_rate,0.415164123901988
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.68,accuracy_rate,0.415164123901988
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6900000000000001,accuracy_rate,0.415164123901988
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.7000000000000001,accuracy_rate,0.3945908460471567
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.71,accuracy_rate,0.39412852519648633
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.72,accuracy_rate,0.39412852519648633
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.73,accuracy_rate,0.39412852519648633
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.74,accuracy_rate,0.39412852519648633
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.75,accuracy_rate,0.39412852519648633
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.76,accuracy_rate,0.38210818307905686
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.77,accuracy_rate,0.38210818307905686
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.78,accuracy_rate,0.38210818307905686
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.79,accuracy_rate,0.38210818307905686
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8,accuracy_rate,0.3816458622283865
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.81,accuracy_rate,0.2565880721220527
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8200000000000001,accuracy_rate,0.2565880721220527
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8300000000000001,accuracy_rate,0.2565880721220527
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.84,accuracy_rate,0.2565880721220527
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.85,accuracy_rate,0.2565880721220527
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.86,accuracy_rate,0.1793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.87,accuracy_rate,0.1793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.88,accuracy_rate,0.1793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.89,accuracy_rate,0.1793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9,accuracy_rate,0.17868700878409616
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.91,accuracy_rate,0.1407766990291262
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.92,accuracy_rate,0.1407766990291262
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.93,accuracy_rate,0.14054553860379104
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9400000000000001,accuracy_rate,0.14054553860379104
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9500000000000001,accuracy_rate,0.0076282940360610264
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.96,accuracy_rate,0.004623208506703652
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.97,accuracy_rate,0.004623208506703652
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.98,accuracy_rate,0.004623208506703652
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.99,accuracy_rate,0.0009246417013407304
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.0,hallucination_rate,0.42579750346740636
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.01,hallucination_rate,0.42579750346740636
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.02,hallucination_rate,0.4255663430420712
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.03,hallucination_rate,0.4255663430420712
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.04,hallucination_rate,0.4255663430420712
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.05,hallucination_rate,0.4255663430420712
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.06,hallucination_rate,0.4241793804900601
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.07,hallucination_rate,0.4241793804900601
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.08,hallucination_rate,0.4241793804900601
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.09,hallucination_rate,0.4241793804900601
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.1,hallucination_rate,0.4241793804900601
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.11,hallucination_rate,0.42348589921405455
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.12,hallucination_rate,0.42348589921405455
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.13,hallucination_rate,0.42348589921405455
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.14,hallucination_rate,0.42348589921405455
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.15,hallucination_rate,0.42348589921405455
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.16,hallucination_rate,0.41793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.17,hallucination_rate,0.41793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.18,hallucination_rate,0.41793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.19,hallucination_rate,0.41793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.2,hallucination_rate,0.41793804900601017
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.21,hallucination_rate,0.4137771613499769
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.22,hallucination_rate,0.4137771613499769
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.23,hallucination_rate,0.4137771613499769
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.24,hallucination_rate,0.4137771613499769
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.25,hallucination_rate,0.4137771613499769
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.26,hallucination_rate,0.4070735090152566
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.27,hallucination_rate,0.4070735090152566
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.28,hallucination_rate,0.4070735090152566
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.29,hallucination_rate,0.4070735090152566
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.3,hallucination_rate,0.4070735090152566
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.31,hallucination_rate,0.3874248728617661
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.32,hallucination_rate,0.3874248728617661
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.33,hallucination_rate,0.3874248728617661
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.34,hallucination_rate,0.3874248728617661
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.35000000000000003,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.36,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.37,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.38,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.39,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.4,hallucination_rate,0.38118354137771615
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.41000000000000003,hallucination_rate,0.19232547387887194
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.42,hallucination_rate,0.19232547387887194
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.43,hallucination_rate,0.19232547387887194
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.44,hallucination_rate,0.19232547387887194
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.45,hallucination_rate,0.19232547387887194
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.46,hallucination_rate,0.18169209431345354
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.47000000000000003,hallucination_rate,0.18169209431345354
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.48,hallucination_rate,0.18169209431345354
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.49,hallucination_rate,0.18169209431345354
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5,hallucination_rate,0.18169209431345354
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.51,hallucination_rate,0.18122977346278318
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.52,hallucination_rate,0.18122977346278318
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.53,hallucination_rate,0.18122977346278318
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.54,hallucination_rate,0.18122977346278318
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.55,hallucination_rate,0.18122977346278318
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.56,hallucination_rate,0.180998613037448
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5700000000000001,hallucination_rate,0.180998613037448
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.58,hallucination_rate,0.180998613037448
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.59,hallucination_rate,0.180998613037448
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6,hallucination_rate,0.180998613037448
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.61,hallucination_rate,0.15742024965325938
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.62,hallucination_rate,0.15742024965325938
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.63,hallucination_rate,0.15742024965325938
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.64,hallucination_rate,0.15742024965325938
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.65,hallucination_rate,0.15742024965325938
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.66,hallucination_rate,0.15649560795191864
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.67,hallucination_rate,0.15649560795191864
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.68,hallucination_rate,0.15649560795191864
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6900000000000001,hallucination_rate,0.15649560795191864
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.7000000000000001,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.71,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.72,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.73,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.74,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.75,hallucination_rate,0.15071659731853906
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.76,hallucination_rate,0.14609338881183542
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.77,hallucination_rate,0.14609338881183542
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.78,hallucination_rate,0.14609338881183542
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.79,hallucination_rate,0.14609338881183542
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8,hallucination_rate,0.14609338881183542
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.81,hallucination_rate,0.059870550161812294
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8200000000000001,hallucination_rate,0.059870550161812294
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8300000000000001,hallucination_rate,0.059870550161812294
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.84,hallucination_rate,0.059870550161812294
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.85,hallucination_rate,0.059870550161812294
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.86,hallucination_rate,0.03282478039759593
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.87,hallucination_rate,0.03282478039759593
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.88,hallucination_rate,0.03282478039759593
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.89,hallucination_rate,0.03282478039759593
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9,hallucination_rate,0.03282478039759593
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.91,hallucination_rate,0.024965325936199722
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.92,hallucination_rate,0.024965325936199722
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.93,hallucination_rate,0.024965325936199722
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9400000000000001,hallucination_rate,0.024965325936199722
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9500000000000001,hallucination_rate,0.0002311604253351826
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.96,hallucination_rate,0.0002311604253351826
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.97,hallucination_rate,0.0002311604253351826
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.98,hallucination_rate,0.0002311604253351826
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.99,hallucination_rate,0.0
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.0,abstention_rate,0.021729079981507166
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.01,abstention_rate,0.021729079981507166
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.02,abstention_rate,0.021960240406842347
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.03,abstention_rate,0.021960240406842347
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.04,abstention_rate,0.021960240406842347
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.05,abstention_rate,0.021960240406842347
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.06,abstention_rate,0.023347202958853445
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.07,abstention_rate,0.023347202958853445
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.08,abstention_rate,0.023347202958853445
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.09,abstention_rate,0.023347202958853445
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.1,abstention_rate,0.023347202958853445
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.11,abstention_rate,0.024040684234858993
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.12,abstention_rate,0.024040684234858993
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.13,abstention_rate,0.024040684234858993
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.14,abstention_rate,0.024040684234858993
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.15,abstention_rate,0.024040684234858993
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.16,abstention_rate,0.03005085529357374
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.17,abstention_rate,0.03005085529357374
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.18,abstention_rate,0.03005085529357374
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.19,abstention_rate,0.03005085529357374
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.2,abstention_rate,0.03005085529357374
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.21,abstention_rate,0.03467406380027739
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.22,abstention_rate,0.03467406380027739
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.23,abstention_rate,0.03467406380027739
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.24,abstention_rate,0.03467406380027739
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.25,abstention_rate,0.03467406380027739
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.26,abstention_rate,0.042071197411003236
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.27,abstention_rate,0.042071197411003236
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.28,abstention_rate,0.042071197411003236
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.29,abstention_rate,0.042071197411003236
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.3,abstention_rate,0.042071197411003236
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.31,abstention_rate,0.06611188164586222
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.32,abstention_rate,0.06611188164586222
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.33,abstention_rate,0.06611188164586222
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.34,abstention_rate,0.06611188164586222
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.35000000000000003,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.36,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.37,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.38,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.39,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.4,abstention_rate,0.07420249653259361
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.41000000000000003,abstention_rate,0.34257975034674065
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.42,abstention_rate,0.34257975034674065
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.43,abstention_rate,0.34257975034674065
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.44,abstention_rate,0.34257975034674065
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.45,abstention_rate,0.34257975034674065
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.46,abstention_rate,0.35760517799352753
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.47000000000000003,abstention_rate,0.35760517799352753
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.48,abstention_rate,0.35760517799352753
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.49,abstention_rate,0.35760517799352753
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5,abstention_rate,0.3578363384188627
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.51,abstention_rate,0.3601479426722145
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.52,abstention_rate,0.3601479426722145
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.53,abstention_rate,0.3601479426722145
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.54,abstention_rate,0.3601479426722145
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.55,abstention_rate,0.3601479426722145
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.56,abstention_rate,0.36384650947757746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.5700000000000001,abstention_rate,0.36384650947757746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.58,abstention_rate,0.36384650947757746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.59,abstention_rate,0.36384650947757746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6,abstention_rate,0.36384650947757746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.61,abstention_rate,0.42394822006472493
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.62,abstention_rate,0.42394822006472493
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.63,abstention_rate,0.42394822006472493
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.64,abstention_rate,0.42394822006472493
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.65,abstention_rate,0.42394822006472493
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.66,abstention_rate,0.4283402681460934
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.67,abstention_rate,0.4283402681460934
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.68,abstention_rate,0.4283402681460934
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.6900000000000001,abstention_rate,0.4283402681460934
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.7000000000000001,abstention_rate,0.4546925566343042
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.71,abstention_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.72,abstention_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.73,abstention_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.74,abstention_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.75,abstention_rate,0.4551548774849746
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.76,abstention_rate,0.4717984281091077
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.77,abstention_rate,0.4717984281091077
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.78,abstention_rate,0.4717984281091077
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.79,abstention_rate,0.4717984281091077
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8,abstention_rate,0.4722607489597781
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.81,abstention_rate,0.683541377716135
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8200000000000001,abstention_rate,0.683541377716135
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.8300000000000001,abstention_rate,0.683541377716135
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.84,abstention_rate,0.683541377716135
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.85,abstention_rate,0.683541377716135
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.86,abstention_rate,0.7877947295423023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.87,abstention_rate,0.7877947295423023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.88,abstention_rate,0.7877947295423023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.89,abstention_rate,0.7877947295423023
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9,abstention_rate,0.7884882108183079
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.91,abstention_rate,0.834257975034674
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.92,abstention_rate,0.834257975034674
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.93,abstention_rate,0.8344891354600092
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9400000000000001,abstention_rate,0.8344891354600092
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.9500000000000001,abstention_rate,0.9921405455386038
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.96,abstention_rate,0.9951456310679612
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.97,abstention_rate,0.9951456310679612
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.98,abstention_rate,0.9951456310679612
+gemini35flash,Gemini 3.5 Flash,residual_log_threshold,,0.99,abstention_rate,0.9990753582986592
+gemini35flash,Gemini 3.5 Flash,native_penalty,0.0,0.0,accuracy_rate,0.5386269070735091
+gemini35flash,Gemini 3.5 Flash,native_penalty,0.0,0.0,hallucination_rate,0.46042995839112344
+gemini35flash,Gemini 3.5 Flash,native_penalty,0.0,0.0,abstention_rate,0.0009431345353675451
+gemini35flash,Gemini 3.5 Flash,native_penalty,3.0,0.75,accuracy_rate,0.5142348589921405
+gemini35flash,Gemini 3.5 Flash,native_penalty,3.0,0.75,hallucination_rate,0.33599630143319464
+gemini35flash,Gemini 3.5 Flash,native_penalty,3.0,0.75,abstention_rate,0.1497688395746648
+gemini35flash,Gemini 3.5 Flash,native_penalty,6.0,0.8571428571428571,accuracy_rate,0.5049422098936662
+gemini35flash,Gemini 3.5 Flash,native_penalty,6.0,0.8571428571428571,hallucination_rate,0.3058113730929265
+gemini35flash,Gemini 3.5 Flash,native_penalty,6.0,0.8571428571428571,abstention_rate,0.18924641701340733
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.0,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.01,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.02,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.03,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.04,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.05,accuracy_rate,0.3243180767452612
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.06,accuracy_rate,0.3229311141932501
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.07,accuracy_rate,0.3229311141932501
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.08,accuracy_rate,0.3229311141932501
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.09,accuracy_rate,0.3217753120665742
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.1,accuracy_rate,0.3217753120665742
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.11,accuracy_rate,0.31946370781322236
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.12,accuracy_rate,0.31946370781322236
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.13,accuracy_rate,0.3187702265372168
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.14,accuracy_rate,0.3187702265372168
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.15,accuracy_rate,0.3187702265372168
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.16,accuracy_rate,0.3127600554785021
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.17,accuracy_rate,0.3127600554785021
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.18,accuracy_rate,0.3127600554785021
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.19,accuracy_rate,0.3122977346278317
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.2,accuracy_rate,0.3122977346278317
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.21,accuracy_rate,0.3028201571890892
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.22,accuracy_rate,0.3028201571890892
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.23,accuracy_rate,0.3028201571890892
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.24,accuracy_rate,0.3028201571890892
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.25,accuracy_rate,0.3028201571890892
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.26,accuracy_rate,0.28779472954230234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.27,accuracy_rate,0.28779472954230234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.28,accuracy_rate,0.28779472954230234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.29,accuracy_rate,0.28779472954230234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.3,accuracy_rate,0.28779472954230234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.31,accuracy_rate,0.27623670827554325
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.32,accuracy_rate,0.27623670827554325
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.33,accuracy_rate,0.27623670827554325
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.34,accuracy_rate,0.27623670827554325
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.35000000000000003,accuracy_rate,0.24572353213129913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.36,accuracy_rate,0.24572353213129913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.37,accuracy_rate,0.24572353213129913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.38,accuracy_rate,0.24572353213129913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.39,accuracy_rate,0.24572353213129913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.4,accuracy_rate,0.24526121128062875
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.41000000000000003,accuracy_rate,0.23555247341655108
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.42,accuracy_rate,0.23555247341655108
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.43,accuracy_rate,0.23555247341655108
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.44,accuracy_rate,0.23555247341655108
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.45,accuracy_rate,0.23462783171521034
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.46,accuracy_rate,0.20827554322699954
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.47000000000000003,accuracy_rate,0.20827554322699954
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.48,accuracy_rate,0.20827554322699954
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.49,accuracy_rate,0.20827554322699954
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5,accuracy_rate,0.20827554322699954
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.51,accuracy_rate,0.2022653721682848
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.52,accuracy_rate,0.2022653721682848
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.53,accuracy_rate,0.2020342117429496
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.54,accuracy_rate,0.20157189089227925
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.55,accuracy_rate,0.20157189089227925
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.56,accuracy_rate,0.16712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5700000000000001,accuracy_rate,0.16712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.58,accuracy_rate,0.16712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.59,accuracy_rate,0.16712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6,accuracy_rate,0.16712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.61,accuracy_rate,0.14979195561719832
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.62,accuracy_rate,0.14979195561719832
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.63,accuracy_rate,0.14956079519186316
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.64,accuracy_rate,0.14956079519186316
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.65,accuracy_rate,0.14956079519186316
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.66,accuracy_rate,0.14285714285714285
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.67,accuracy_rate,0.14262598243180769
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.68,accuracy_rate,0.1423948220064725
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6900000000000001,accuracy_rate,0.1423948220064725
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.7000000000000001,accuracy_rate,0.13546000924641702
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.71,accuracy_rate,0.13453536754507628
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.72,accuracy_rate,0.13453536754507628
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.73,accuracy_rate,0.12182154415164125
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.74,accuracy_rate,0.12135922330097088
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.75,accuracy_rate,0.12135922330097088
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.76,accuracy_rate,0.0889967637540453
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.77,accuracy_rate,0.0889967637540453
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.78,accuracy_rate,0.08876560332871013
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.79,accuracy_rate,0.08853444290337494
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8,accuracy_rate,0.08853444290337494
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.81,accuracy_rate,0.08136846971798428
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8200000000000001,accuracy_rate,0.0718908922792418
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8300000000000001,accuracy_rate,0.07165973185390662
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.84,accuracy_rate,0.07165973185390662
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.85,accuracy_rate,0.07142857142857142
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.86,accuracy_rate,0.03744798890429958
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.87,accuracy_rate,0.03744798890429958
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.88,accuracy_rate,0.03744798890429958
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.89,accuracy_rate,0.024271844660194174
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9,accuracy_rate,0.02288488210818308
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.91,accuracy_rate,0.013869625520110958
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.92,accuracy_rate,0.013407304669440592
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.93,accuracy_rate,0.0062413314840499305
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9400000000000001,accuracy_rate,0.003236245954692557
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9500000000000001,accuracy_rate,0.0016181229773462784
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.96,accuracy_rate,0.0009246417013407304
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.97,accuracy_rate,0.0009246417013407304
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.98,accuracy_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.99,accuracy_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.0,hallucination_rate,0.672214516874711
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.01,hallucination_rate,0.672214516874711
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.02,hallucination_rate,0.672214516874711
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.03,hallucination_rate,0.6712898751733704
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.04,hallucination_rate,0.6631992602866389
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.05,hallucination_rate,0.6588072122052705
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.06,hallucination_rate,0.6236708275543227
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.07,hallucination_rate,0.6234396671289875
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.08,hallucination_rate,0.6229773462783171
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.09,hallucination_rate,0.5920018492834027
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.1,hallucination_rate,0.5920018492834027
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.11,hallucination_rate,0.5469255663430421
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.12,hallucination_rate,0.5469255663430421
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.13,hallucination_rate,0.5319001386962552
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.14,hallucination_rate,0.5319001386962552
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.15,hallucination_rate,0.5319001386962552
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.16,hallucination_rate,0.4637078132223763
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.17,hallucination_rate,0.4637078132223763
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.18,hallucination_rate,0.4637078132223763
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.19,hallucination_rate,0.46024040684234857
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.2,hallucination_rate,0.46024040684234857
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.21,hallucination_rate,0.39042995839112343
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.22,hallucination_rate,0.39042995839112343
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.23,hallucination_rate,0.3897364771151179
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.24,hallucination_rate,0.3897364771151179
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.25,hallucination_rate,0.3897364771151179
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.26,hallucination_rate,0.3116042533518262
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.27,hallucination_rate,0.3116042533518262
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.28,hallucination_rate,0.31137309292649096
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.29,hallucination_rate,0.31137309292649096
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.3,hallucination_rate,0.31137309292649096
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.31,hallucination_rate,0.27092001849283404
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.32,hallucination_rate,0.27092001849283404
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.33,hallucination_rate,0.27092001849283404
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.34,hallucination_rate,0.27092001849283404
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.35000000000000003,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.36,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.37,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.38,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.39,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.4,hallucination_rate,0.19348127600554785
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.41000000000000003,hallucination_rate,0.17290799815071659
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.42,hallucination_rate,0.17290799815071659
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.43,hallucination_rate,0.17290799815071659
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.44,hallucination_rate,0.17290799815071659
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.45,hallucination_rate,0.17290799815071659
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.46,hallucination_rate,0.12806287563569116
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.47000000000000003,hallucination_rate,0.12806287563569116
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.48,hallucination_rate,0.12806287563569116
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.49,hallucination_rate,0.12806287563569116
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5,hallucination_rate,0.12806287563569116
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.51,hallucination_rate,0.12066574202496533
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.52,hallucination_rate,0.12066574202496533
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.53,hallucination_rate,0.12043458159963015
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.54,hallucination_rate,0.12043458159963015
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.55,hallucination_rate,0.12043458159963015
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.56,hallucination_rate,0.07651410078594545
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5700000000000001,hallucination_rate,0.07651410078594545
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.58,hallucination_rate,0.07651410078594545
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.59,hallucination_rate,0.07651410078594545
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6,hallucination_rate,0.07651410078594545
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.61,hallucination_rate,0.06102635228848821
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.62,hallucination_rate,0.06102635228848821
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.63,hallucination_rate,0.06102635228848821
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.64,hallucination_rate,0.06102635228848821
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.65,hallucination_rate,0.06102635228848821
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.66,hallucination_rate,0.05640314378178456
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.67,hallucination_rate,0.05640314378178456
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.68,hallucination_rate,0.05640314378178456
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6900000000000001,hallucination_rate,0.05640314378178456
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.7000000000000001,hallucination_rate,0.05131761442441054
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.71,hallucination_rate,0.05131761442441054
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.72,hallucination_rate,0.05131761442441054
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.73,hallucination_rate,0.043689320388349516
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.74,hallucination_rate,0.043689320388349516
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.75,hallucination_rate,0.043689320388349516
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.76,hallucination_rate,0.022191400832177532
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.77,hallucination_rate,0.022191400832177532
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.78,hallucination_rate,0.022191400832177532
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.79,hallucination_rate,0.022191400832177532
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8,hallucination_rate,0.022191400832177532
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.81,hallucination_rate,0.019186315302820157
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8200000000000001,hallucination_rate,0.01779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8300000000000001,hallucination_rate,0.01779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.84,hallucination_rate,0.01779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.85,hallucination_rate,0.01779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.86,hallucination_rate,0.005779010633379565
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.87,hallucination_rate,0.005779010633379565
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.88,hallucination_rate,0.005779010633379565
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.89,hallucination_rate,0.003005085529357374
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9,hallucination_rate,0.003005085529357374
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.91,hallucination_rate,0.0013869625520110957
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.92,hallucination_rate,0.001155802126675913
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.93,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9400000000000001,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9500000000000001,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.96,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.97,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.98,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.99,hallucination_rate,0.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.0,abstention_rate,0.0034674063800277394
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.01,abstention_rate,0.0034674063800277394
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.02,abstention_rate,0.0034674063800277394
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.03,abstention_rate,0.00439204808136847
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.04,abstention_rate,0.012482662968099861
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.05,abstention_rate,0.01687471104946833
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.06,abstention_rate,0.05339805825242718
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.07,abstention_rate,0.053629218677762366
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.08,abstention_rate,0.05409153952843273
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.09,abstention_rate,0.08622283865002311
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.1,abstention_rate,0.08622283865002311
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.11,abstention_rate,0.13361072584373554
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.12,abstention_rate,0.13361072584373554
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.13,abstention_rate,0.14932963476652797
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.14,abstention_rate,0.14932963476652797
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.15,abstention_rate,0.14932963476652797
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.16,abstention_rate,0.22353213129912158
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.17,abstention_rate,0.22353213129912158
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.18,abstention_rate,0.22353213129912158
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.19,abstention_rate,0.2274618585298197
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.2,abstention_rate,0.2274618585298197
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.21,abstention_rate,0.30674988441978734
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.22,abstention_rate,0.30674988441978734
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.23,abstention_rate,0.3074433656957929
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.24,abstention_rate,0.3074433656957929
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.25,abstention_rate,0.3074433656957929
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.26,abstention_rate,0.4006010171058715
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.27,abstention_rate,0.4006010171058715
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.28,abstention_rate,0.40083217753120665
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.29,abstention_rate,0.40083217753120665
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.3,abstention_rate,0.40083217753120665
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.31,abstention_rate,0.45284327323162277
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.32,abstention_rate,0.45284327323162277
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.33,abstention_rate,0.45284327323162277
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.34,abstention_rate,0.45284327323162277
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.35000000000000003,abstention_rate,0.5607951918631531
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.36,abstention_rate,0.5607951918631531
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.37,abstention_rate,0.5607951918631531
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.38,abstention_rate,0.5607951918631531
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.39,abstention_rate,0.5607951918631531
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.4,abstention_rate,0.5612575127138234
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.41000000000000003,abstention_rate,0.5915395284327323
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.42,abstention_rate,0.5915395284327323
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.43,abstention_rate,0.5915395284327323
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.44,abstention_rate,0.5915395284327323
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.45,abstention_rate,0.592464170134073
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.46,abstention_rate,0.6636615811373093
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.47000000000000003,abstention_rate,0.6636615811373093
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.48,abstention_rate,0.6636615811373093
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.49,abstention_rate,0.6636615811373093
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5,abstention_rate,0.6636615811373093
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.51,abstention_rate,0.6770688858067498
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.52,abstention_rate,0.6770688858067498
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.53,abstention_rate,0.6775312066574203
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.54,abstention_rate,0.6779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.55,abstention_rate,0.6779935275080906
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.56,abstention_rate,0.7563569116967175
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.5700000000000001,abstention_rate,0.7563569116967175
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.58,abstention_rate,0.7563569116967175
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.59,abstention_rate,0.7563569116967175
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6,abstention_rate,0.7563569116967175
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.61,abstention_rate,0.7891816920943134
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.62,abstention_rate,0.7891816920943134
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.63,abstention_rate,0.7894128525196487
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.64,abstention_rate,0.7894128525196487
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.65,abstention_rate,0.7894128525196487
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.66,abstention_rate,0.8007397133610726
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.67,abstention_rate,0.8009708737864077
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.68,abstention_rate,0.801202034211743
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.6900000000000001,abstention_rate,0.801202034211743
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.7000000000000001,abstention_rate,0.8132223763291725
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.71,abstention_rate,0.8141470180305131
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.72,abstention_rate,0.8141470180305131
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.73,abstention_rate,0.8344891354600092
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.74,abstention_rate,0.8349514563106796
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.75,abstention_rate,0.8349514563106796
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.76,abstention_rate,0.8888118354137772
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.77,abstention_rate,0.8888118354137772
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.78,abstention_rate,0.8890429958391124
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.79,abstention_rate,0.8892741562644475
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8,abstention_rate,0.8892741562644475
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.81,abstention_rate,0.8994452149791956
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8200000000000001,abstention_rate,0.9103097549699491
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.8300000000000001,abstention_rate,0.9105409153952844
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.84,abstention_rate,0.9105409153952844
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.85,abstention_rate,0.9107720758206195
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.86,abstention_rate,0.9567730004623208
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.87,abstention_rate,0.9567730004623208
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.88,abstention_rate,0.9567730004623208
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.89,abstention_rate,0.9727230698104484
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9,abstention_rate,0.9741100323624595
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.91,abstention_rate,0.984743411927878
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.92,abstention_rate,0.9854368932038835
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.93,abstention_rate,0.9937586685159501
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9400000000000001,abstention_rate,0.9967637540453075
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.9500000000000001,abstention_rate,0.9983818770226537
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.96,abstention_rate,0.9990753582986592
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.97,abstention_rate,0.9990753582986592
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.98,abstention_rate,1.0
+sonnet46,Claude Sonnet 4.6,residual_log_threshold,,0.99,abstention_rate,1.0
+sonnet46,Claude Sonnet 4.6,native_penalty,0.0,0.0,accuracy_rate,0.290078594544614
+sonnet46,Claude Sonnet 4.6,native_penalty,0.0,0.0,hallucination_rate,0.7070550161812298
+sonnet46,Claude Sonnet 4.6,native_penalty,0.0,0.0,abstention_rate,0.002866389274156265
+sonnet46,Claude Sonnet 4.6,native_penalty,3.0,0.75,accuracy_rate,0.24520573277854832
+sonnet46,Claude Sonnet 4.6,native_penalty,3.0,0.75,hallucination_rate,0.35901987979657884
+sonnet46,Claude Sonnet 4.6,native_penalty,3.0,0.75,abstention_rate,0.3957743874248728
+sonnet46,Claude Sonnet 4.6,native_penalty,6.0,0.8571428571428571,accuracy_rate,0.22168284789644013
+sonnet46,Claude Sonnet 4.6,native_penalty,6.0,0.8571428571428571,hallucination_rate,0.269750346740638
+sonnet46,Claude Sonnet 4.6,native_penalty,6.0,0.8571428571428571,abstention_rate,0.5085668053629219
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.0,accuracy_rate,0.18816458622283866
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.01,accuracy_rate,0.18816458622283866
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.02,accuracy_rate,0.18816458622283866
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.03,accuracy_rate,0.18515950069348128
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.04,accuracy_rate,0.1821544151641239
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.05,accuracy_rate,0.18192325473878873
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.06,accuracy_rate,0.1793804900601017
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.07,accuracy_rate,0.1793804900601017
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.08,accuracy_rate,0.1793804900601017
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.09,accuracy_rate,0.17914932963476654
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.1,accuracy_rate,0.17914932963476654
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.11,accuracy_rate,0.17891816920943135
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.12,accuracy_rate,0.17891816920943135
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.13,accuracy_rate,0.17891816920943135
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.14,accuracy_rate,0.17891816920943135
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.15,accuracy_rate,0.17891816920943135
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.16,accuracy_rate,0.17868700878409616
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.17,accuracy_rate,0.17868700878409616
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.18,accuracy_rate,0.17868700878409616
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.19,accuracy_rate,0.17868700878409616
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.2,accuracy_rate,0.17868700878409616
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.21,accuracy_rate,0.17730004623208506
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.22,accuracy_rate,0.17730004623208506
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.23,accuracy_rate,0.17730004623208506
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.24,accuracy_rate,0.17730004623208506
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.25,accuracy_rate,0.17730004623208506
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.26,accuracy_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.27,accuracy_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.28,accuracy_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.29,accuracy_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.3,accuracy_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.31,accuracy_rate,0.15903837263060563
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.32,accuracy_rate,0.15903837263060563
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.33,accuracy_rate,0.15903837263060563
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.34,accuracy_rate,0.15903837263060563
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.35000000000000003,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.36,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.37,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.38,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.39,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.4,accuracy_rate,0.15464632454923716
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.41000000000000003,accuracy_rate,0.1158113730929265
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.42,accuracy_rate,0.1158113730929265
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.43,accuracy_rate,0.1158113730929265
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.44,accuracy_rate,0.1158113730929265
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.45,accuracy_rate,0.1155802126675913
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.46,accuracy_rate,0.11118816458622284
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.47000000000000003,accuracy_rate,0.11118816458622284
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.48,accuracy_rate,0.11118816458622284
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.49,accuracy_rate,0.11118816458622284
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5,accuracy_rate,0.11118816458622284
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.51,accuracy_rate,0.10355987055016182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.52,accuracy_rate,0.10355987055016182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.53,accuracy_rate,0.10355987055016182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.54,accuracy_rate,0.10355987055016182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.55,accuracy_rate,0.10355987055016182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.56,accuracy_rate,0.10286638927415627
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5700000000000001,accuracy_rate,0.10286638927415627
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.58,accuracy_rate,0.10286638927415627
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.59,accuracy_rate,0.10286638927415627
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6,accuracy_rate,0.10286638927415627
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.61,accuracy_rate,0.09454461396208969
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.62,accuracy_rate,0.09454461396208969
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.63,accuracy_rate,0.09454461396208969
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.64,accuracy_rate,0.09454461396208969
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.65,accuracy_rate,0.09454461396208969
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.66,accuracy_rate,0.09200184928340269
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.67,accuracy_rate,0.09200184928340269
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.68,accuracy_rate,0.09200184928340269
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6900000000000001,accuracy_rate,0.09200184928340269
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.7000000000000001,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.71,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.72,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.73,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.74,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.75,accuracy_rate,0.08876560332871013
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.76,accuracy_rate,0.08737864077669903
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.77,accuracy_rate,0.08737864077669903
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.78,accuracy_rate,0.08737864077669903
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.79,accuracy_rate,0.08737864077669903
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8,accuracy_rate,0.08714748035136384
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.81,accuracy_rate,0.08183079056865465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8200000000000001,accuracy_rate,0.08183079056865465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8300000000000001,accuracy_rate,0.08183079056865465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.84,accuracy_rate,0.08183079056865465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.85,accuracy_rate,0.08183079056865465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.86,accuracy_rate,0.012251502542764678
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.87,accuracy_rate,0.012251502542764678
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.88,accuracy_rate,0.012251502542764678
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.89,accuracy_rate,0.012251502542764678
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9,accuracy_rate,0.011789181692094313
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.91,accuracy_rate,0.0062413314840499305
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.92,accuracy_rate,0.0062413314840499305
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.93,accuracy_rate,0.0062413314840499305
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9400000000000001,accuracy_rate,0.0062413314840499305
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9500000000000001,accuracy_rate,0.0006934812760055479
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.96,accuracy_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.97,accuracy_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.98,accuracy_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.99,accuracy_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.0,hallucination_rate,0.7951918631530283
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.01,hallucination_rate,0.7951918631530283
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.02,hallucination_rate,0.7829403606102635
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.03,hallucination_rate,0.6708275543226999
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.04,hallucination_rate,0.6005547850208044
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.05,hallucination_rate,0.5966250577901063
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.06,hallucination_rate,0.5399907535829865
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.07,hallucination_rate,0.5399907535829865
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.08,hallucination_rate,0.5399907535829865
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.09,hallucination_rate,0.5395284327323162
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.1,hallucination_rate,0.5395284327323162
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.11,hallucination_rate,0.5360610263522885
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.12,hallucination_rate,0.5360610263522885
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.13,hallucination_rate,0.5360610263522885
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.14,hallucination_rate,0.5360610263522885
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.15,hallucination_rate,0.5360610263522885
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.16,hallucination_rate,0.5351363846509477
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.17,hallucination_rate,0.5351363846509477
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.18,hallucination_rate,0.5351363846509477
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.19,hallucination_rate,0.5351363846509477
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.2,hallucination_rate,0.5351363846509477
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.21,hallucination_rate,0.5249653259361997
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.22,hallucination_rate,0.5249653259361997
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.23,hallucination_rate,0.5249653259361997
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.24,hallucination_rate,0.5249653259361997
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.25,hallucination_rate,0.5249653259361997
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.26,hallucination_rate,0.5221914008321775
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.27,hallucination_rate,0.5221914008321775
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.28,hallucination_rate,0.5221914008321775
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.29,hallucination_rate,0.5221914008321775
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.3,hallucination_rate,0.5221914008321775
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.31,hallucination_rate,0.4160887656033287
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.32,hallucination_rate,0.4160887656033287
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.33,hallucination_rate,0.4160887656033287
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.34,hallucination_rate,0.4160887656033287
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.35000000000000003,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.36,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.37,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.38,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.39,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.4,hallucination_rate,0.39528432732316227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.41000000000000003,hallucination_rate,0.236708275543227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.42,hallucination_rate,0.236708275543227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.43,hallucination_rate,0.236708275543227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.44,hallucination_rate,0.236708275543227
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.45,hallucination_rate,0.23647711511789182
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.46,hallucination_rate,0.21590383726306056
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.47000000000000003,hallucination_rate,0.21590383726306056
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.48,hallucination_rate,0.21590383726306056
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.49,hallucination_rate,0.21590383726306056
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5,hallucination_rate,0.21590383726306056
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.51,hallucination_rate,0.19741100323624594
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.52,hallucination_rate,0.19741100323624594
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.53,hallucination_rate,0.19741100323624594
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.54,hallucination_rate,0.19741100323624594
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.55,hallucination_rate,0.19741100323624594
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.56,hallucination_rate,0.19717984281091078
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5700000000000001,hallucination_rate,0.19717984281091078
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.58,hallucination_rate,0.19717984281091078
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.59,hallucination_rate,0.19717984281091078
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6,hallucination_rate,0.19717984281091078
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.61,hallucination_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.62,hallucination_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.63,hallucination_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.64,hallucination_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.65,hallucination_rate,0.17614424410540916
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.66,hallucination_rate,0.16967175219602404
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.67,hallucination_rate,0.16967175219602404
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.68,hallucination_rate,0.16967175219602404
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6900000000000001,hallucination_rate,0.16967175219602404
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.7000000000000001,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.71,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.72,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.73,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.74,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.75,hallucination_rate,0.16042533518261673
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.76,hallucination_rate,0.15742024965325938
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.77,hallucination_rate,0.15742024965325938
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.78,hallucination_rate,0.15742024965325938
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.79,hallucination_rate,0.15742024965325938
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8,hallucination_rate,0.15742024965325938
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.81,hallucination_rate,0.14609338881183542
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8200000000000001,hallucination_rate,0.14609338881183542
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8300000000000001,hallucination_rate,0.14609338881183542
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.84,hallucination_rate,0.14609338881183542
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.85,hallucination_rate,0.14609338881183542
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.86,hallucination_rate,0.008552935737401757
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.87,hallucination_rate,0.008552935737401757
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.88,hallucination_rate,0.008552935737401757
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.89,hallucination_rate,0.008552935737401757
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9,hallucination_rate,0.008552935737401757
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.91,hallucination_rate,0.0036985668053629217
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.92,hallucination_rate,0.0036985668053629217
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.93,hallucination_rate,0.0036985668053629217
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9400000000000001,hallucination_rate,0.0036985668053629217
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9500000000000001,hallucination_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.96,hallucination_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.97,hallucination_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.98,hallucination_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.99,hallucination_rate,0.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.0,abstention_rate,0.016643550624133148
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.01,abstention_rate,0.016643550624133148
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.02,abstention_rate,0.028895053166897826
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.03,abstention_rate,0.14401294498381878
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.04,abstention_rate,0.21729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.05,abstention_rate,0.22145168747110494
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.06,abstention_rate,0.2806287563569117
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.07,abstention_rate,0.2806287563569117
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.08,abstention_rate,0.2806287563569117
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.09,abstention_rate,0.28132223763291725
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.1,abstention_rate,0.28132223763291725
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.11,abstention_rate,0.28502080443828015
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.12,abstention_rate,0.28502080443828015
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.13,abstention_rate,0.28502080443828015
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.14,abstention_rate,0.28502080443828015
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.15,abstention_rate,0.28502080443828015
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.16,abstention_rate,0.2861766065649561
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.17,abstention_rate,0.2861766065649561
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.18,abstention_rate,0.2861766065649561
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.19,abstention_rate,0.2861766065649561
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.2,abstention_rate,0.2861766065649561
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.21,abstention_rate,0.2977346278317152
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.22,abstention_rate,0.2977346278317152
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.23,abstention_rate,0.2977346278317152
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.24,abstention_rate,0.2977346278317152
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.25,abstention_rate,0.2977346278317152
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.26,abstention_rate,0.3016643550624133
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.27,abstention_rate,0.3016643550624133
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.28,abstention_rate,0.3016643550624133
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.29,abstention_rate,0.3016643550624133
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.3,abstention_rate,0.3016643550624133
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.31,abstention_rate,0.42487286176606565
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.32,abstention_rate,0.42487286176606565
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.33,abstention_rate,0.42487286176606565
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.34,abstention_rate,0.42487286176606565
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.35000000000000003,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.36,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.37,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.38,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.39,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.4,abstention_rate,0.4500693481276006
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.41000000000000003,abstention_rate,0.6474803513638465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.42,abstention_rate,0.6474803513638465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.43,abstention_rate,0.6474803513638465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.44,abstention_rate,0.6474803513638465
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.45,abstention_rate,0.6479426722145168
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.46,abstention_rate,0.6729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.47000000000000003,abstention_rate,0.6729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.48,abstention_rate,0.6729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.49,abstention_rate,0.6729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5,abstention_rate,0.6729079981507166
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.51,abstention_rate,0.6990291262135923
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.52,abstention_rate,0.6990291262135923
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.53,abstention_rate,0.6990291262135923
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.54,abstention_rate,0.6990291262135923
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.55,abstention_rate,0.6990291262135923
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.56,abstention_rate,0.6999537679149329
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.5700000000000001,abstention_rate,0.6999537679149329
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.58,abstention_rate,0.6999537679149329
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.59,abstention_rate,0.6999537679149329
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6,abstention_rate,0.6999537679149329
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.61,abstention_rate,0.7293111419325011
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.62,abstention_rate,0.7293111419325011
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.63,abstention_rate,0.7293111419325011
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.64,abstention_rate,0.7293111419325011
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.65,abstention_rate,0.7293111419325011
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.66,abstention_rate,0.7383263985205732
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.67,abstention_rate,0.7383263985205732
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.68,abstention_rate,0.7383263985205732
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.6900000000000001,abstention_rate,0.7383263985205732
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.7000000000000001,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.71,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.72,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.73,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.74,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.75,abstention_rate,0.7508090614886731
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.76,abstention_rate,0.7552011095700416
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.77,abstention_rate,0.7552011095700416
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.78,abstention_rate,0.7552011095700416
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.79,abstention_rate,0.7552011095700416
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8,abstention_rate,0.7554322699953768
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.81,abstention_rate,0.77207582061951
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8200000000000001,abstention_rate,0.77207582061951
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.8300000000000001,abstention_rate,0.77207582061951
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.84,abstention_rate,0.77207582061951
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.85,abstention_rate,0.77207582061951
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.86,abstention_rate,0.9791955617198336
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.87,abstention_rate,0.9791955617198336
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.88,abstention_rate,0.9791955617198336
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.89,abstention_rate,0.9791955617198336
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9,abstention_rate,0.9796578825705039
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.91,abstention_rate,0.9900601017105871
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.92,abstention_rate,0.9900601017105871
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.93,abstention_rate,0.9900601017105871
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9400000000000001,abstention_rate,0.9900601017105871
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.9500000000000001,abstention_rate,0.9993065187239945
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.96,abstention_rate,1.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.97,abstention_rate,1.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.98,abstention_rate,1.0
+deepseekv32maas,DeepSeek V3.2,residual_log_threshold,,0.99,abstention_rate,1.0
+deepseekv32maas,DeepSeek V3.2,native_penalty,0.0,0.0,accuracy_rate,0.1670688858067499
+deepseekv32maas,DeepSeek V3.2,native_penalty,0.0,0.0,hallucination_rate,0.8181553398058252
+deepseekv32maas,DeepSeek V3.2,native_penalty,0.0,0.0,abstention_rate,0.014775774387424872
+deepseekv32maas,DeepSeek V3.2,native_penalty,3.0,0.75,accuracy_rate,0.09549699491447064
+deepseekv32maas,DeepSeek V3.2,native_penalty,3.0,0.75,hallucination_rate,0.22724919093851134
+deepseekv32maas,DeepSeek V3.2,native_penalty,3.0,0.75,abstention_rate,0.677253814147018
+deepseekv32maas,DeepSeek V3.2,native_penalty,6.0,0.8571428571428571,accuracy_rate,0.09267683772538142
+deepseekv32maas,DeepSeek V3.2,native_penalty,6.0,0.8571428571428571,hallucination_rate,0.216833102172908
+deepseekv32maas,DeepSeek V3.2,native_penalty,6.0,0.8571428571428571,abstention_rate,0.6904900601017105
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.0,accuracy_rate,0.3044382801664355
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.01,accuracy_rate,0.3044382801664355
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.02,accuracy_rate,0.3044382801664355
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.03,accuracy_rate,0.3042071197411003
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.04,accuracy_rate,0.30351363846509477
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.05,accuracy_rate,0.30351363846509477
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.06,accuracy_rate,0.3028201571890892
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.07,accuracy_rate,0.3028201571890892
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.08,accuracy_rate,0.3028201571890892
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.09,accuracy_rate,0.3028201571890892
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.1,accuracy_rate,0.3028201571890892
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.11,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.12,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.13,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.14,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.15,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.16,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.17,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.18,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.19,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.2,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.21,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.22,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.23,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.24,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.25,accuracy_rate,0.30258899676375406
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.26,accuracy_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.27,accuracy_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.28,accuracy_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.29,accuracy_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.3,accuracy_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.31,accuracy_rate,0.3018955154877485
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.32,accuracy_rate,0.3018955154877485
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.33,accuracy_rate,0.3018955154877485
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.34,accuracy_rate,0.3018955154877485
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.35000000000000003,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.36,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.37,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.38,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.39,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.4,accuracy_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.41000000000000003,accuracy_rate,0.30004623208506703
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.42,accuracy_rate,0.30004623208506703
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.43,accuracy_rate,0.30004623208506703
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.44,accuracy_rate,0.30004623208506703
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.45,accuracy_rate,0.30004623208506703
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.46,accuracy_rate,0.2991215903837263
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.47000000000000003,accuracy_rate,0.2991215903837263
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.48,accuracy_rate,0.2991215903837263
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.49,accuracy_rate,0.2991215903837263
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5,accuracy_rate,0.2991215903837263
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.51,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.52,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.53,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.54,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.55,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.56,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5700000000000001,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.58,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.59,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6,accuracy_rate,0.2988904299583911
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.61,accuracy_rate,0.2919556171983356
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.62,accuracy_rate,0.2919556171983356
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.63,accuracy_rate,0.2919556171983356
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.64,accuracy_rate,0.2919556171983356
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.65,accuracy_rate,0.2919556171983356
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.66,accuracy_rate,0.29033749422098937
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.67,accuracy_rate,0.29033749422098937
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.68,accuracy_rate,0.29033749422098937
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6900000000000001,accuracy_rate,0.29033749422098937
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.7000000000000001,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.71,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.72,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.73,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.74,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.75,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.76,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.77,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.78,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.79,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.81,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8200000000000001,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8300000000000001,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.84,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.85,accuracy_rate,0.27346278317152106
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.86,accuracy_rate,0.14701803051317613
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.87,accuracy_rate,0.14701803051317613
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.88,accuracy_rate,0.14701803051317613
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.89,accuracy_rate,0.14655570966250578
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9,accuracy_rate,0.1463245492371706
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.91,accuracy_rate,0.14054553860379104
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.92,accuracy_rate,0.14054553860379104
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.93,accuracy_rate,0.1398520573277855
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9400000000000001,accuracy_rate,0.1398520573277855
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9500000000000001,accuracy_rate,0.002542764678687009
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.96,accuracy_rate,0.002542764678687009
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.97,accuracy_rate,0.002542764678687009
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.98,accuracy_rate,0.002542764678687009
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.99,accuracy_rate,0.0009246417013407304
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.0,hallucination_rate,0.3217753120665742
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.01,hallucination_rate,0.321544151641239
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.02,hallucination_rate,0.321544151641239
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.03,hallucination_rate,0.3196948682385576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.04,hallucination_rate,0.30998613037447986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.05,hallucination_rate,0.30998613037447986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.06,hallucination_rate,0.30906148867313915
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.07,hallucination_rate,0.30906148867313915
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.08,hallucination_rate,0.30906148867313915
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.09,hallucination_rate,0.30906148867313915
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.1,hallucination_rate,0.30906148867313915
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.11,hallucination_rate,0.30859916782246877
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.12,hallucination_rate,0.30859916782246877
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.13,hallucination_rate,0.30859916782246877
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.14,hallucination_rate,0.30859916782246877
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.15,hallucination_rate,0.30859916782246877
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.16,hallucination_rate,0.3079056865464632
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.17,hallucination_rate,0.3079056865464632
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.18,hallucination_rate,0.3079056865464632
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.19,hallucination_rate,0.3079056865464632
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.2,hallucination_rate,0.3079056865464632
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.21,hallucination_rate,0.30674988441978734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.22,hallucination_rate,0.30674988441978734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.23,hallucination_rate,0.30674988441978734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.24,hallucination_rate,0.30674988441978734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.25,hallucination_rate,0.30674988441978734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.26,hallucination_rate,0.3046694405917707
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.27,hallucination_rate,0.3046694405917707
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.28,hallucination_rate,0.3046694405917707
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.29,hallucination_rate,0.3046694405917707
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.3,hallucination_rate,0.3046694405917707
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.31,hallucination_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.32,hallucination_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.33,hallucination_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.34,hallucination_rate,0.30235783633841884
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.35000000000000003,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.36,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.37,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.38,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.39,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.4,hallucination_rate,0.30143319463707813
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.41000000000000003,hallucination_rate,0.2977346278317152
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.42,hallucination_rate,0.2977346278317152
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.43,hallucination_rate,0.2977346278317152
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.44,hallucination_rate,0.2977346278317152
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.45,hallucination_rate,0.2977346278317152
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.46,hallucination_rate,0.2928802588996764
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.47000000000000003,hallucination_rate,0.2928802588996764
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.48,hallucination_rate,0.2928802588996764
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.49,hallucination_rate,0.2928802588996764
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5,hallucination_rate,0.2928802588996764
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.51,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.52,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.53,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.54,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.55,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.56,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5700000000000001,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.58,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.59,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6,hallucination_rate,0.289875173370319
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.61,hallucination_rate,0.27045769764216365
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.62,hallucination_rate,0.27045769764216365
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.63,hallucination_rate,0.27045769764216365
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.64,hallucination_rate,0.27045769764216365
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.65,hallucination_rate,0.27045769764216365
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.66,hallucination_rate,0.2688395746648174
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.67,hallucination_rate,0.2688395746648174
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.68,hallucination_rate,0.2688395746648174
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6900000000000001,hallucination_rate,0.2688395746648174
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.7000000000000001,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.71,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.72,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.73,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.74,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.75,hallucination_rate,0.24526121128062875
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.76,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.77,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.78,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.79,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.81,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8200000000000001,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8300000000000001,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.84,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.85,hallucination_rate,0.24433656957928804
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.86,hallucination_rate,0.11488673139158576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.87,hallucination_rate,0.11488673139158576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.88,hallucination_rate,0.11488673139158576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.89,hallucination_rate,0.11488673139158576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9,hallucination_rate,0.11488673139158576
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.91,hallucination_rate,0.11049468331021729
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.92,hallucination_rate,0.11049468331021729
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.93,hallucination_rate,0.11049468331021729
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9400000000000001,hallucination_rate,0.11049468331021729
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9500000000000001,hallucination_rate,0.0009246417013407304
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.96,hallucination_rate,0.0009246417013407304
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.97,hallucination_rate,0.0009246417013407304
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.98,hallucination_rate,0.0009246417013407304
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.99,hallucination_rate,0.0004623208506703652
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.0,abstention_rate,0.3737864077669903
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.01,abstention_rate,0.37401756819232546
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.02,abstention_rate,0.37401756819232546
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.03,abstention_rate,0.3760980120203421
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.04,abstention_rate,0.3865002311604253
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.05,abstention_rate,0.3865002311604253
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.06,abstention_rate,0.3881183541377716
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.07,abstention_rate,0.3881183541377716
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.08,abstention_rate,0.3881183541377716
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.09,abstention_rate,0.3881183541377716
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.1,abstention_rate,0.3881183541377716
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.11,abstention_rate,0.3888118354137772
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.12,abstention_rate,0.3888118354137772
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.13,abstention_rate,0.3888118354137772
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.14,abstention_rate,0.3888118354137772
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.15,abstention_rate,0.3888118354137772
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.16,abstention_rate,0.3895053166897827
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.17,abstention_rate,0.3895053166897827
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.18,abstention_rate,0.3895053166897827
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.19,abstention_rate,0.3895053166897827
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.2,abstention_rate,0.3895053166897827
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.21,abstention_rate,0.3906611188164586
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.22,abstention_rate,0.3906611188164586
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.23,abstention_rate,0.3906611188164586
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.24,abstention_rate,0.3906611188164586
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.25,abstention_rate,0.3906611188164586
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.26,abstention_rate,0.39297272306981046
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.27,abstention_rate,0.39297272306981046
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.28,abstention_rate,0.39297272306981046
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.29,abstention_rate,0.39297272306981046
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.3,abstention_rate,0.39297272306981046
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.31,abstention_rate,0.39574664817383265
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.32,abstention_rate,0.39574664817383265
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.33,abstention_rate,0.39574664817383265
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.34,abstention_rate,0.39574664817383265
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.35000000000000003,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.36,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.37,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.38,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.39,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.4,abstention_rate,0.39713361072584374
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.41000000000000003,abstention_rate,0.40221914008321774
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.42,abstention_rate,0.40221914008321774
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.43,abstention_rate,0.40221914008321774
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.44,abstention_rate,0.40221914008321774
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.45,abstention_rate,0.40221914008321774
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.46,abstention_rate,0.40799815071659734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.47000000000000003,abstention_rate,0.40799815071659734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.48,abstention_rate,0.40799815071659734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.49,abstention_rate,0.40799815071659734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5,abstention_rate,0.40799815071659734
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.51,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.52,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.53,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.54,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.55,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.56,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.5700000000000001,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.58,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.59,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6,abstention_rate,0.41123439667128986
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.61,abstention_rate,0.4375866851595007
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.62,abstention_rate,0.4375866851595007
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.63,abstention_rate,0.4375866851595007
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.64,abstention_rate,0.4375866851595007
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.65,abstention_rate,0.4375866851595007
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.66,abstention_rate,0.44082293111419324
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.67,abstention_rate,0.44082293111419324
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.68,abstention_rate,0.44082293111419324
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.6900000000000001,abstention_rate,0.44082293111419324
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.7000000000000001,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.71,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.72,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.73,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.74,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.75,abstention_rate,0.4812760055478502
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.76,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.77,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.78,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.79,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.81,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8200000000000001,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.8300000000000001,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.84,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.85,abstention_rate,0.48220064724919093
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.86,abstention_rate,0.7380952380952381
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.87,abstention_rate,0.7380952380952381
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.88,abstention_rate,0.7380952380952381
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.89,abstention_rate,0.7385575589459085
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9,abstention_rate,0.7387887193712437
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.91,abstention_rate,0.7489597780859917
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.92,abstention_rate,0.7489597780859917
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.93,abstention_rate,0.7496532593619972
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9400000000000001,abstention_rate,0.7496532593619972
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.9500000000000001,abstention_rate,0.9965325936199723
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.96,abstention_rate,0.9965325936199723
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.97,abstention_rate,0.9965325936199723
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.98,abstention_rate,0.9965325936199723
+qwen3_235b,Qwen3 235B-A22B,residual_log_threshold,,0.99,abstention_rate,0.9986130374479889
+qwen3_235b,Qwen3 235B-A22B,native_penalty,0.0,0.0,accuracy_rate,0.37225150254276473
+qwen3_235b,Qwen3 235B-A22B,native_penalty,0.0,0.0,hallucination_rate,0.5106842348589921
+qwen3_235b,Qwen3 235B-A22B,native_penalty,0.0,0.0,abstention_rate,0.11706426259824318
+qwen3_235b,Qwen3 235B-A22B,native_penalty,3.0,0.75,accuracy_rate,0.21539528432732316
+qwen3_235b,Qwen3 235B-A22B,native_penalty,3.0,0.75,hallucination_rate,0.19361997226074895
+qwen3_235b,Qwen3 235B-A22B,native_penalty,3.0,0.75,abstention_rate,0.590984743411928
+qwen3_235b,Qwen3 235B-A22B,native_penalty,6.0,0.8571428571428571,accuracy_rate,0.20400832177531206
+qwen3_235b,Qwen3 235B-A22B,native_penalty,6.0,0.8571428571428571,hallucination_rate,0.17851595006934812
+qwen3_235b,Qwen3 235B-A22B,native_penalty,6.0,0.8571428571428571,abstention_rate,0.6174757281553399

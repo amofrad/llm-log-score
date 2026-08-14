@@ -1,0 +1,86 @@
+{
+  "grader": "openai",
+  "grader_model": "gpt-5.6-terra",
+  "sources": [
+    {
+      "source": "gemini35flash/simpleqa_topp_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "gemini35flash/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "gemini35flash_L0/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "gemini35flash_L6/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "gemini35flash_consistency/simpleqa_log_consistency_results.jsonl",
+      "rows": 50000
+    },
+    {
+      "source": "claudesonnet46/simpleqa_topp_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "claudesonnet46/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "claudesonnet46_L0/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "claudesonnet46_L6/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "claudesonnet46_consistency/simpleqa_log_consistency_results.jsonl",
+      "rows": 150132
+    },
+    {
+      "source": "deepseekv32/simpleqa_topp_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "deepseekv32/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "deepseekv32_L0/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "deepseekv32_L6/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "deepseekv32_consistency/simpleqa_log_consistency_results.jsonl",
+      "rows": 50000
+    },
+    {
+      "source": "qwen3_235b/simpleqa_topp_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "qwen3_235b/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "qwen3_235b_L0/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "qwen3_235b_L6/simpleqa_penalty_results.jsonl",
+      "rows": 4326
+    },
+    {
+      "source": "qwen3_235b_consistency/simpleqa_log_consistency_results.jsonl",
+      "rows": 50000
+    }
+  ]
+}

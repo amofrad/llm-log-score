@@ -1,0 +1,5 @@
+model,candidate_grades_compared,agreement,coverage_flips,coverage_flip_rate,disagreements_gemini_to_openai
+Gemini 3.5 Flash,209969,0.9971805361743876,7,0.0016181229773462784,"{""incorrect->correct"": 526, ""incorrect->not_attempted"": 66}"
+Claude Sonnet 4.6,942021,0.9984681870149391,24,0.005547850208044383,"{""incorrect->correct"": 1321, ""incorrect->not_attempted"": 122}"
+DeepSeek V3.2,389561,0.9985470824851563,8,0.0018492834026814608,"{""incorrect->correct"": 487, ""incorrect->not_attempted"": 79}"
+Qwen3 235B-A22B,156800,0.9981058673469387,6,0.0013869625520110957,"{""incorrect->correct"": 201, ""incorrect->not_attempted"": 96}"

@@ -1,0 +1,11 @@
+# Analysis (reproducing figures/tables from the shipped graded results)
+numpy>=1.26
+pandas>=2.0.0
+scipy>=1.11
+matplotlib>=3.8.0
+
+# Running the data-collection and grading stages from scratch
+datasets>=3.0.0
+requests>=2.31.0
+tqdm>=4.66.0
+google-auth>=2.0.0
