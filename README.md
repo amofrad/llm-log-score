@@ -25,7 +25,7 @@ match exactly.
 ## Repository structure
 
 ```
-.
+llm-log-score/
 ├── runner/                  data collection
 │   ├── engine.py            API clients, caching, prompts, scoring, grading
 │   └── run.py               subcommands: simpleqa, consistency, batch
