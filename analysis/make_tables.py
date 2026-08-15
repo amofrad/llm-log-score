@@ -201,7 +201,7 @@ def audits(out_dir: Path) -> None:
 # ---------------------------------------------------------------------------
 
 def _paired_inputs(key: str, penalty: float):
-    dlog = load_run(common.RUNS[key]["residual"]).set_index("question_id", drop=False)
+    dlog = load_run(common.RUNS[key]["run"]).set_index("question_id", drop=False)
     dpen = mf.load_penalty_arm(key, penalty)
     shared = dlog.index.intersection(dpen.index)
     dlog = dlog.loc[shared]
@@ -298,7 +298,7 @@ def support_containment(out_dir: Path) -> None:
     rows = []
     for _label, key, _run, _cons in MODELS:
         label = common.RUNS[key]["label"]
-        dlog = load_run(common.RUNS[key]["residual"]).set_index("question_id", drop=False)
+        dlog = load_run(common.RUNS[key]["run"]).set_index("question_id", drop=False)
         for penalty in PENALTIES:
             dpen = mf.load_penalty_arm(key, penalty)
             shared = dlog.index.intersection(dpen.index)

@@ -4,9 +4,8 @@ Reads the graded simpleqa_topp_results.jsonl files produced by the runner
 (runner/run.py) and grading stage (grading/grade.py) and provides:
 
 - run loading / candidate parsing,
-- top-p' confidence-set construction from the elicited distribution,
-- post-hoc threshold decisions (the penalty-rubric family applied offline),
-- Wilson confidence intervals and a paired question-level bootstrap.
+- top-p confidence-set construction from the elicited distribution,
+- post-hoc threshold decisions (the penalty-rubric family applied offline).
 
 Result files may be stored either as plain ``*.jsonl`` or gzip-compressed
 ``*.jsonl.gz``; every loader in this module resolves both transparently.
@@ -25,7 +24,6 @@ from __future__ import annotations
 import gzip
 import json
 import os
-import math
 import random
 from functools import lru_cache
 from dataclasses import dataclass, field
@@ -36,40 +34,29 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# Default to the primary (OpenAI-graded) result tree; point this at
-# results/graded_by_gemini to reproduce the second-grader numbers.
 OUTPUTS_DIR = Path(
     os.environ.get("GRADED_RESULTS_DIR", REPO_ROOT / "results" / "graded_by_openai")
 )
 SIMPLEQA_TEST_SPLIT_SIZE = 4321
 
-# The four production runs analyzed in the paper.
 RUNS = {
     "gemini35flash": {
-        "full": "gemini35flash",
-        "log200": "gemini35flash",
-        "residual": "gemini35flash",
+        "run": "gemini35flash",
         "model_id": "google/gemini-3.5-flash",
         "label": "Gemini 3.5 Flash",
     },
     "sonnet46": {
-        "full": "claudesonnet46",
-        "log200": "claudesonnet46",
-        "residual": "claudesonnet46",
+        "run": "claudesonnet46",
         "model_id": "claude-sonnet-4-6",
         "label": "Claude Sonnet 4.6",
     },
     "deepseekv32maas": {
-        "full": "deepseekv32",
-        "log200": "deepseekv32",
-        "residual": "deepseekv32",
+        "run": "deepseekv32",
         "model_id": "deepseek-ai/deepseek-v3.2-maas",
         "label": "DeepSeek V3.2",
     },
     "qwen3_235b": {
-        "full": "qwen3_235b",
-        "log200": "qwen3_235b",
-        "residual": "qwen3_235b",
+        "run": "qwen3_235b",
         "model_id": "qwen/qwen3-235b-a22b-instruct-2507-maas",
         "label": "Qwen3 235B-A22B",
     },
@@ -83,10 +70,6 @@ MODEL_COLORS = {
     "qwen3_235b": "#CC79A7",
 }
 
-
-# ---------------------------------------------------------------------------
-# Loading
-# ---------------------------------------------------------------------------
 
 def norm_answer(s: str) -> str:
     """Light answer-string normalization used for within-report matching."""
@@ -105,7 +88,7 @@ def result_file(path: Path) -> Path | None:
 
 
 def open_result(path: Path):
-    """Open a (possibly gzip-compressed) result file for text reading."""
+    """Open (gzip-compressed) result file for text reading."""
     path = Path(path)
     if path.suffix == ".gz":
         return gzip.open(path, "rt")
@@ -201,12 +184,10 @@ def load_run(run_dir_name: str) -> pd.DataFrame:
                 "log_top_prob": top["probability"] if top else np.nan,
                 "log_total_tokens": _float(rec.get("log_total_tokens")),
                 "log_generation_error": rec.get("log_generation_error"),
-                # empirical (baseline) arm — present only in the full runs
                 "empirical_accuracy_overall": _float(rec.get("empirical_accuracy_overall")),
                 "empirical_hallucination_rate": _float(rec.get("empirical_hallucination_rate")),
                 "empirical_not_attempted_rate": _float(rec.get("empirical_not_attempted_rate")),
                 "empirical_total_tokens": _float(rec.get("empirical_total_tokens")),
-                # penalty arm — present only in the full runs
                 "penalty_value": _float(rec.get("penalty_value")),
                 "penalty_threshold": _float(rec.get("penalty_threshold")),
                 "penalty_accuracy_overall": _float(rec.get("penalty_accuracy_overall")),
@@ -215,19 +196,13 @@ def load_run(run_dir_name: str) -> pd.DataFrame:
                 "penalty_abstention_rate": _float(rec.get("penalty_abstention_rate")),
                 "penalty_total_tokens": _float(rec.get("penalty_total_tokens")),
                 "imported_from": rec.get("imported_from"),
-                # scoring-rule provenance
-                "log_idk_rule": rec.get("log_idk_rule") or "naive",
+                "log_idk_rule": rec.get("log_idk_rule"),
                 "log_idk_rho": _float(rec.get("log_idk_rho")),
             }
         )
     df = pd.DataFrame(rows)
     df["run_dir"] = run_dir_name
     return df
-
-
-def load_all_residual() -> dict[str, pd.DataFrame]:
-    """Load the residual-rho runs: {model_key: df}."""
-    return {key: load_run(cfg["residual"]) for key, cfg in RUNS.items()}
 
 
 def _float(x):
@@ -239,21 +214,7 @@ def _float(x):
         return np.nan
 
 
-def load_all() -> dict[str, dict[str, pd.DataFrame]]:
-    """Load all four production runs: {model_key: {"full": df, "log200": df}}."""
-    out = {}
-    for key, cfg in RUNS.items():
-        out[key] = {
-            "full": load_run(cfg["full"]),
-            "log200": load_run(cfg["log200"]),
-        }
-    return out
-
-
-# ---------------------------------------------------------------------------
 # Confidence sets and post-hoc decisions
-# ---------------------------------------------------------------------------
-
 def sorted_candidates(cands: list[dict]) -> list[dict]:
     """Sort candidates by reported probability, descending (stable)."""
     return sorted(cands, key=lambda c: -c["probability"])
@@ -333,43 +294,3 @@ def frontier(df: pd.DataFrame, thresholds: np.ndarray) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ---------------------------------------------------------------------------
-# Inference helpers
-# ---------------------------------------------------------------------------
-
-def wilson_ci(k: int, n: int, alpha: float = 0.05) -> tuple[float, float]:
-    """Wilson score interval for a binomial proportion."""
-    if n == 0:
-        return (np.nan, np.nan)
-    from scipy.stats import norm
-
-    z = norm.ppf(1 - alpha / 2)
-    phat = k / n
-    denom = 1 + z**2 / n
-    center = (phat + z**2 / (2 * n)) / denom
-    half = z * math.sqrt(phat * (1 - phat) / n + z**2 / (4 * n**2)) / denom
-    return (max(0.0, center - half), min(1.0, center + half))
-
-
-def paired_bootstrap(
-    df: pd.DataFrame,
-    stat_fn,
-    n_boot: int = 2000,
-    seed: int = 123,
-    alpha: float = 0.05,
-) -> dict:
-    """Question-level paired bootstrap.
-
-    stat_fn maps a (resampled) DataFrame to a scalar.  Returns point estimate
-    and percentile CI.
-    """
-    rng = np.random.default_rng(seed)
-    n = len(df)
-    point = stat_fn(df)
-    stats = np.empty(n_boot)
-    idx = np.arange(n)
-    for b in range(n_boot):
-        take = rng.choice(idx, size=n, replace=True)
-        stats[b] = stat_fn(df.iloc[take])
-    lo, hi = np.quantile(stats, [alpha / 2, 1 - alpha / 2])
-    return {"point": point, "lo": lo, "hi": hi, "boot": stats}

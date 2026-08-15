@@ -1,23 +1,12 @@
-"""Stage 1: regenerate the paper figures built around the residual-rho
-SimpleQA elicitation and penalty-sample behavior.
+"""Generate the paper's figures from the graded results.
 
-Figure roles:
-  - F1: residual-rho frontier versus penalty-prompt point.
-  - F1A: same frontier view with accuracy on the y axis.
-  - F2: sample-average penalty/log outcome table (formerly F17).
-  - F3: cumulative rates as the paired question prefix grows (formerly F14).
-  - F3A: cumulative three-way top-p outcome rates.
-  - F4: residual-log versus penalty convergence (formerly appendix FA1).
-  - F5A: threshold response curves using three-way outcome definitions.
-  - F6: distinct responses per question.
-  - F7: repeated log-elicitation consistency.
-  - F8: question-level replication variability of reported distributions.
-  - F9: question-level mean pairwise JSD diagnostics.
+Outputs, written to results/figures/ with the CSV data behind each figure:
+F2A/F2B_Frontier.pdf (Fig. 2), F3_OutcomeTable_L3.pdf (Fig. 3),
+FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
+FS3_cumulative.pdf (Fig. S3), and FS4_response_counts.pdf (Fig. S4).
+F1_Concept.pdf is a hand-authored illustration shipped as a static asset.
 
-Pairing: all contrasts are paired by question_id in the deterministic
-SimpleQA order whenever both residual-log and penalty rows are available.
-
-Run:  python analysis/make_figures.py   (see analysis/reproduce_all.py)
+Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
 
 from __future__ import annotations
@@ -72,9 +61,7 @@ PENALTY_BAR_COLORS = {0.0: "#fca5a5", 3.0: "#ef4444", 6.0: "#991b1b"}
 PENALTY_LINESTYLES = {0.0: "-.", 3.0: "--", 6.0: ":"}
 PENALTY_MARKERS = {0.0: "o", 3.0: "s", 6.0: "^"}
 PENALTY_ALPHA = {0.0: 0.62, 3.0: 0.72, 6.0: 0.78}
-RULE_STYLE = {"residual": "-", "naive": "--"}
-RULE_ALPHA = {"residual": 1.0, "naive": 0.45}
-DEFAULT_F7_RUN_DIR = "claudesonnet46_consistency"
+DEFAULT_CONSISTENCY_RUNS = "claudesonnet46_consistency"
 
 plt.rcParams.update(
     {
@@ -87,32 +74,10 @@ plt.rcParams.update(
 )
 
 
-# Only these figures appear in the manuscript.  savefig writes just these,
-# under their manuscript names and as PDF only, and silently skips every other
-# figure so the output directory holds only manuscript artifacts.  The
-# concept figure (F1_Concept.pdf) is a hand-authored illustration shipped as
-# a static asset in results/figures/.
-FIGURE_RENAMES = {
-    # F2A_Frontier/F2B_Frontier are written directly by fig_frontier with
-    # fixed (non-tight) margins so the stacked rows stay aligned.
-    "f2_penalty_log_outcome_table_sample_average": "F3_OutcomeTable_L3",
-    "f2_penalty_log_outcome_table_sample_average_L0": "FS1_OutcomeTable_L0",
-    "f2_penalty_log_outcome_table_sample_average_L6": "FS1_OutcomeTable_L6",
-    "f9_log_consistency_jsd_diagnostics": "FS2_JSD",
-    "f3a_cumulative_three_way_rates": "FS3_cumulative",
-    "f6_responses_per_question": "FS4_response_counts",
-}
-
-
 def savefig(fig, name: str):
-    manuscript_name = FIGURE_RENAMES.get(name)
-    if manuscript_name is not None:
-        fig.savefig(
-            OUT / f"{manuscript_name}.pdf", bbox_inches="tight", pad_inches=0.02
-        )
+    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
-    plt.close(fig)
-    print(f"  wrote {name}.png/.pdf")
+    print(f"  wrote {name}.pdf")
 
 
 def model_key_for_id(model_id: str) -> str | None:
@@ -182,62 +147,35 @@ def penalty_tag(penalty: float) -> str:
     return f"L{penalty:g}".replace(".", "p")
 
 
-def penalty_threshold(penalty: float) -> float:
-    return penalty / (1.0 + penalty)
-
-
 def penalty_run_dir_name(cfg: dict, penalty: float) -> str:
     if np.isclose(penalty, PRIMARY_PENALTY):
-        return cfg["residual"]
-    return f"{cfg['residual']}_L{penalty:g}"
+        return cfg["run"]
+    return f"{cfg['run']}_L{penalty:g}"
 
 
 def load_paired():
-    """Return per model:
-      'residual', 'naive'            -- elicitation arms paired on the naive
-                                        rows, for paired naive-vs-residual
-                                        deltas;
-      'residual_all'                 -- all available residual-rho log rows;
-      'penalty'                      -- deduplicated penalty arm; prefers the
-                                        standalone residual-dir penalty file
-                                        when present, else falls back to full;
-      'residual_penalty'             -- residual elicitation restricted to the
-                                        penalty-arm questions.
-    All alignments are verified."""
+    """Per model: the elicited log run in the canonical SimpleQA order
+    ("log"), the penalty arms by level ("penalties"), and the log rows
+    aligned to each penalty arm's questions ("log_by_penalty")."""
     global ACTIVE_MODEL_ORDER
     out = {}
     loaded_keys = []
     canonical_order = list(simpleqa_full_question_order())
     for key in list(ACTIVE_MODEL_ORDER):
         try:
-            dfull = load_run(RUNS[key]["full"]).set_index("question_id", drop=False)
-            dnaive = load_run(RUNS[key]["log200"]).set_index("question_id", drop=False)
-            dres_all = load_run(RUNS[key]["residual"]).set_index("question_id", drop=False)
+            dlog_all = load_run(RUNS[key]["run"]).set_index("question_id", drop=False)
         except FileNotFoundError as exc:
-            print(f"  {key}: skipped (missing finalized run file: {exc.filename})")
+            print(f"  {key}: skipped (missing run file: {exc.filename})")
             continue
-        # arms may have been extended independently; pair on the (ordered)
-        # intersection and keep the full residual arm separately.
-        naive_set = set(dnaive["question_id"])
-        residual_set = set(dres_all["question_id"])
-        common = [q for q in canonical_order if q in residual_set and q in naive_set]
-        common.extend(
-            q for q in dres_all["question_id"]
-            if q in naive_set and q not in set(common)
-        )
-        if not common:
-            print(f"  {key}: skipped (no shared questions between naive and residual)")
+        log_set = set(dlog_all["question_id"])
+        order = [q for q in canonical_order if q in log_set]
+        order.extend(q for q in dlog_all["question_id"] if q not in set(order))
+        if not order:
+            print(f"  {key}: skipped (no log rows)")
             continue
-        dres = dres_all.loc[common]
-        dnaive = dnaive.loc[common]
-        full_set = set(dfull["question_id"])
-        fq = [q for q in canonical_order if q in set(common) and q in full_set]
-        fq.extend(q for q in common if q in full_set and q not in set(fq))
-        if len(fq) != len(dfull):
-            print(f"  {key}: skipped (full-run questions are not nested)")
-            continue
+        dlog = dlog_all.loc[order]
         penalties = {}
-        residual_by_penalty = {}
+        log_by_penalty = {}
         for penalty in PENALTY_LEVELS:
             dpen_all = load_penalty_arm(key, penalty)
             if dpen_all.empty:
@@ -248,9 +186,9 @@ def load_paired():
                 print(f"  {key}: penalty {penalty_label(penalty)} rows=0 (not found)")
                 continue
             penalty_set = set(dpen_all["question_id"])
-            pq = [q for q in canonical_order if q in residual_set and q in penalty_set]
+            pq = [q for q in canonical_order if q in log_set and q in penalty_set]
             pq.extend(
-                q for q in dres_all["question_id"]
+                q for q in dlog_all["question_id"]
                 if q in penalty_set and q not in set(pq)
             )
             if not pq:
@@ -260,31 +198,22 @@ def load_paired():
                     break
                 print(f"  {key}: penalty {penalty_label(penalty)} rows=0 (no paired qids)")
                 continue
-            dpen = dpen_all.loc[pq]
-            penalties[float(penalty)] = dpen
-            residual_by_penalty[float(penalty)] = dres_all.loc[pq]
+            penalties[float(penalty)] = dpen_all.loc[pq]
+            log_by_penalty[float(penalty)] = dlog_all.loc[pq]
             print(
-                f"  {key}: penalty {penalty_label(penalty)} rows={len(dpen)} "
-                f"(source={dpen.attrs.get('source')}, raw_rows={dpen.attrs.get('raw_rows')})"
+                f"  {key}: penalty {penalty_label(penalty)} rows={len(pq)} "
+                f"(source={penalties[float(penalty)].attrs.get('source')})"
             )
         if PRIMARY_PENALTY not in penalties:
             continue
-        dpen = penalties[PRIMARY_PENALTY]
         out[key] = {
-            "residual": dres,            # paired with the naive arm
-            "residual_all": dres_all,    # full residual arm (may be longer)
-            "naive": dnaive,
-            "full": dfull.loc[fq],
-            "penalty": dpen,
+            "log": dlog,
             "penalties": penalties,
-            "residual_full": dres.loc[fq],
-            "residual_penalty": residual_by_penalty[PRIMARY_PENALTY],
-            "residual_by_penalty": residual_by_penalty,
-            "naive_full": dnaive.loc[fq],
+            "log_by_penalty": log_by_penalty,
         }
         loaded_keys.append(key)
     if not out:
-        raise SystemExit("No selected models had complete finalized log and penalty rows.")
+        raise SystemExit("No selected models had complete log and penalty rows.")
     ACTIVE_MODEL_ORDER = loaded_keys
     return out
 
@@ -351,35 +280,24 @@ def _penalty_df_from_rows(
 def load_penalty_arm(key: str, penalty: float = PRIMARY_PENALTY) -> pd.DataFrame:
     """Load one penalty arm for a model.
 
-    L=3 keeps the historical behavior: prefer the standalone residual-dir
-    penalty file and fall back to the legacy full run.  Other penalty levels
-    are read from separate directories, e.g. *_L6.
+    L=3 lives in the model's main run directory; other levels are read from
+    separate directories, e.g. *_L6.
     """
     cfg = RUNS[key]
-    candidates = [
-        OUTPUTS_DIR / penalty_run_dir_name(cfg, penalty) / "simpleqa_penalty_results.jsonl",
-    ]
-    if np.isclose(penalty, PRIMARY_PENALTY):
-        candidates.append(OUTPUTS_DIR / cfg["full"] / "simpleqa_topp_results.jsonl")
-    for candidate_path in candidates:
-        standalone = result_file(candidate_path)
-        if standalone is None:
-            continue
-        df = _penalty_df_from_rows(
-            load_jsonl(standalone),
-            model_id=cfg["model_id"],
-            source=str(standalone.relative_to(OUTPUTS_DIR)),
-            penalty=penalty,
-        )
-        if not df.empty:
-            return df
-    return pd.DataFrame()
+    path = result_file(
+        OUTPUTS_DIR / penalty_run_dir_name(cfg, penalty) / "simpleqa_penalty_results.jsonl"
+    )
+    if path is None:
+        return pd.DataFrame()
+    return _penalty_df_from_rows(
+        load_jsonl(path),
+        model_id=cfg["model_id"],
+        source=str(path.relative_to(OUTPUTS_DIR)),
+        penalty=penalty,
+    )
 
 
-# ---------------------------------------------------------------------------
-# F1: frontier, both rules
-# ---------------------------------------------------------------------------
-
+# Fig. 2: hallucination-abstention frontier
 def _frontier_decision_matrices(
     df: pd.DataFrame,
     thresholds: np.ndarray,
@@ -462,11 +380,8 @@ def bootstrap_frontier_bands(
 
 
 def fig_frontier(paired):
-    """Writes F2A (hallucination row) and F2B (accuracy row) as separate
-    PDFs with identical fixed margins so the manuscript can stack them under
-    LaTeX-set panel letters (FS1 style).  Do not save with a tight bbox:
-    the shared margins are what keep the two rows' panels aligned."""
-    print("== F1: frontier (residual-rho prompt vs penalty) ==")
+    """Writes F2A (hallucination row) and F2B (accuracy row)"""
+    print("== Fig. 2: frontier (residual-rho prompt vs penalty) ==")
     grid = np.linspace(0, 0.95, 96)
     band_rows = []
     n_models = len(ACTIVE_MODEL_ORDER)
@@ -492,20 +407,20 @@ def fig_frontier(paired):
     ]
     for col, key in enumerate(ACTIVE_MODEL_ORDER):
         c = MODEL_COLORS[key]
-        dres = paired[key]["residual_penalty"]
-        fr = frontier(dres, grid)
+        dlog_pen = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
+        fr = frontier(dlog_pen, grid)
         band_x = np.linspace(
             float(fr["abstention_rate"].min()),
             float(fr["abstention_rate"].max()),
             121,
         )
         bands = bootstrap_frontier_bands(
-            dres,
+            dlog_pen,
             grid,
             band_x,
             seed=91000 + 97 * col,
         )
-        dfull = paired[key]["full"]
+        dlog = paired[key]["log"]
         for row, (frontier_col, penalty_col, empirical_col) in enumerate(row_specs):
             ax = row_axes[row][col]
             band_lo, band_hi = bands[frontier_col]
@@ -545,15 +460,15 @@ def fig_frontier(paired):
                     zorder=5,
                     label=f"penalty {penalty_label(penalty)}",
                 )
-            if _has_empirical_baseline(dfull):
+            if _has_empirical_baseline(dlog):
                 ax.scatter(
-                    [dfull["empirical_not_attempted_rate"].mean()],
-                    [dfull[empirical_col].mean()],
+                    [dlog["empirical_not_attempted_rate"].mean()],
+                    [dlog[empirical_col].mean()],
                     color="black",
                     marker="s",
                     s=42,
                     zorder=5,
-                    label=f"baseline prompt (≈L=0, n={len(dfull)})",
+                    label=f"baseline prompt (≈L=0, n={len(dlog)})",
                 )
             ax.set_xlim(-0.02, 1.02)
             ax.set_ylim(-0.02, 0.90 if row == 0 else 0.65)
@@ -599,253 +514,6 @@ def fig_frontier(paired):
         print(f"  wrote {name}.pdf")
 
 
-def fig_frontier_accuracy(paired):
-    print("== F1A: accuracy frontier (residual-rho prompt vs penalty) ==")
-    grid = np.linspace(0, 0.95, 96)
-    fig, axes = model_panel_subplots(height=4)
-    for ax, key in zip(axes, ACTIVE_MODEL_ORDER):
-        c = MODEL_COLORS[key]
-        dres = paired[key]["residual_penalty"]
-        fr = frontier(dres, grid)
-        ax.plot(
-            fr["abstention_rate"],
-            fr["accuracy_overall"],
-            color=c,
-            lw=2,
-            label="post-hoc rule on elicited dist.",
-        )
-        dfull = paired[key]["full"]
-        for penalty, dpen in paired[key]["penalties"].items():
-            ax.scatter(
-                [dpen["penalty_abstention_rate"].mean()],
-                [dpen["penalty_accuracy_overall"].mean()],
-                color=PENALTY_COLORS.get(penalty, "crimson"),
-                marker="o",
-                s=54 if np.isclose(penalty, PRIMARY_PENALTY) else 46,
-                edgecolors="white",
-                linewidths=0.6,
-                zorder=5,
-                label=f"penalty prompt {penalty_label(penalty)}",
-            )
-        if _has_empirical_baseline(dfull):
-            ax.scatter(
-                [dfull["empirical_not_attempted_rate"].mean()],
-                [dfull["empirical_accuracy_overall"].mean()],
-                color="black",
-                marker="s",
-                s=45,
-                zorder=5,
-                label=f"baseline prompt (≈L=0, n={len(dfull)})",
-            )
-        ax.set_title(RUNS[key]["label"])
-        ax.set_xlabel("abstention rate")
-        ax.set_xlim(-0.02, 1.02)
-        ax.set_ylim(-0.02, 1.02)
-        ax.grid(alpha=0.18, lw=0.6)
-    axes[0].set_ylabel("accuracy")
-    axes[0].legend(fontsize=7, loc="best")
-    savefig(fig, "f1_accuracy_frontier")
-
-
-# ---------------------------------------------------------------------------
-# F5: hallucination and abstention as functions of the threshold t
-# ---------------------------------------------------------------------------
-
-def fig_threshold_response(paired):
-    """Hallucination and abstention rates vs the decision threshold t.
-
-    The elicitation arm yields genuine curves (one report, every t applied
-    post hoc); a fixed penalty prompt is constant in t -- horizontal lines.
-    Vertical guides mark each penalty prompt's own design point.
-    """
-    print("== F5: threshold response (rates vs t) ==")
-    grid = np.linspace(0, 0.99, 100)
-    fig, axes = plt.subplots(2, 2, figsize=(10.5, 8), sharex=True)
-    panels = [
-        ("hallucination_rate", "penalty_hallucination_rate",
-         "hallucination rate (wrong & answered)"),
-        ("abstention_rate", "penalty_abstention_rate", "abstention rate"),
-        ("accuracy_overall", "penalty_accuracy_overall",
-         "accuracy (correct / all questions)"),
-        ("accuracy_when_answered", "penalty_accuracy_when_answered",
-         "accuracy when answered (correct / answered)"),
-    ]
-    for key in ACTIVE_MODEL_ORDER:
-        c = MODEL_COLORS[key]
-        fr = frontier(paired[key]["residual_penalty"], grid)
-        for ax, (col, pen_col, _) in zip(axes.flat, panels):
-            ax.plot(fr["t"], fr[col], color=c, lw=2,
-                    label=RUNS[key]["label"] if col == "hallucination_rate" else None)
-            for penalty, dpen in paired[key]["penalties"].items():
-                ax.axhline(
-                    dpen[pen_col].mean(),
-                    color=c,
-                    lw=1.4,
-                    ls=PENALTY_LINESTYLES.get(penalty, "--"),
-                    alpha=PENALTY_ALPHA.get(penalty, 0.65),
-                )
-    for ax, (_, _, ylab) in zip(axes.flat, panels):
-        for penalty in sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]}):
-            ax.axvline(penalty_threshold(penalty), color="gray", lw=0.9, ls="-.", alpha=0.45)
-        ax.set_ylabel(ylab, fontsize=9)
-        ax.set_xlim(0, 1)
-    for ax in axes[1]:
-        ax.set_xlabel("decision threshold t (answer iff top prob ≥ t)")
-    axes[0, 0].annotate("penalty design thresholds", xy=(0.73, 0.97),
-                        xycoords="axes fraction", fontsize=7, ha="right", color="gray")
-    penalty_handles = [
-        Line2D([0], [0],
-               color="black",
-               lw=1.5,
-               ls=PENALTY_LINESTYLES.get(p, "--"),
-               label=f"penalty {penalty_label(p)}")
-        for p in sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]})
-    ]
-    model_handles, _ = axes[0, 0].get_legend_handles_labels()
-    axes[0, 0].legend(handles=model_handles + penalty_handles, fontsize=7, loc="upper right")
-    fig.tight_layout()
-    savefig(fig, "f5_threshold_response")
-
-
-def fig_threshold_three_way_response(paired):
-    """Three-way threshold response using the F3A outcome partition."""
-    print("== F5A: three-way threshold response (rates vs t) ==")
-    grid = np.linspace(0, 0.99, 100)
-    fig, axes = plt.subplots(1, 3, figsize=(12.6, 3.4), sharex=True, sharey=True)
-    panels = [
-        ("accuracy_overall", "accuracy_rate", "accuracy"),
-        ("hallucination_rate", "hallucination_rate", "hallucination rate"),
-        ("abstention_rate", "abstention_rate", "abstention rate"),
-    ]
-    rows = []
-    for key in ACTIVE_MODEL_ORDER:
-        c = MODEL_COLORS[key]
-        fr = frontier(paired[key]["residual_penalty"], grid)
-        for ax, (col, metric, _) in zip(axes, panels):
-            ax.plot(
-                fr["t"],
-                fr[col],
-                color=c,
-                lw=2,
-                label=RUNS[key]["label"] if col == "accuracy_overall" else None,
-            )
-            for t, value in zip(fr["t"], fr[col]):
-                rows.append(
-                    {
-                        "model": key,
-                        "model_label": RUNS[key]["label"],
-                        "method": "residual_log_threshold",
-                        "penalty_level": np.nan,
-                        "threshold": t,
-                        "metric": metric,
-                        "value": value,
-                    }
-                )
-
-        for penalty, dpen in paired[key]["penalties"].items():
-            halluc, acc, abst = _penalty_three_way_arrays(dpen)
-            penalty_values = {
-                "accuracy_rate": float(np.mean(acc)),
-                "hallucination_rate": float(np.mean(halluc)),
-                "abstention_rate": float(np.mean(abst)),
-            }
-            for ax, (_, metric, _) in zip(axes, panels):
-                ax.scatter(
-                    [penalty_threshold(penalty)],
-                    [penalty_values[metric]],
-                    marker=PENALTY_MARKERS.get(penalty, "o"),
-                    s=36,
-                    color=c,
-                    edgecolor="white",
-                    linewidth=0.6,
-                    alpha=PENALTY_ALPHA.get(penalty, 0.88),
-                    zorder=4,
-                )
-                rows.append(
-                    {
-                        "model": key,
-                        "model_label": RUNS[key]["label"],
-                        "method": "native_penalty",
-                        "penalty_level": penalty,
-                        "threshold": penalty_threshold(penalty),
-                        "metric": metric,
-                        "value": penalty_values[metric],
-                    }
-                )
-
-    available_penalties = sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]})
-    for ax, (_, _, ylab) in zip(axes, panels):
-        ax.set_xlabel("decision threshold t")
-        ax.set_ylabel(ylab)
-        ax.set_xlim(0, 1)
-        ax.set_ylim(-0.02, 1.02)
-        ax.grid(alpha=0.18, lw=0.6)
-
-    model_handles = [
-        Line2D([0], [0], color=MODEL_COLORS[key], lw=2, label=RUNS[key]["label"])
-        for key in ACTIVE_MODEL_ORDER
-    ]
-    method_handles = [Line2D([0], [0], color="black", lw=2, ls="-", label="residual log")]
-    for penalty in available_penalties:
-        method_handles.append(
-            Line2D(
-                [0],
-                [0],
-                color="black",
-                marker=PENALTY_MARKERS.get(penalty, "o"),
-                markerfacecolor="black",
-                markeredgecolor="white",
-                markeredgewidth=0.6,
-                lw=0,
-                label=f"penalty prompt {penalty_label(penalty)}",
-            )
-        )
-    axes[0].legend(handles=model_handles, fontsize=7, loc="best")
-    axes[2].legend(
-        handles=method_handles,
-        fontsize=7,
-        loc="best",
-        handlelength=4.0,
-        handletextpad=0.6,
-        borderpad=0.35,
-        labelspacing=0.45,
-    )
-    fig.tight_layout(w_pad=1.5)
-    pd.DataFrame(rows).to_csv(OUT / "f5a_threshold_three_way_response.csv", index=False)
-    savefig(fig, "f5a_threshold_three_way_response")
-
-
-# ---------------------------------------------------------------------------
-# Shared threshold helpers
-# ---------------------------------------------------------------------------
-
-def _log_threshold_inputs(dlog: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Top-concrete answer probability and grade arrays for threshold rules."""
-    top_prob = []
-    top_correct = []
-    top_incorrect = []
-    for candidates in dlog["candidates"]:
-        concrete = [c for c in candidates if c["grade"] != "not_attempted"]
-        if not concrete:
-            top_prob.append(np.nan)
-            top_correct.append(False)
-            top_incorrect.append(False)
-            continue
-        top = max(concrete, key=lambda c: c["probability"])
-        top_prob.append(float(top["probability"]))
-        top_correct.append(top["grade"] == "correct")
-        top_incorrect.append(top["grade"] == "incorrect")
-    return (
-        np.asarray(top_prob, dtype=float),
-        np.asarray(top_correct, dtype=bool),
-        np.asarray(top_incorrect, dtype=bool),
-    )
-
-
-# ---------------------------------------------------------------------------
-# F6: elicited vs empirical, both rules
-# ---------------------------------------------------------------------------
-
 def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     return (
         "empirical_accuracy_overall" in df
@@ -855,10 +523,7 @@ def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     )
 
 
-# ---------------------------------------------------------------------------
-# F6: responses provided per question, by method
-# ---------------------------------------------------------------------------
-
+# Fig. S4: distinct response entries per question, by method
 def _json_distribution_items(raw) -> list[dict]:
     if raw is None:
         return []
@@ -923,13 +588,13 @@ def _penalty_distribution_items(row: pd.Series) -> list[dict]:
     return items
 
 
-def fig_responses_per_question(paired):
-    print("== F6: responses per question ==")
+def fig_response_counts(paired):
+    print("== Fig. S4: responses per question ==")
     fig, axes = model_panel_subplots(height=4.8, sharey=True)
     count_rows = []
     count_data = {}
     for ax, key in zip(axes, ACTIVE_MODEL_ORDER):
-        df = paired[key]["residual_penalty"]
+        df = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
         log_counts = df["candidates"].map(_distinct_response_count).to_numpy()
         penalty_counts = {}
         for penalty, dpen in sorted(paired[key]["penalties"].items()):
@@ -1056,173 +721,10 @@ def fig_responses_per_question(paired):
         frameon=False,
         fontsize=17,
     )
-    savefig(fig, "f6_responses_per_question")
+    savefig(fig, "FS4_response_counts")
 
 
-# ---------------------------------------------------------------------------
-# F4: convergence of residual-log vs penalty estimates
-# ---------------------------------------------------------------------------
-
-CONVERGENCE_Z = 1.959963984540054
-CONVERGENCE_METRICS = [
-    "coverage-or-IDK @ p=0.9",
-    "strict coverage @ p=0.9",
-    "mean IDK mass",
-]
-
-
-def per_question_convergence_series(df: pd.DataFrame) -> dict[str, np.ndarray]:
-    """Per-question diagnostics in stored deterministic question order."""
-    sets = df["candidates"].map(lambda c: top_p_set(c, NOMINAL_P))
-    oridk = sets.map(lambda s: float(s.covers or s.has_idk)).to_numpy(dtype=float)
-    strict = sets.map(lambda s: float(s.covers)).to_numpy(dtype=float)
-    q_idk = df["log_idk_mass"].fillna(0).to_numpy(dtype=float)
-    return {
-        "coverage-or-IDK @ p=0.9": oridk,
-        "strict coverage @ p=0.9": strict,
-        "mean IDK mass": q_idk,
-    }
-
-
-def penalty_convergence_series(df: pd.DataFrame) -> dict[str, np.ndarray]:
-    """Same F4 diagnostics computed from the penalty sample distribution."""
-    items = df.apply(_penalty_distribution_items, axis=1).tolist()
-    sets = [top_p_set(item, NOMINAL_P) for item in items]
-    oridk = np.array([float(s.covers or s.has_idk) for s in sets], dtype=float)
-    strict = np.array([float(s.covers) for s in sets], dtype=float)
-    denom = df["n_samples_requested"].astype(float).to_numpy()
-    denom = np.where(denom > 0, denom, 1.0)
-    q_idk = (
-        df["penalty_abstain_samples"].fillna(0).astype(float).to_numpy()
-        + df["penalty_not_attempted_samples"].fillna(0).astype(float).to_numpy()
-    ) / denom
-    return {
-        "coverage-or-IDK @ p=0.9": oridk,
-        "strict coverage @ p=0.9": strict,
-        "mean IDK mass": q_idk,
-    }
-
-
-def running_mean_band(x: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Running mean with a normal pointwise 95% band."""
-    x = np.asarray(x, dtype=float)
-    n = np.arange(1, len(x) + 1)
-    if len(x) == 0:
-        return n, np.array([]), np.array([])
-    mean = np.cumsum(x) / n
-    sq = np.cumsum(x**2) / n
-    sd = np.sqrt(np.maximum(0.0, sq - mean**2))
-    half = CONVERGENCE_Z * sd / np.sqrt(n)
-    return n, mean, half
-
-
-def bootstrap_running_mean_band(
-    x: np.ndarray,
-    *,
-    seed: int,
-    n_boot: int = BOOT_BAND_REPS,
-    min_n: int = BOOT_BAND_MIN_N,
-    step: int = BOOT_BAND_STEP,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Pointwise question-level bootstrap band for a running mean."""
-    x = np.asarray(x, dtype=float)
-    n_obs = len(x)
-    if n_obs == 0:
-        empty = np.array([])
-        return empty, empty, empty
-    start = min(min_n, n_obs)
-    ns = np.unique(np.r_[np.arange(start, n_obs + 1, step), n_obs]).astype(int)
-    rng = np.random.default_rng(seed)
-    lo = []
-    hi = []
-    for k in ns:
-        take = rng.integers(0, k, size=(n_boot, k))
-        vals = x[:k][take].mean(axis=1)
-        qlo, qhi = np.quantile(vals, [0.025, 0.975])
-        lo.append(qlo)
-        hi.append(qhi)
-    return ns, np.asarray(lo), np.asarray(hi)
-
-
-def fig_log_vs_penalty_convergence(paired) -> None:
-    print("== F4: residual-log vs penalty convergence ==")
-    model_keys = [key for key in ACTIVE_MODEL_ORDER if paired[key]["penalties"]]
-    if not model_keys:
-        print("  skipped F4: no penalty rows available")
-        return
-
-    fig, axes = plt.subplots(1, 3, figsize=(12.6, 3.7), sharex=True)
-    axes = np.atleast_1d(axes).ravel()
-    for ax_idx, (ax, metric) in enumerate(zip(axes, CONVERGENCE_METRICS)):
-        for key_idx, key in enumerate(model_keys):
-            color = MODEL_COLORS[key]
-            series = per_question_convergence_series(paired[key]["residual_all"])[metric]
-            n, mean, _ = running_mean_band(series)
-            m = n >= min(BOOT_BAND_MIN_N, len(series))
-            bx, blo, bhi = bootstrap_running_mean_band(
-                series,
-                seed=31000 + 1000 * ax_idx + 100 * key_idx,
-            )
-            ax.plot(
-                n[m],
-                mean[m],
-                color=color,
-                lw=1.8,
-                ls="-",
-                label=RUNS[key]["label"] if ax_idx == 0 else None,
-            )
-            ax.fill_between(bx, blo, bhi, color=color, alpha=0.10, linewidth=0)
-
-            for penalty_idx, penalty in enumerate(sorted(paired[key]["penalties"])):
-                pen_series = penalty_convergence_series(paired[key]["penalties"][penalty])[metric]
-                pn, pmean, _ = running_mean_band(pen_series)
-                pm = pn >= min(BOOT_BAND_MIN_N, len(pen_series))
-                pbx, pblo, pbhi = bootstrap_running_mean_band(
-                    pen_series,
-                    seed=32000 + 1000 * ax_idx + 100 * key_idx + penalty_idx,
-                )
-                ax.plot(
-                    pn[pm],
-                    pmean[pm],
-                    color=color,
-                    lw=1.8,
-                    ls=PENALTY_LINESTYLES.get(penalty, "--"),
-                    alpha=PENALTY_ALPHA.get(penalty, 0.82),
-                )
-                ax.fill_between(pbx, pblo, pbhi, color=color, alpha=0.05, linewidth=0)
-        ax.set_title(metric, fontsize=10)
-        ax.set_xlabel("question count n (deterministic order)")
-        ax.set_ylim(-0.03, 1.04)
-    axes[0].set_ylabel("running estimate")
-
-    model_handles = [
-        Line2D([0], [0], color=MODEL_COLORS[key], lw=2, label=RUNS[key]["label"])
-        for key in model_keys
-    ]
-    method_handles = [Line2D([0], [0], color="black", lw=1.8, ls="-", label="residual log")]
-    available_penalties = sorted({p for key in model_keys for p in paired[key]["penalties"]})
-    for penalty in available_penalties:
-        method_handles.append(
-            Line2D(
-                [0],
-                [0],
-                color="black",
-                lw=1.8,
-                ls=PENALTY_LINESTYLES.get(penalty, "--"),
-                label=f"penalty {penalty_label(penalty)}",
-            )
-        )
-    axes[0].legend(handles=model_handles, fontsize=8, loc="lower right")
-    axes[2].legend(handles=method_handles, fontsize=8, loc="best")
-
-    fig.tight_layout()
-    savefig(fig, "f4_log_vs_penalty_convergence")
-
-
-# ---------------------------------------------------------------------------
-# F3: cumulative rates as the paired question prefix grows
-# ---------------------------------------------------------------------------
-
+# Fig. S3: running outcome rates
 def bootstrap_cumulative_rate_bands(
     halluc: np.ndarray,
     acc: np.ndarray,
@@ -1282,160 +784,6 @@ def bootstrap_cumulative_rate_bands(
         for name, bounds in out.items()
     }
 
-def cumulative_rates_for_key(paired, key: str, threshold: float = 0.75) -> pd.DataFrame:
-    """Cumulative paired rates in deterministic SimpleQA order.
-
-    Residual-log is a one-decision-per-question curve at threshold t.
-    Penalty arms contribute their empirical 50-sample accuracy /
-    hallucination / abstention rates.
-    """
-    dlog = paired[key]["residual_penalty"]
-    log_outcomes = dlog["candidates"].map(lambda c: posthoc_decision(c, threshold))
-    rows = []
-    specs = [
-        (
-            "residual_log_t075",
-            (log_outcomes == "incorrect").astype(float).to_numpy(),
-            (log_outcomes == "correct").astype(float).to_numpy(),
-            (log_outcomes == "abstain").astype(float).to_numpy(),
-        ),
-    ]
-    for penalty, dpen in paired[key]["penalties"].items():
-        specs.append(
-            (
-                f"penalty_native_{penalty_tag(penalty)}",
-                dpen["penalty_hallucination_rate"].astype(float).to_numpy(),
-                dpen["penalty_accuracy_overall"].astype(float).to_numpy(),
-                dpen["penalty_abstention_rate"].astype(float).to_numpy(),
-            )
-        )
-    for method, halluc, acc, abst in specs:
-        denom = np.arange(1, len(halluc) + 1)
-        cum_halluc = np.cumsum(halluc)
-        cum_acc = np.cumsum(acc)
-        cum_abst = np.cumsum(abst)
-        cum_answered = cum_halluc + cum_acc
-        cum_acc_answered = np.divide(
-            cum_acc,
-            cum_answered,
-            out=np.full_like(cum_acc, np.nan, dtype=float),
-            where=cum_answered > 0,
-        )
-        for i, (h, a, z, awa) in enumerate(
-            zip(cum_halluc / denom,
-                cum_acc / denom,
-                cum_abst / denom,
-                cum_acc_answered),
-            start=1,
-        ):
-            rows.append(
-                {
-                    "model": key,
-                    "method": method,
-                    "threshold": threshold if method.startswith("residual") else np.nan,
-                    "n_questions": i,
-                    "hallucination_rate": h,
-                    "accuracy_overall": a,
-                    "abstention_rate": z,
-                    "accuracy_when_answered": awa,
-                }
-            )
-    return pd.DataFrame(rows)
-
-
-def fig_cumulative_rates(paired) -> pd.DataFrame:
-    print("== F3: cumulative rates by number of questions ==")
-    rows = pd.concat(
-        [cumulative_rates_for_key(paired, key) for key in ACTIVE_MODEL_ORDER],
-        ignore_index=True,
-    )
-    rows.to_csv(OUT / "f3_cumulative_rates_by_question.csv", index=False)
-
-    fig, axes = plt.subplots(2, 2, figsize=(10.8, 7.4), sharex=False)
-    panels = [
-        ("hallucination_rate", "hallucination rate"),
-        ("abstention_rate", "abstention rate"),
-        ("accuracy_overall", "accuracy"),
-        ("accuracy_when_answered", "accuracy when answered"),
-    ]
-    for ax, (col, ylab) in zip(axes.flat, panels):
-        band_seed = 14000
-        for model_idx, key in enumerate(ACTIVE_MODEL_ORDER):
-            c = MODEL_COLORS[key]
-            sub = rows[rows["model"] == key]
-            dlog = paired[key]["residual_penalty"]
-            log_outcomes = dlog["candidates"].map(lambda cands: posthoc_decision(cands, 0.75))
-            method_specs = [
-                (
-                    "residual_log_t075",
-                    "-",
-                    0.95,
-                    (log_outcomes == "incorrect").astype(float).to_numpy(),
-                    (log_outcomes == "correct").astype(float).to_numpy(),
-                    (log_outcomes == "abstain").astype(float).to_numpy(),
-                )
-            ]
-            method_specs.extend(
-                (
-                    f"penalty_native_{penalty_tag(p)}",
-                    PENALTY_LINESTYLES.get(p, "--"),
-                    PENALTY_ALPHA.get(p, 0.72),
-                    paired[key]["penalties"][p]["penalty_hallucination_rate"].astype(float).to_numpy(),
-                    paired[key]["penalties"][p]["penalty_accuracy_overall"].astype(float).to_numpy(),
-                    paired[key]["penalties"][p]["penalty_abstention_rate"].astype(float).to_numpy(),
-                )
-                for p in sorted(paired[key]["penalties"])
-            )
-            for method_idx, (method, ls, alpha, halluc, acc, abst) in enumerate(method_specs):
-                d = sub[sub["method"] == method]
-                bands = bootstrap_cumulative_rate_bands(
-                    halluc,
-                    acc,
-                    abst,
-                    seed=band_seed + 100 * model_idx + method_idx,
-                )
-                bx, blo, bhi = bands[col]
-                ax.fill_between(
-                    bx,
-                    blo,
-                    bhi,
-                    color=c,
-                    alpha=0.10 if method == "residual_log_t075" else 0.055,
-                    linewidth=0,
-                )
-                ax.plot(
-                    d["n_questions"], d[col],
-                    color=c, lw=1.8, ls=ls, alpha=alpha,
-                )
-        ax.set_xlabel("number of questions")
-        ax.set_ylabel(ylab)
-        ax.set_ylim(-0.02, 1.02)
-        ax.grid(alpha=0.18, lw=0.6)
-
-    model_handles = [
-        Line2D([0], [0], color=MODEL_COLORS[key], lw=2, label=RUNS[key]["label"])
-        for key in ACTIVE_MODEL_ORDER
-    ]
-    method_handles = [
-        Line2D([0], [0], color="black", lw=2, ls="-",
-               label="residual-ρ log, t=0.75"),
-    ]
-    for penalty in sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]}):
-        method_handles.append(
-            Line2D(
-                [0],
-                [0],
-                color="black",
-                lw=2,
-                ls=PENALTY_LINESTYLES.get(penalty, "--"),
-                label=f"penalty prompt {penalty_label(penalty)}",
-            )
-        )
-    axes[0, 0].legend(handles=model_handles, fontsize=7, loc="best")
-    axes[1, 1].legend(handles=method_handles, fontsize=7, loc="best")
-    savefig(fig, "f3_cumulative_rates")
-    return rows
-
 
 def _log_top_p_three_way_outcome(candidates: list[dict], p: float = NOMINAL_P) -> str:
     top = top_p_set(candidates, p)
@@ -1466,7 +814,7 @@ def _penalty_three_way_arrays(dpen: pd.DataFrame) -> tuple[np.ndarray, np.ndarra
     return halluc, acc, abst
 
 
-def cumulative_three_way_rates_for_key(paired, key: str) -> pd.DataFrame:
+def cumulative_rates_for_key(paired, key: str) -> pd.DataFrame:
     """Cumulative three-way outcome rates.
 
     Log reports are evaluated as top-p sets: truth in the prefix is accuracy,
@@ -1477,7 +825,7 @@ def cumulative_three_way_rates_for_key(paired, key: str) -> pd.DataFrame:
     specs = [
         (
             "residual_log_top_p",
-            *_log_top_p_three_way_arrays(paired[key]["residual_penalty"]),
+            *_log_top_p_three_way_arrays(paired[key]["log_by_penalty"][PRIMARY_PENALTY]),
         ),
     ]
     for penalty, dpen in paired[key]["penalties"].items():
@@ -1509,10 +857,10 @@ def cumulative_three_way_rates_for_key(paired, key: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def fig_cumulative_three_way_rates(paired) -> pd.DataFrame:
-    print("== F3A: cumulative three-way top-p outcome rates ==")
+def fig_cumulative_rates(paired) -> pd.DataFrame:
+    print("== Fig. S3: cumulative three-way top-p outcome rates ==")
     rows = pd.concat(
-        [cumulative_three_way_rates_for_key(paired, key) for key in ACTIVE_MODEL_ORDER],
+        [cumulative_rates_for_key(paired, key) for key in ACTIVE_MODEL_ORDER],
         ignore_index=True,
     )
     rows.to_csv(OUT / "FS3_cumulative.csv", index=False)
@@ -1532,7 +880,7 @@ def fig_cumulative_three_way_rates(paired) -> pd.DataFrame:
                 "-",
                 0.95,
                 2.45,
-                *_log_top_p_three_way_arrays(paired[key]["residual_penalty"]),
+                *_log_top_p_three_way_arrays(paired[key]["log_by_penalty"][PRIMARY_PENALTY]),
             )
         ]
         method_specs.extend(
@@ -1605,8 +953,6 @@ def fig_cumulative_three_way_rates(paired) -> pd.DataFrame:
                 label=f"penalty {penalty_label(penalty)}",
             )
         )
-    # One shared legend below the panels: models on the top row, line
-    # styles (methods) on the bottom row (legend fills column-major).
     if len(model_handles) == len(method_handles):
         combined_handles = [
             handle
@@ -1627,14 +973,11 @@ def fig_cumulative_three_way_rates(paired) -> pd.DataFrame:
         columnspacing=1.4,
         labelspacing=1.0,
     )
-    savefig(fig, "f3a_cumulative_three_way_rates")
+    savefig(fig, "FS3_cumulative")
     return rows
 
 
-# ---------------------------------------------------------------------------
-# F2: penalty-vs-log 3x3 outcome table
-# ---------------------------------------------------------------------------
-
+# Fig. 3 / Fig. S1: penalty-vs-log outcome tables
 OUTCOME_KEYS = ["abstain", "correct", "incorrect"]
 PENALTY_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
 LOG_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
@@ -1709,8 +1052,6 @@ def _first_penalty_sample_outcome(row: pd.Series) -> str | None:
 def _penalty_sample_average_weights(row: pd.Series) -> dict[str, float]:
     n = max(1.0, _positive_float(row.get("n_samples_requested"), 1.0))
     abstain = _positive_float(row.get("penalty_abstain_samples"))
-    # A small number of non-empty generations can still be graded as
-    # not-attempted; for this 3-way table they belong in the abstain row.
     abstain += _positive_float(row.get("penalty_not_attempted_samples"))
     return {
         "abstain": abstain / n,
@@ -1727,7 +1068,7 @@ def _penalty_log_outcome_tables_for_key(
     penalty: float,
 ) -> tuple[pd.DataFrame, list[dict], int]:
     dpen = paired[key]["penalties"][penalty]
-    dlog = paired[key]["residual_by_penalty"][penalty]
+    dlog = paired[key]["log_by_penalty"][penalty]
     table = pd.DataFrame(0.0, index=OUTCOME_KEYS, columns=OUTCOME_KEYS)
     rows = []
     used = 0
@@ -1827,8 +1168,6 @@ def _plot_outcome_tables(
                 value = arr[i, j]
                 pct = 100 * value / row_total if row_total > 0 else 0.0
                 value_text = f"{value:.0f}" if mode == "first_sample" else f"{value:.1f}"
-                # Pick text color from the tile's actual luminance so bright
-                # ramps (e.g. orange) keep black text even at high counts.
                 rgba = cmap(norm(value))
                 luminance = 0.299 * rgba[0] + 0.587 * rgba[1] + 0.114 * rgba[2]
                 text_color = "white" if luminance < 0.6 else "black"
@@ -1857,8 +1196,6 @@ def _plot_outcome_tables(
                 ).set_path_effects(
                     [withStroke(linewidth=0.01, foreground=text_color)]
                 )
-        # The default font has no true semibold weight, so a hairline stroke
-        # around the regular glyphs stands in for one.
         title_effect = [withStroke(linewidth=0.5, foreground="#111827")]
         ax.set_xticks(range(len(OUTCOME_KEYS)), LOG_OUTCOME_LABELS, fontsize=12)
         for label in ax.get_xticklabels():
@@ -1902,7 +1239,6 @@ def _plot_outcome_tables(
             pad=11,
         ).set_path_effects(title_effect)
         ax.tick_params(axis="x", rotation=0)
-        # Full border on all four sides (the global rcParams hide top/right).
         for spine in ax.spines.values():
             spine.set_visible(True)
     axes[0].set_ylabel(
@@ -1915,13 +1251,12 @@ def _plot_outcome_tables(
     sm = plt.cm.ScalarMappable(norm=norm, cmap=subtle_count_cmap)
     sm.set_array([])
     cbar = fig.colorbar(sm, ax=axes, fraction=0.008, pad=0.012, shrink=0.86)
-    # No label: the caption explains that shading encodes question counts.
     cbar.ax.tick_params(labelsize=8, length=2.5, width=0.5, colors="#111827")
     cbar.outline.set_visible(False)
     savefig(fig, name)
 
 
-def _fig_penalty_log_outcome_table_for_penalty(
+def _fig_outcome_table_for_penalty(
     paired,
     penalty: float,
     *,
@@ -1931,7 +1266,7 @@ def _fig_penalty_log_outcome_table_for_penalty(
     mode = "sample_average"
     model_keys = [key for key in ACTIVE_MODEL_ORDER if penalty in paired[key]["penalties"]]
     if not model_keys:
-        print(f"  skipped F2: no {penalty_label(penalty)} penalty rows")
+        print(f"  skipped: no {penalty_label(penalty)} penalty rows")
         return outputs
 
     matrices = {}
@@ -1946,8 +1281,7 @@ def _fig_penalty_log_outcome_table_for_penalty(
         all_rows.extend(rows)
         print(f"  {key} ({mode}, {penalty_label(penalty)}): n={used}")
     detail = pd.DataFrame(all_rows)
-    csv_name = FIGURE_RENAMES.get(name, name)
-    detail.to_csv(OUT / f"{csv_name}_long.csv", index=False)
+    detail.to_csv(OUT / f"{name}_long.csv", index=False)
 
     summary_rows = []
     for key, mat in matrices.items():
@@ -1968,7 +1302,7 @@ def _fig_penalty_log_outcome_table_for_penalty(
                     }
                 )
     summary = pd.DataFrame(summary_rows)
-    summary.to_csv(OUT / f"{csv_name}.csv", index=False)
+    summary.to_csv(OUT / f"{name}.csv", index=False)
     outputs[f"{mode}_{penalty_tag(penalty)}"] = summary
     _plot_outcome_tables(
         matrices,
@@ -1981,14 +1315,14 @@ def _fig_penalty_log_outcome_table_for_penalty(
     return outputs
 
 
-def fig_penalty_log_outcome_tables(paired) -> dict[str, pd.DataFrame]:
-    print("== F2: penalty-vs-log sample-average outcome tables ==")
+def fig_outcome_tables(paired) -> dict[str, pd.DataFrame]:
+    print("== Fig. 3 / Fig. S1: penalty-vs-log outcome tables ==")
     outputs = {}
-    base_name = "f2_penalty_log_outcome_table_sample_average"
     for penalty in PENALTY_LEVELS:
-        name = base_name if np.isclose(penalty, PRIMARY_PENALTY) else f"{base_name}_{penalty_tag(penalty)}"
+        name = ("F3_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
+                else f"FS1_OutcomeTable_{penalty_tag(penalty)}")
         outputs.update(
-            _fig_penalty_log_outcome_table_for_penalty(
+            _fig_outcome_table_for_penalty(
                 paired,
                 penalty,
                 name=name,
@@ -1997,18 +1331,15 @@ def fig_penalty_log_outcome_tables(paired) -> dict[str, pd.DataFrame]:
     return outputs
 
 
-# ---------------------------------------------------------------------------
-# F7: repeated log-elicitation consistency
-# ---------------------------------------------------------------------------
-
-def f7_member_key(candidate: dict) -> str:
+# Fig. S2: elicitation consistency
+def member_key(candidate: dict) -> str:
     if candidate.get("grade") == "not_attempted":
         return "__IDK__"
     text = str(candidate.get("answer", ""))
     return norm_answer(text) or text.strip().lower()
 
 
-def f7_pairwise_jaccard(sets: list[set[str]]) -> float:
+def pairwise_jaccard(sets: list[set[str]]) -> float:
     if len(sets) <= 1:
         return np.nan
     vals = []
@@ -2019,7 +1350,7 @@ def f7_pairwise_jaccard(sets: list[set[str]]) -> float:
     return float(np.mean(vals)) if vals else np.nan
 
 
-def f7_report_distribution(candidates: list[dict]) -> dict[str, float]:
+def report_distribution(candidates: list[dict]) -> dict[str, float]:
     dist: dict[str, float] = {}
     for candidate in candidates:
         try:
@@ -2028,7 +1359,7 @@ def f7_report_distribution(candidates: list[dict]) -> dict[str, float]:
             continue
         if not np.isfinite(prob) or prob <= 0:
             continue
-        key = f7_member_key(candidate)
+        key = member_key(candidate)
         dist[key] = dist.get(key, 0.0) + prob
     total = sum(dist.values())
     if total > 0:
@@ -2036,7 +1367,7 @@ def f7_report_distribution(candidates: list[dict]) -> dict[str, float]:
     return dist
 
 
-def f7_distribution_matrix(
+def distribution_matrix(
     distributions: list[dict[str, float]],
 ) -> tuple[np.ndarray, list[str]]:
     if not distributions:
@@ -2055,75 +1386,54 @@ def f7_distribution_matrix(
     return arr, keys
 
 
-def f7_entropy_array(arr: np.ndarray) -> np.ndarray:
+def entropy_array(arr: np.ndarray) -> np.ndarray:
     with np.errstate(divide="ignore", invalid="ignore"):
         terms = np.where(arr > 0, -arr * np.log2(arr), 0.0)
     return terms.sum(axis=-1)
 
 
-def f7_pairwise_jsd_matrix_from_array(arr: np.ndarray) -> np.ndarray:
+def pairwise_jsd_matrix_from_array(arr: np.ndarray) -> np.ndarray:
     n = arr.shape[0]
     if n == 0:
         return np.zeros((0, 0), dtype=float)
     if arr.shape[1] == 0:
         return np.zeros((n, n), dtype=float)
-    h = f7_entropy_array(arr)
+    h = entropy_array(arr)
     mid = 0.5 * (arr[:, None, :] + arr[None, :, :])
-    jsd = f7_entropy_array(mid) - 0.5 * (h[:, None] + h[None, :])
+    jsd = entropy_array(mid) - 0.5 * (h[:, None] + h[None, :])
     return np.maximum(0.0, jsd)
 
 
-def f7_upper_triangle_values(matrix: np.ndarray) -> list[float]:
+def upper_triangle_values(matrix: np.ndarray) -> list[float]:
     if matrix.shape[0] <= 1:
         return []
     tri = np.triu_indices(matrix.shape[0], k=1)
     return matrix[tri].astype(float).tolist()
 
 
-def f7_pairwise_tv_values(distributions: list[dict[str, float]]) -> list[float]:
+def pairwise_tv_values(distributions: list[dict[str, float]]) -> list[float]:
     if len(distributions) <= 1:
         return []
-    arr, _keys = f7_distribution_matrix(distributions)
+    arr, _keys = distribution_matrix(distributions)
     if arr.shape[1] == 0:
         return []
     tv = 0.5 * np.abs(arr[:, None, :] - arr[None, :, :]).sum(axis=2)
-    return f7_upper_triangle_values(tv)
+    return upper_triangle_values(tv)
 
 
-def f7_jsd(a: dict[str, float], b: dict[str, float]) -> float:
-    arr, _keys = f7_distribution_matrix([a, b])
-    if arr.shape[1] == 0:
-        return 0.0
-    return float(f7_pairwise_jsd_matrix_from_array(arr)[0, 1])
-
-
-def f7_pairwise_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
+def pairwise_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
     if len(distributions) <= 1:
         return []
-    arr, _keys = f7_distribution_matrix(distributions)
+    arr, _keys = distribution_matrix(distributions)
     if arr.shape[1] == 0:
         return []
-    return f7_upper_triangle_values(f7_pairwise_jsd_matrix_from_array(arr))
+    return upper_triangle_values(pairwise_jsd_matrix_from_array(arr))
 
 
-def f7_consensus_distribution(distributions: list[dict[str, float]]) -> dict[str, float]:
-    if not distributions:
-        return {}
-    keys = set().union(*(set(dist) for dist in distributions))
-    consensus = {
-        key: float(np.mean([dist.get(key, 0.0) for dist in distributions]))
-        for key in keys
-    }
-    total = sum(consensus.values())
-    if total > 0:
-        consensus = {key: value / total for key, value in consensus.items()}
-    return consensus
-
-
-def f7_consensus_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
+def consensus_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
     if not distributions:
         return []
-    arr, _keys = f7_distribution_matrix(distributions)
+    arr, _keys = distribution_matrix(distributions)
     if arr.shape[1] == 0:
         return []
     consensus = arr.mean(axis=0)
@@ -2131,14 +1441,14 @@ def f7_consensus_jsd_values(distributions: list[dict[str, float]]) -> list[float
     if total <= 0:
         return []
     consensus = consensus / total
-    h = f7_entropy_array(arr)
-    h_consensus = float(f7_entropy_array(consensus))
+    h = entropy_array(arr)
+    h_consensus = float(entropy_array(consensus))
     mid = 0.5 * (arr + consensus[None, :])
-    vals = f7_entropy_array(mid) - 0.5 * (h + h_consensus)
+    vals = entropy_array(mid) - 0.5 * (h + h_consensus)
     return np.maximum(0.0, vals).astype(float).tolist()
 
 
-def parse_candidates_for_f7(rec: dict) -> list[dict]:
+def parse_report_candidates(rec: dict) -> list[dict]:
     raw = rec.get("log_candidates_json")
     if not raw:
         return []
@@ -2179,7 +1489,7 @@ def load_log_consistency(run_dir_name: str) -> pd.DataFrame:
                 try:
                     rec = json.loads(line)
                 except json.JSONDecodeError:
-                    print(f"  F7: ignored malformed in-progress line {line_i} from {path}")
+                    print(f"  ignored malformed line {line_i} from {path}")
                     continue
                 key = (
                     str(rec.get("model")),
@@ -2190,9 +1500,9 @@ def load_log_consistency(run_dir_name: str) -> pd.DataFrame:
 
     rows = []
     for rec in records_by_key.values():
-        candidates = parse_candidates_for_f7(rec)
+        candidates = parse_report_candidates(rec)
         top = top_p_set(candidates, NOMINAL_P)
-        top_members = sorted({f7_member_key(c) for c in top.members})
+        top_members = sorted({member_key(c) for c in top.members})
         model_key = model_key_for_id(str(rec["model"])) or str(rec["model"])
         rows.append(
             {
@@ -2220,12 +1530,12 @@ def summarize_log_consistency(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for (model_key, question_id), group in df.groupby(["model_key", "question_id"], sort=False):
         member_sets = [set(members) for members in group["log_top_p_members"]]
-        distributions = [f7_report_distribution(candidates) for candidates in group["candidates"]]
-        tv_values = f7_pairwise_tv_values(distributions)
-        jsd_values = f7_pairwise_jsd_values(distributions)
-        consensus_jsd_values = f7_consensus_jsd_values(distributions)
+        distributions = [report_distribution(candidates) for candidates in group["candidates"]]
+        tv_values = pairwise_tv_values(distributions)
+        jsd_values = pairwise_jsd_values(distributions)
+        consensus_values = consensus_jsd_values(distributions)
         top_keys = [
-            f7_member_key({"answer": answer, "grade": grade})
+            member_key({"answer": answer, "grade": grade})
             for answer, grade in zip(group["log_top_answer"], group["log_top_grade"])
         ]
         top_counts = pd.Series(top_keys).value_counts()
@@ -2243,8 +1553,8 @@ def summarize_log_consistency(df: pd.DataFrame) -> pd.DataFrame:
                 "sd_log_idk_mass": group["log_idk_mass"].std(ddof=1),
                 "mean_top_p_set_size": group["log_top_p_set_size"].mean(),
                 "sd_top_p_set_size": group["log_top_p_set_size"].std(ddof=1),
-                "mean_top_p_jaccard": f7_pairwise_jaccard(member_sets),
-                "mean_top_p_set_distance": 1.0 - f7_pairwise_jaccard(member_sets),
+                "mean_top_p_jaccard": pairwise_jaccard(member_sets),
+                "mean_top_p_set_distance": 1.0 - pairwise_jaccard(member_sets),
                 "mean_pairwise_tv": float(np.mean(tv_values)) if tv_values else np.nan,
                 "median_pairwise_tv": float(np.median(tv_values)) if tv_values else np.nan,
                 "q90_pairwise_tv": float(np.quantile(tv_values, 0.90)) if tv_values else np.nan,
@@ -2252,13 +1562,13 @@ def summarize_log_consistency(df: pd.DataFrame) -> pd.DataFrame:
                 "median_pairwise_jsd": float(np.median(jsd_values)) if jsd_values else np.nan,
                 "q90_pairwise_jsd": float(np.quantile(jsd_values, 0.90)) if jsd_values else np.nan,
                 "mean_consensus_jsd": (
-                    float(np.mean(consensus_jsd_values)) if consensus_jsd_values else np.nan
+                    float(np.mean(consensus_values)) if consensus_values else np.nan
                 ),
                 "median_consensus_jsd": (
-                    float(np.median(consensus_jsd_values)) if consensus_jsd_values else np.nan
+                    float(np.median(consensus_values)) if consensus_values else np.nan
                 ),
                 "q90_consensus_jsd": (
-                    float(np.quantile(consensus_jsd_values, 0.90)) if consensus_jsd_values else np.nan
+                    float(np.quantile(consensus_values, 0.90)) if consensus_values else np.nan
                 ),
                 "top_answer_agreement": float(top_counts.iloc[0] / len(group)) if len(top_counts) else np.nan,
                 "top_answer_disagreement": (
@@ -2271,439 +1581,7 @@ def summarize_log_consistency(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def f7_band(rows: list[dict], *, metric: str, x_col: str = "repeat_count") -> pd.DataFrame:
-    df = pd.DataFrame(rows)
-    if df.empty:
-        return df
-    return (
-        df.groupby([x_col, "metric"], as_index=False)["value"]
-        .agg(mean="mean", q25=lambda x: np.quantile(x, 0.25), q75=lambda x: np.quantile(x, 0.75))
-    )
-
-
-def f7_plot_band(
-    ax,
-    data: pd.DataFrame,
-    *,
-    metric: str,
-    label: str,
-    color: str,
-    ls: str = "-",
-    x_col: str = "repeat_count",
-) -> None:
-    sub = data[data["metric"] == metric].sort_values(x_col)
-    if sub.empty:
-        return
-    ax.plot(sub[x_col], sub["mean"], color=color, lw=2, ls=ls, label=label)
-    ax.fill_between(
-        sub[x_col].to_numpy(dtype=float),
-        sub["q25"].to_numpy(dtype=float),
-        sub["q75"].to_numpy(dtype=float),
-        color=color,
-        alpha=0.12,
-        linewidth=0,
-    )
-
-
-def simpleqa_question_sort_key(question_id: object) -> tuple[int, str]:
-    match = re.search(r"(\d+)$", str(question_id))
-    return (int(match.group(1)) if match else 10**12, str(question_id))
-
-
-def f7_line_convergence(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    outcome_rows = []
-    agreement_rows = []
-    frontier_rows = []
-    question_rows = []
-
-    for _qid, group in df.sort_values("repeat_index").groupby("question_id", sort=False):
-        outcomes = group["candidates"].map(_log_top_p_three_way_outcome)
-        outcome_specs = [
-            ("accuracy_rate", outcomes == "accuracy"),
-            ("hallucination_rate", outcomes == "hallucination"),
-            ("abstention_rate", outcomes == "abstention"),
-        ]
-        for label, mask in outcome_specs:
-            values = mask.astype(float).to_numpy()
-            final = float(np.mean(values))
-            running = np.cumsum(values) / np.arange(1, len(values) + 1)
-            for k, estimate in enumerate(running, start=1):
-                outcome_rows.append(
-                    {
-                        "repeat_count": k,
-                        "metric": label,
-                        "value": float(estimate - final) ** 2,
-                    }
-                )
-
-        top_keys = [
-            f7_member_key({"answer": answer, "grade": grade})
-            for answer, grade in zip(group["log_top_answer"], group["log_top_grade"])
-        ]
-        member_sets = [set(members) for members in group["log_top_p_members"]]
-        top_counter: Counter[str] = Counter(top_keys[:1])
-        jaccard_sum = 0.0
-        jaccard_pairs = 0
-        for k in range(2, len(group) + 1):
-            new_idx = k - 1
-            top_counter[top_keys[new_idx]] += 1
-            new_set = member_sets[new_idx]
-            for old_set in member_sets[:new_idx]:
-                union = old_set | new_set
-                jaccard_sum += 1.0 if not union else len(old_set & new_set) / len(union)
-            jaccard_pairs += new_idx
-            agreement_rows.append(
-                {
-                    "repeat_count": k,
-                    "metric": "top_answer_majority",
-                    "value": float(max(top_counter.values()) / k) if top_counter else np.nan,
-                }
-            )
-            agreement_rows.append(
-                {
-                    "repeat_count": k,
-                    "metric": "top_p_set_jaccard",
-                    "value": float(jaccard_sum / jaccard_pairs) if jaccard_pairs else np.nan,
-                }
-            )
-
-    grid = np.linspace(0, 0.95, 96)
-    repeat_ids = sorted(df["repeat_index"].unique())
-    hallucination_by_repeat = []
-    abstention_by_repeat = []
-    for repeat_i in repeat_ids:
-        group = df[df["repeat_index"] == repeat_i]
-        top_prob, _top_correct, top_incorrect = _log_threshold_inputs(group)
-        answered = top_prob[:, None] >= grid[None, :]
-        hallucination_by_repeat.append(
-            np.mean(answered & top_incorrect[:, None], axis=0)
-        )
-        abstention_by_repeat.append(np.mean(~answered, axis=0))
-
-    hallucination_mat = np.vstack(hallucination_by_repeat)
-    abstention_mat = np.vstack(abstention_by_repeat)
-    final_hallucination = hallucination_mat.mean(axis=0)
-    final_abstention = abstention_mat.mean(axis=0)
-    denom = np.arange(1, len(repeat_ids) + 1, dtype=float)[:, None]
-    prefix_hallucination = np.cumsum(hallucination_mat, axis=0) / denom
-    prefix_abstention = np.cumsum(abstention_mat, axis=0) / denom
-    hallucination_error = np.mean(np.square(prefix_hallucination - final_hallucination), axis=1)
-    abstention_error = np.mean(np.square(prefix_abstention - final_abstention), axis=1)
-    for k, (h_err, a_err) in enumerate(zip(hallucination_error, abstention_error), start=1):
-        frontier_rows.append(
-            {
-                "repeat_count": k,
-                "metric": "hallucination_rate",
-                "value": float(h_err),
-            }
-        )
-        frontier_rows.append(
-            {
-                "repeat_count": k,
-                "metric": "abstention_rate",
-                "value": float(a_err),
-            }
-        )
-
-    question_order = sorted(df["question_id"].drop_duplicates(), key=simpleqa_question_sort_key)
-    question_pos = {question_id: pos for pos, question_id in enumerate(question_order)}
-    for _repeat_i, group in df.groupby("repeat_index", sort=False):
-        group = (
-            group.assign(question_pos=group["question_id"].map(question_pos))
-            .sort_values("question_pos")
-        )
-        outcomes = group["candidates"].map(_log_top_p_three_way_outcome)
-        outcome_specs = [
-            ("accuracy_rate", outcomes == "accuracy"),
-            ("hallucination_rate", outcomes == "hallucination"),
-            ("abstention_rate", outcomes == "abstention"),
-        ]
-        for label, mask in outcome_specs:
-            values = mask.astype(float).to_numpy()
-            final = float(np.mean(values))
-            running = np.cumsum(values) / np.arange(1, len(values) + 1)
-            for k, estimate in enumerate(running, start=1):
-                question_rows.append(
-                    {
-                        "question_count": k,
-                        "metric": label,
-                        "value": float(estimate - final) ** 2,
-                    }
-                )
-
-    return (
-        f7_band(outcome_rows, metric="value"),
-        f7_band(agreement_rows, metric="value"),
-        f7_band(frontier_rows, metric="value"),
-        f7_band(question_rows, metric="value", x_col="question_count"),
-    )
-
-
-def fig_log_consistency_convergence(
-    df: pd.DataFrame,
-    *,
-    label: str,
-    n_questions: int,
-    n_repeats: int,
-    temperature: float,
-) -> None:
-    outcomes, agreement, frontier_conv, question_conv = f7_line_convergence(df)
-    outcomes.assign(panel="top_p_outcome").to_csv(
-        OUT / "f7_log_consistency_convergence_top_p_outcomes.csv",
-        index=False,
-    )
-    agreement.assign(panel="agreement").to_csv(
-        OUT / "f7_log_consistency_convergence_agreement.csv",
-        index=False,
-    )
-    frontier_conv.assign(panel="frontier").to_csv(
-        OUT / "f7_log_consistency_convergence_frontier.csv",
-        index=False,
-    )
-    question_conv.assign(panel="top_p_outcome_by_question").to_csv(
-        OUT / "f7_log_consistency_convergence_top_p_outcomes_by_question.csv",
-        index=False,
-    )
-
-    fig, axes = plt.subplots(1, 3, figsize=(12.6, 3.9), sharex=False)
-
-    f7_plot_band(axes[0], outcomes, metric="accuracy_rate", label="accuracy", color="#1a73e8")
-    f7_plot_band(
-        axes[0],
-        outcomes,
-        metric="hallucination_rate",
-        label="hallucination",
-        color="#d97706",
-    )
-    f7_plot_band(
-        axes[0],
-        outcomes,
-        metric="abstention_rate",
-        label="abstention",
-        color="#009E73",
-    )
-    axes[0].set_title("A. Top-0.9 outcomes converge", fontsize=10)
-    axes[0].set_xlabel("number of replications")
-    axes[0].set_ylabel("MSE vs full-replication mean")
-    axes[0].legend(fontsize=7)
-
-    f7_plot_band(
-        axes[1],
-        frontier_conv,
-        metric="hallucination_rate",
-        label="hallucination rate",
-        color="#1a73e8",
-    )
-    f7_plot_band(
-        axes[1],
-        frontier_conv,
-        metric="abstention_rate",
-        label="abstention rate",
-        color="#009E73",
-    )
-    axes[1].set_title("B. Frontier estimate converges", fontsize=10)
-    axes[1].set_xlabel("number of replications")
-    axes[1].set_ylabel("MSE vs full-replication frontier")
-    axes[1].legend(fontsize=7)
-
-    f7_plot_band(
-        axes[2],
-        question_conv,
-        metric="accuracy_rate",
-        label="accuracy",
-        color="#1a73e8",
-        x_col="question_count",
-    )
-    f7_plot_band(
-        axes[2],
-        question_conv,
-        metric="hallucination_rate",
-        label="hallucination",
-        color="#d97706",
-        x_col="question_count",
-    )
-    f7_plot_band(
-        axes[2],
-        question_conv,
-        metric="abstention_rate",
-        label="abstention",
-        color="#009E73",
-        x_col="question_count",
-    )
-    axes[2].set_title("C. Top-0.9 outcomes by questions", fontsize=10)
-    axes[2].set_xlabel("number of questions")
-    axes[2].set_ylabel("MSE vs full-question mean")
-    axes[2].legend(fontsize=7)
-
-    fig.suptitle(
-        f"F7. Log-elicitation replication consistency: "
-        f"{n_questions} questions; median {n_repeats} replications",
-        y=1.03,
-    )
-    fig.tight_layout()
-    savefig(fig, "f7_log_consistency")
-
-
-def f7_ecdf_panel(
-    ax,
-    values,
-    *,
-    color: str,
-    label: str,
-    x_label: str,
-    x_upper: float,
-    linestyle: str = "-",
-    median_text_y: float = 0.08,
-    median_label: str | None = None,
-    annotate_median: bool = True,
-) -> None:
-    vals = pd.Series(values, dtype="float64").replace([np.inf, -np.inf], np.nan).dropna()
-    vals = vals[(vals >= 0) & (vals <= 1)].sort_values().to_numpy()
-    if len(vals) == 0:
-        ax.text(0.5, 0.5, "no data", ha="center", va="center", transform=ax.transAxes)
-        ax.set_xlabel(x_label)
-        ax.set_ylabel("cumulative fraction of questions")
-        return
-    y = np.arange(1, len(vals) + 1) / len(vals)
-    median = float(np.median(vals))
-    ax.step(vals, y, where="post", color=color, lw=2.2, ls=linestyle, label=label)
-    ax.axvline(median, color=color, lw=1.2, alpha=0.35)
-    if annotate_median:
-        ax.text(
-            0.97,
-            median_text_y,
-            f"{median_label or label} median {median:.3f}",
-            ha="right",
-            va="bottom",
-            fontsize=8,
-            color=color,
-            transform=ax.transAxes,
-        )
-    ax.set_xlim(0, x_upper)
-    ax.set_ylim(0, 1.02)
-    ax.set_xlabel(x_label)
-    ax.set_ylabel("cumulative fraction of questions")
-
-
-def f7_axis_upper(values, *, floor: float) -> float:
-    vals = pd.Series(values, dtype="float64").replace([np.inf, -np.inf], np.nan).dropna()
-    vals = vals[(vals >= 0) & (vals <= 1)]
-    if vals.empty:
-        return floor
-    return min(1.0, max(floor, float(vals.quantile(0.99)) * 1.08))
-
-
-def fig_log_consistency_question_variability(
-    summary: pd.DataFrame,
-    *,
-    label: str,
-    n_questions: int,
-    n_repeats: int,
-    temperature: float,
-) -> None:
-    detail = summary.sort_values(["model_key", "mean_pairwise_tv"], ascending=[True, False])
-    detail.to_csv(OUT / "f8_log_consistency_question_variability.csv", index=False)
-
-    model_keys = list(summary["model_key"].dropna().drop_duplicates())
-    if not model_keys:
-        print("  skipped F8: no model keys found")
-        return
-
-    upper_values = pd.concat(
-        [summary["mean_pairwise_jsd"], summary["mean_consensus_jsd"]],
-        ignore_index=True,
-    )
-    jsd_upper = f7_axis_upper(upper_values, floor=0.20)
-    n_cols = min(3, len(model_keys))
-    n_rows = int(np.ceil(len(model_keys) / n_cols))
-    fig, axes = plt.subplots(
-        n_rows,
-        n_cols,
-        figsize=(4.25 * n_cols, 3.2 * n_rows),
-        squeeze=False,
-        sharex=True,
-        sharey=True,
-    )
-
-    for ax_idx, (ax, model_key) in enumerate(zip(axes.ravel(), model_keys)):
-        sub = summary[summary["model_key"] == model_key]
-        model_label = RUNS.get(model_key, {}).get("label", sub["model_label"].iloc[0])
-        model_color = MODEL_COLORS.get(model_key, "#1a73e8")
-        pairwise_median = float(np.nanmedian(sub["mean_pairwise_jsd"]))
-        consensus_median = float(np.nanmedian(sub["mean_consensus_jsd"]))
-        f7_ecdf_panel(
-            ax,
-            sub["mean_pairwise_jsd"],
-            color=model_color,
-            label=f"pairwise replications (median {pairwise_median:.3f})",
-            x_label="mean JS divergence (bits)",
-            x_upper=jsd_upper,
-            linestyle="-",
-            annotate_median=False,
-        )
-        f7_ecdf_panel(
-            ax,
-            sub["mean_consensus_jsd"],
-            color="#4b5563",
-            label=f"to consensus report (median {consensus_median:.3f})",
-            x_label="mean JS divergence (bits)",
-            x_upper=jsd_upper,
-            linestyle="--",
-            annotate_median=False,
-        )
-        prefix = f"{chr(ord('A') + ax_idx)}. " if len(model_keys) > 1 else ""
-        ax.set_title(f"{prefix}{model_label}", fontsize=10)
-        ax.grid(alpha=0.18, lw=0.6)
-        ax.legend(fontsize=8, loc="lower right")
-
-    for ax in axes.ravel()[len(model_keys):]:
-        ax.set_visible(False)
-
-    fig.suptitle(
-        f"F8. Question-level replication variability: "
-        f"{n_questions} questions; median {n_repeats} replications",
-        y=1.03,
-    )
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
-    savefig(fig, "f8_log_consistency_question_variability")
-
-
-def f10_replication_specific_question_jsd(df: pd.DataFrame) -> pd.DataFrame:
-    """Mean divergence from each replication to the others, by question."""
-    rows = []
-    for (model_key, question_id), group in df.groupby(["model_key", "question_id"], sort=False):
-        group = group.sort_values("repeat_index")
-        repeat_ids = group["repeat_index"].astype(int).to_numpy()
-        distributions = [
-            f7_report_distribution(row.candidates)
-            for row in group.itertuples(index=False)
-        ]
-        arr, _keys = f7_distribution_matrix(distributions)
-        if arr.shape[0] <= 1:
-            continue
-        jsd = f7_pairwise_jsd_matrix_from_array(arr)
-        model_label = RUNS.get(model_key, {}).get("label", model_key)
-        for pos, repeat_id in enumerate(repeat_ids):
-            mask = np.ones(arr.shape[0], dtype=bool)
-            mask[pos] = False
-            vals = jsd[pos, mask]
-            vals = vals[np.isfinite(vals)]
-            if vals.size == 0:
-                continue
-            rows.append(
-                {
-                    "model_key": model_key,
-                    "model_label": model_label,
-                    "question_id": question_id,
-                    "repeat_index": int(repeat_id),
-                    "mean_pairwise_jsd": float(np.mean(vals)),
-                    "n_pairwise": int(vals.size),
-                }
-            )
-    return pd.DataFrame(rows)
-
-
-def f10_ecdf_summary(
+def bootstrap_ecdf_summary(
     question_summary: pd.DataFrame,
     *,
     value_col: str = "median",
@@ -2753,55 +1631,10 @@ def f10_ecdf_summary(
     )
 
 
-def f10_question_summary(replication_detail: pd.DataFrame) -> pd.DataFrame:
-    if replication_detail.empty:
-        return pd.DataFrame()
-    summary = (
-        replication_detail.groupby(["model_key", "model_label", "question_id"], as_index=False)[
-            "mean_pairwise_jsd"
-        ]
-        .agg(
-            median="median",
-            q25=lambda x: np.quantile(x, 0.25),
-            q75=lambda x: np.quantile(x, 0.75),
-            q025=lambda x: np.quantile(x, 0.025),
-            q975=lambda x: np.quantile(x, 0.975),
-            n_replications="count",
-        )
-    )
-    return summary
-
-
-def fig_log_consistency_ecdf_tail_questions(
-    df: pd.DataFrame,
-    *,
-    label: str,
-    n_questions: int,
-    n_repeats: int,
-    temperature: float,
-    random_seed: int = 0,
-) -> None:
-    detail = f10_replication_specific_question_jsd(df)
-    if detail.empty:
-        print("  skipped F9: no replication-specific JSD values found")
-        return
-
-    auxiliary_summary = f10_question_summary(detail)
-    if auxiliary_summary.empty:
-        print("  skipped F9: insufficient JSD summaries")
-        return
-
-    question_summary = summarize_log_consistency(df)
+def fig_jsd_ecdf(question_summary: pd.DataFrame, *, random_seed: int = 0) -> None:
     if question_summary.empty:
-        print("  skipped F9: insufficient question-level pairwise JSD summaries")
+        print("  skipped Fig. S2: no question-level pairwise JSD summaries")
         return
-
-    detail.to_csv(OUT / "f9_log_consistency_replication_question_jsd.csv", index=False)
-    auxiliary_summary.to_csv(OUT / "f9_log_consistency_question_tail.csv", index=False)
-    question_summary.to_csv(
-        OUT / "f9_log_consistency_question_mean_pairwise_jsd.csv",
-        index=False,
-    )
 
     x_values = (
         question_summary["mean_pairwise_jsd"]
@@ -2824,7 +1657,7 @@ def fig_log_consistency_ecdf_tail_questions(
     ecdf_frames = []
     for model_idx, model_key in enumerate(model_keys):
         model_summary = question_summary[question_summary["model_key"] == model_key]
-        model_ecdf = f10_ecdf_summary(
+        model_ecdf = bootstrap_ecdf_summary(
             model_summary,
             value_col="mean_pairwise_jsd",
             grid=common_grid,
@@ -2840,7 +1673,7 @@ def fig_log_consistency_ecdf_tail_questions(
         )
         ecdf_frames.append(model_ecdf)
     if not ecdf_frames:
-        print("  skipped F9: insufficient model-specific JSD summaries")
+        print("  skipped Fig. S2: insufficient model-specific JSD summaries")
         return
     ecdf = pd.concat(ecdf_frames, ignore_index=True)
     ecdf.to_csv(OUT / "FS2_JSD.csv", index=False)
@@ -2923,127 +1756,10 @@ def fig_log_consistency_ecdf_tail_questions(
         frameon=False,
     )
     fig.tight_layout()
-    savefig(fig, "f9_log_consistency_jsd_diagnostics")
+    savefig(fig, "FS2_JSD")
 
 
-def f7_repeat_pairwise_jsd_matrix(model_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    repeat_ids = sorted(model_df["repeat_index"].dropna().astype(int).unique())
-    repeat_pos = {repeat_id: i for i, repeat_id in enumerate(repeat_ids)}
-    sums = np.zeros((len(repeat_ids), len(repeat_ids)), dtype=float)
-    counts = np.zeros((len(repeat_ids), len(repeat_ids)), dtype=int)
-
-    for _question_id, group in model_df.groupby("question_id", sort=False):
-        local_repeat_ids = [int(row.repeat_index) for row in group.itertuples(index=False)]
-        distributions = [
-            f7_report_distribution(row.candidates)
-            for row in group.itertuples(index=False)
-        ]
-        if not local_repeat_ids:
-            continue
-        arr, _keys = f7_distribution_matrix(distributions)
-        local_jsd = f7_pairwise_jsd_matrix_from_array(arr)
-        idx = np.array([repeat_pos[repeat_id] for repeat_id in local_repeat_ids], dtype=int)
-        sums[np.ix_(idx, idx)] += local_jsd
-        counts[np.ix_(idx, idx)] += 1
-
-    means = np.full_like(sums, np.nan, dtype=float)
-    np.divide(sums, counts, out=means, where=counts > 0)
-    rows = [
-        {
-            "repeat_i": repeat_i,
-            "repeat_j": repeat_j,
-            "mean_jsd": float(means[i, j]) if counts[i, j] > 0 else np.nan,
-            "n_questions": int(counts[i, j]),
-        }
-        for i, repeat_i in enumerate(repeat_ids)
-        for j, repeat_j in enumerate(repeat_ids)
-    ]
-    long = pd.DataFrame(rows)
-    matrix = long.pivot(index="repeat_i", columns="repeat_j", values="mean_jsd").reindex(
-        index=repeat_ids,
-        columns=repeat_ids,
-    )
-    return matrix, long
-
-
-def f7_pairwise_jsd_heatmap_data(
-    df: pd.DataFrame,
-) -> tuple[list[str], dict[str, pd.DataFrame], pd.DataFrame, float]:
-    model_keys = list(df["model_key"].drop_duplicates())
-    matrices: dict[str, pd.DataFrame] = {}
-    long_rows = []
-    vmax_values = []
-    for model_key in model_keys:
-        model_df = df[df["model_key"] == model_key]
-        matrix, long = f7_repeat_pairwise_jsd_matrix(model_df)
-        matrices[model_key] = matrix
-        long.insert(0, "model_key", model_key)
-        long.insert(1, "model_label", RUNS.get(model_key, {}).get("label", model_key))
-        long_rows.append(long)
-        vals = matrix.to_numpy(dtype=float)
-        vmax_values.extend(vals[np.isfinite(vals)].ravel().tolist())
-
-    long = pd.concat(long_rows, ignore_index=True) if long_rows else pd.DataFrame()
-    vmax = min(1.0, max(0.05, float(np.quantile(vmax_values, 0.99)) if vmax_values else 0.05))
-    return model_keys, matrices, long, vmax
-
-
-def fig_log_consistency_pairwise_jsd_heatmap(
-    df: pd.DataFrame,
-    *,
-    label: str,
-    n_questions: int,
-    n_repeats: int,
-    temperature: float,
-) -> None:
-    model_keys, matrices, long, vmax = f7_pairwise_jsd_heatmap_data(df)
-
-    if not long.empty:
-        long.to_csv(
-            OUT / "f9_log_consistency_pairwise_jsd_heatmap.csv",
-            index=False,
-        )
-
-    fig_width = max(4.2, 3.5 * len(model_keys))
-    fig, axes = plt.subplots(
-        1,
-        len(model_keys),
-        figsize=(fig_width, 3.65),
-        squeeze=False,
-        constrained_layout=True,
-    )
-    image = None
-    for ax, model_key in zip(axes.ravel(), model_keys):
-        matrix = matrices[model_key]
-        repeat_labels = matrix.index.to_numpy()
-        image = ax.imshow(
-            matrix.to_numpy(dtype=float),
-            cmap="viridis",
-            vmin=0,
-            vmax=vmax,
-            interpolation="nearest",
-        )
-        ax.set_title(RUNS.get(model_key, {}).get("label", model_key), fontsize=10)
-        ax.set_xlabel("replication index")
-        ax.set_ylabel("replication index")
-        n_ticks = min(5, len(repeat_labels))
-        if n_ticks > 0:
-            tick_pos = np.linspace(0, len(repeat_labels) - 1, n_ticks, dtype=int)
-            ax.set_xticks(tick_pos, [str(int(repeat_labels[pos])) for pos in tick_pos], fontsize=7)
-            ax.set_yticks(tick_pos, [str(int(repeat_labels[pos])) for pos in tick_pos], fontsize=7)
-
-    if image is not None:
-        cbar = fig.colorbar(image, ax=axes.ravel().tolist(), shrink=0.78, pad=0.03)
-        cbar.set_label("mean pairwise JS divergence (bits)")
-    fig.suptitle(
-        f"F9. Replication-index pairwise Jensen-Shannon heatmap: "
-        f"{n_questions} questions; median {n_repeats} replications",
-        y=1.03,
-    )
-    savefig(fig, "f9_log_consistency_pairwise_jsd_heatmap")
-
-
-def fig_log_consistency(
+def fig_consistency(
     run_dir_name: str | None,
     *,
     question_limit: int | None = None,
@@ -3055,20 +1771,20 @@ def fig_log_consistency(
         if part.strip()
     ]
     if not run_dir_names:
-        print("== F7: skipped (no log consistency run directory configured) ==")
+        print("== Fig. S2: skipped (no log consistency run directory configured) ==")
         return False
     frames = []
     for name in run_dir_names:
         try:
             frames.append(load_log_consistency(name))
         except FileNotFoundError as exc:
-            print(f"  F7: skipped missing run {exc.filename}")
+            print(f"  skipped missing run {exc.filename}")
     if not frames:
-        print("== F7: skipped (no log consistency run files found) ==")
+        print("== Fig. S2: skipped (no log consistency run files found) ==")
         return False
     df = pd.concat(frames, ignore_index=True)
     if df.empty:
-        print("== F7: skipped (log consistency file has no rows) ==")
+        print("== Fig. S2: skipped (log consistency file has no rows) ==")
         return False
 
     if repeat_limit is not None:
@@ -3115,7 +1831,7 @@ def fig_log_consistency(
                 + ")"
             )
         print(
-            f"  F7: restricted every model to the first {question_limit} "
+            f"  restricted every model to the first {question_limit} "
             "questions in the deterministic SimpleQA order"
         )
 
@@ -3132,65 +1848,26 @@ def fig_log_consistency(
                 f"examples: {examples}"
             )
         print(
-            f"  F7: restricted every model--question pair to replications "
+            f"  restricted every model--question pair to replications "
             f"0--{repeat_limit - 1}"
         )
 
-    print("== F7: repeated log-elicitation consistency ==")
+    print("== Fig. S2: repeated log-elicitation consistency ==")
     summary = summarize_log_consistency(df)
-    df.drop(columns=["candidates"], errors="ignore").to_csv(
-        OUT / "f7_log_consistency_repeats.csv",
-        index=False,
-    )
-    summary.to_csv(OUT / "f7_log_consistency_by_question.csv", index=False)
-
-    label = (
-        summary["model_label"].iloc[0]
-        if summary["model_label"].nunique() == 1
-        else ", ".join(summary["model_label"].drop_duplicates())
-    )
-    n_questions = summary["question_id"].nunique()
-    n_repeats = int(summary["n_repeats"].median())
-    temperature = df["log_temperature"].dropna().iloc[0] if df["log_temperature"].notna().any() else np.nan
-
-    fig_log_consistency_convergence(
-        df,
-        label=label,
-        n_questions=n_questions,
-        n_repeats=n_repeats,
-        temperature=temperature,
-    )
-    fig_log_consistency_question_variability(
-        summary,
-        label=label,
-        n_questions=n_questions,
-        n_repeats=n_repeats,
-        temperature=temperature,
-    )
-    fig_log_consistency_ecdf_tail_questions(
-        df,
-        label=label,
-        n_questions=n_questions,
-        n_repeats=n_repeats,
-        temperature=temperature,
-    )
+    summary.to_csv(OUT / "FS2_JSD_by_question.csv", index=False)
+    fig_jsd_ecdf(summary)
     return True
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Regenerate Stage 1 figures with an optional subset of models."
+        description="Regenerate the paper figures, optionally for a subset of models."
     )
     parser.add_argument(
         "--models",
         nargs="+",
         default=list(MODEL_ORDER),
-        help=(
-            "Model keys or aliases to include. Valid keys: "
-            f"{', '.join(RUNS)}. Aliases include gemini, sonnet, "
-            "deepseek, and qwen. "
-            "Comma-separated values are also accepted."
-        ),
+        help=f"Model keys or aliases to include (default: all of {', '.join(RUNS)}).",
     )
     parser.add_argument(
         "--out-dir",
@@ -3199,33 +1876,29 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Directory for generated figures and CSVs.",
     )
     parser.add_argument(
-        "--f7-run-dir",
-        default=DEFAULT_F7_RUN_DIR,
+        "--consistency-runs",
+        default=DEFAULT_CONSISTENCY_RUNS,
         help=(
-            "Output directory name under outputs/ containing "
-            "simpleqa_log_consistency_results.jsonl. Supply comma-separated "
-            "directories to combine model ECDFs, or an empty string to skip F7."
+            "Comma-separated run directories with repeated-elicitation results "
+            "for Fig. S2, or an empty string to skip it."
         ),
     )
     parser.add_argument(
-        "--f7-question-limit",
+        "--consistency-question-limit",
         type=int,
         default=None,
-        help=(
-            "Restrict every log-consistency model to the same first N questions "
-            "in the deterministic SimpleQA order."
-        ),
+        help="Restrict every model to the same first N questions of the SimpleQA order.",
     )
     parser.add_argument(
-        "--f7-repeat-limit",
+        "--consistency-repeat-limit",
         type=int,
         default=None,
-        help="Restrict every log-consistency question to replication indices below N.",
+        help="Restrict every question to replication indices below N.",
     )
     parser.add_argument(
-        "--only-log-consistency",
+        "--only-consistency",
         action="store_true",
-        help="Generate only the repeated-log consistency outputs, including FS2_JSD.pdf.",
+        help="Generate only the Fig. S2 outputs.",
     )
     args = parser.parse_args(argv)
     args.models = parse_model_keys(args.models)
@@ -3237,32 +1910,26 @@ def main(argv: list[str] | None = None):
     configure_run(model_keys=args.models, out_dir=args.out_dir)
     print("Selected models:", ", ".join(ACTIVE_MODEL_ORDER))
     print("Output directory:", OUT)
-    if args.only_log_consistency:
-        wrote_f7 = fig_log_consistency(
-            args.f7_run_dir,
-            question_limit=args.f7_question_limit,
-            repeat_limit=args.f7_repeat_limit,
+    if args.only_consistency:
+        wrote = fig_consistency(
+            args.consistency_runs,
+            question_limit=args.consistency_question_limit,
+            repeat_limit=args.consistency_repeat_limit,
         )
-        if not wrote_f7:
-            raise SystemExit("No log-consistency figure was generated.")
-        print("\nDone. Updated log-consistency outputs in", OUT)
+        if not wrote:
+            raise SystemExit("No consistency figure was generated.")
         return
     paired = load_paired()
     fig_frontier(paired)
-    fig_frontier_accuracy(paired)
-    fig_penalty_log_outcome_tables(paired)
+    fig_outcome_tables(paired)
     fig_cumulative_rates(paired)
-    fig_cumulative_three_way_rates(paired)
-    fig_log_vs_penalty_convergence(paired)
-    fig_threshold_three_way_response(paired)
-    fig_responses_per_question(paired)
-    wrote_f7 = fig_log_consistency(
-        args.f7_run_dir,
-        question_limit=args.f7_question_limit,
-        repeat_limit=args.f7_repeat_limit,
+    fig_response_counts(paired)
+    fig_consistency(
+        args.consistency_runs,
+        question_limit=args.consistency_question_limit,
+        repeat_limit=args.consistency_repeat_limit,
     )
-    suffix = "F1-F9" if wrote_f7 else "F1-F6"
-    print(f"\nDone. Updated {suffix} figures in", OUT)
+    print("\nDone. Figures written to", OUT)
 
 
 if __name__ == "__main__":

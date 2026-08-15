@@ -26,16 +26,16 @@ sys.path.insert(0, str(HERE))
 import make_figures as mf  # noqa: E402
 import make_tables as mt  # noqa: E402
 
-# The four repeated-elicitation runs behind the consistency figure (FS2),
-# capped to a common 1,000 questions x 50 replicates.
-F7_RUNS = ",".join([
+# The four repeated-elicitation runs behind Fig. S2, capped to a common
+# 1,000 questions x 50 replicates.
+CONSISTENCY_RUNS = ",".join([
     "gemini35flash_consistency",
     "claudesonnet46_consistency",
     "deepseekv32_consistency",
     "qwen3_235b_consistency",
 ])
-F7_QUESTION_LIMIT = "1000"
-F7_REPEAT_LIMIT = "50"
+CONSISTENCY_QUESTION_LIMIT = "1000"
+CONSISTENCY_REPEAT_LIMIT = "50"
 
 
 def main(argv=None) -> None:
@@ -64,9 +64,9 @@ def main(argv=None) -> None:
         mt.set_results_tree(mt.tree_for_grader(args.grader))
         mf.main([
             "--out-dir", str(out_dir),
-            "--f7-run-dir", F7_RUNS,
-            "--f7-question-limit", F7_QUESTION_LIMIT,
-            "--f7-repeat-limit", F7_REPEAT_LIMIT,
+            "--consistency-runs", CONSISTENCY_RUNS,
+            "--consistency-question-limit", CONSISTENCY_QUESTION_LIMIT,
+            "--consistency-repeat-limit", CONSISTENCY_REPEAT_LIMIT,
         ])
 
     print(f"\nDone. Regenerated paper artifacts in {out_dir}")
