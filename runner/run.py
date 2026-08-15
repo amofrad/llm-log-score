@@ -1,8 +1,7 @@
-"""Unified command-line runner for the SimpleQA uncertainty-elicitation
-experiments. Three subcommands, all built on the shared ``engine.py`` module:
-``simpleqa`` (single-report log elicitation with an optional penalty arm),
-``consistency`` (repeated-report replication runs), and ``batch`` (GCP
-batch-prediction variant that feeds the shared response cache)."""
+"""Command-line runner for the SimpleQA elicitation experiments. Three
+subcommands, all built on engine.py: simpleqa (single-report log elicitation
+with an optional penalty arm), consistency (repeated-report runs), and batch
+(GCP batch prediction that feeds the shared response cache)."""
 
 from __future__ import annotations
 
@@ -23,36 +22,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import engine  # noqa: E402
 
-# ===========================================================================
-# ``simpleqa`` subcommand
-# ===========================================================================
+# simpleqa subcommand: one log-elicitation call per question (temperature 0),
+# scored by the residual-rho rule in the prompt, plus an optional penalty arm
+# (--include-penalty). Sampling is deterministic (shuffle seed 17); runs
+# resume from the checkpoint in --out-dir.
 #
-# One log-elicitation call per question (temperature 0), scored with the
-# residual-rho rule stated in the prompt, plus an optional penalty arm
-# (--include-penalty) sampling the answer-or-decline rubric prompt.
-#
-# Example:
-#   GOOGLE_CLOUD_PROJECT=your-gcp-project python run.py simpleqa \
+#   GOOGLE_CLOUD_PROJECT=... python run.py simpleqa \
 #       --models claude-sonnet-4-6 --idk-rho 0.5 \
-#       --include-penalty --penalty 3 \
-#       --out-dir outputs/claudesonnet46
-#
-# Question sampling is deterministic (fixed shuffle seed 17); runs with
-# different --num-samples share a common prefix of questions.  Interrupted
-# runs resume from the checkpoint in --out-dir.
-# ===========================================================================
+#       --include-penalty --penalty 3 --out-dir outputs/claudesonnet46
 
 SAMPLING_SEED = 17
+# size of the SimpleQA 'test' split; the 5 'few_shot' questions are appended after
 SIMPLEQA_TEST_SPLIT_SIZE = 4321
 
 
 def parse_simpleqa_splits(value: str) -> list[str]:
-    """Parse a split expression while preserving the historical test order.
+    """Parse a split expression, keeping the test split first.
 
-    The main runs used the shuffled OpenEvals/SimpleQA ``test`` split.  The
-    public dataset also has a five-question ``few_shot`` split.  For
-    ``test+few_shot``/``all`` we load test first and append few_shot so earlier
-    prefixes remain byte-for-byte comparable to the existing test-only runs.
+    SimpleQA ships a 4,321-question test split and a 5-question few_shot
+    split. For test+few_shot/all, test loads first and few_shot is appended,
+    so earlier prefixes stay comparable to the test-only runs.
     """
     normalized = value.strip()
     if normalized in {"all", "full", "test+few_shot", "test,few_shot"}:
@@ -182,14 +171,8 @@ def load_simpleqa_examples_for_run(args) -> list["engine.SimpleQAExample"]:
     return combined
 
 
-# ---------------------------------------------------------------------------
-# Residual-rho prompt
-# ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
 # Rule bookkeeping
-# ---------------------------------------------------------------------------
 
 def annotate_results(results_path: Path, *, rho: float, eps: float) -> None:
     """Add log_idk_rule / log_idk_rho / realized residual-score fields."""
@@ -239,9 +222,9 @@ def first_row_rho(path: Path) -> tuple[float | None, bool]:
 def check_resume_compatibility(
     out_dir: Path, results_path: Path, partial_path: Path, *, rho: float
 ) -> None:
-    """Refuse to resume into an out-dir whose rows or marker carry a
-    different rho.  A partial checkpoint written before post-run annotation
-    carries no rho and is accepted."""
+    """Refuse to resume into an out-dir whose rows or marker carry a different
+    rho. A partial checkpoint, written before annotation, has no rho and is
+    accepted."""
     marker = out_dir / "_rule_marker.json"
     if marker.exists():
         m = json.loads(marker.read_text())
@@ -271,23 +254,16 @@ def write_rule_marker(out_dir: Path, *, rho: float) -> None:
     )
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
 # Penalty arm (optional; --include-penalty)
-# ---------------------------------------------------------------------------
 
 def run_penalty_question(
     example, *, model, answer_client, grader_client, grader_model, use_grader,
     mock, seed, penalty, n_samples, temperature, answer_max_tokens,
     empty_content_retries, json_only_prompts, gcp_reasoning_effort,
 ):
-    """Replicates the penalty block of the original empirical experiment
-    exactly, minus the baseline arm, so that questions covered by the
-    original *_topp90 runs are cache hits."""
+    """Run the penalty arm for one question: sample the answer-or-decline
+    rubric n_samples times and grade each sample."""
     penalty_prompt = (
         engine.build_simpleqa_penalty_json_prompt(example, penalty)
         if json_only_prompts
@@ -693,11 +669,6 @@ def run_penalty_arm(args, examples, effort) -> None:
     print(f"[penalty] summary -> {summary_path}")
 
 
-# ---------------------------------------------------------------------------
-# Legacy per-model plot refresh
-# ---------------------------------------------------------------------------
-
-
 def _simpleqa_add_arguments(p: argparse.ArgumentParser) -> None:
     p.add_argument("--models", nargs="+", required=True,
                    help="GCP Vertex model ids (one family per invocation, "
@@ -898,19 +869,12 @@ def _simpleqa_main(args: argparse.Namespace) -> None:
     if args.include_penalty:
         run_penalty_arm(args, examples, effort)
 
-# ===========================================================================
-# ``consistency`` subcommand: repeated SimpleQA log elicitation for
-# test-retest consistency.
+# consistency subcommand: repeated SimpleQA log elicitation for test-retest
+# consistency, one row per (model, question, repeat), so analysis can measure
+# how stable the elicited report is under repeated sampling.
 #
-# This produces one row per (model, question, repeat) so analysis scripts can
-# measure how stable the elicited probability report is under repeated
-# sampling.
-#
-# Run example:
-#   python run.py consistency \
-#     --models claude-sonnet-4-6 --num-samples 20 --log-repeats 50 \
-#     --out-dir outputs/sonnet_log_consistency
-# ===========================================================================
+#   python run.py consistency --models claude-sonnet-4-6 \
+#       --num-samples 20 --log-repeats 50 --out-dir outputs/sonnet_log_consistency
 
 def _consistency_add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--models", nargs="+", required=True)
@@ -1231,9 +1195,6 @@ def _consistency_main(args: argparse.Namespace) -> None:
     done_new = 0
     resource_exhausted_counts: dict[tuple[str, str, int], int] = {}
     worker_count = max(1, args.max_workers)
-    # Keep at most one queued job per worker. In particular, a serial run
-    # should retry one exact request instead of alternating between two jobs
-    # during a prolonged provider-capacity outage.
     max_pending = worker_count
     print(
         f"[log consistency] starting {len(jobs)} pending jobs "
@@ -1376,38 +1337,18 @@ def pd_groupby(rows: list[dict[str, Any]], *, keys: tuple[str, ...]):
     for key in sorted(groups):
         yield key, groups[key]
 
-# ===========================================================================
-# ``batch`` subcommand: prepare and import GCP batch predictions for the
-# SimpleQA runner.
+# batch subcommand: generate answer-model responses via GCP batch prediction,
+# inserting them into the same SQLite cache as `run.py simpleqa`; the ordinary
+# runner then grades and summarizes as usual.
 #
-# The batch job handles answer-model generation only. Completed responses are
-# inserted into the same SQLite cache used by ``run.py simpleqa``. The
-# ordinary runner can then grade and summarize the results without changing
-# the existing analysis pipeline.
-#
-# Typical workflow
-# ----------------
-# Prepare and submit a log-report batch::
-#
-#     python run.py batch prepare \
-#       --arm log --num-samples 4326 \
+#   python run.py batch prepare --arm log --num-samples 4326 \
 #       --work-dir outputs/gptoss120b_batch/log
-#     python run.py batch submit \
-#       --plan outputs/gptoss120b_batch/log/batch_plan.json
+#   python run.py batch submit --plan .../batch_plan.json
+#   # after it succeeds: status / download / import-cache with the same --plan
 #
-# After the job succeeds::
-#
-#     python run.py batch status \
-#       --plan outputs/gptoss120b_batch/log/batch_plan.json
-#     python run.py batch download \
-#       --plan outputs/gptoss120b_batch/log/batch_plan.json
-#     python run.py batch import-cache \
-#       --plan outputs/gptoss120b_batch/log/batch_plan.json
-#
-# Then run ``run.py simpleqa`` with the same generation arguments,
-# ``--gcp-location us-central1``, and ``--answer-cache-only``. The answer
-# calls will be cache hits while grader calls remain live.
-# ===========================================================================
+# Then run `run.py simpleqa` with the same generation args,
+# --gcp-location us-central1, and --answer-cache-only: answer calls hit the
+# cache while grader calls stay live.
 
 DEFAULT_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 DEFAULT_LOCATION = "us-central1"
@@ -1566,7 +1507,7 @@ def _cache_kwargs(
     disable_thinking: bool,
     reasoning_effort: str | None,
 ) -> dict[str, Any]:
-    """Mirror ``OpenRouterClient.generate`` cache-key construction exactly."""
+    """Mirror OpenRouterClient.generate cache-key construction exactly."""
     base_url = engine.gcp_vertex_openai_base_url(project, location)
     request_seed = engine.provider_request_seed(model=model, base_url=base_url, seed=seed)
     request_effort = engine.effective_gcp_reasoning_effort(model, reasoning_effort)
@@ -2223,10 +2164,6 @@ def _batch_add_arguments(parser: argparse.ArgumentParser) -> None:
     import_parser.add_argument("--cache-path", type=Path, default=None)
     import_parser.set_defaults(func=import_cache)
 
-
-# ===========================================================================
-# Top-level CLI
-# ===========================================================================
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(

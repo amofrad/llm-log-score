@@ -27,8 +27,19 @@ grading/    graders.py (both graders and the shared rubric) + grade.py
 analysis/   common.py, make_figures.py, make_tables.py, reproduce_all.py
 results/    graded_by_openai/ (primary grading), graded_by_gemini/ (second
             grader), figures/ (the paper's figures, tables, and audits)
-data/       dataset notes (SimpleQA, loaded from Hugging Face)
 ```
+
+## Data
+
+All experiments use the SimpleQA factuality benchmark: 4,326 short-answer
+factual questions with adjudicated gold answers (Wei et al., 2024, "Measuring
+short-form factuality in large language models", arXiv:2411.04368). The runner
+loads it from the Hugging Face Hub as
+[`OpenEvals/SimpleQA`](https://huggingface.co/datasets/OpenEvals/SimpleQA) via
+the `datasets` library; no copy is stored in this repository. Question ids
+`simpleqa-0` through `simpleqa-4320` are the dataset's `test` split in row
+order, and `simpleqa-4321` through `simpleqa-4325` are its five `few_shot`
+questions appended after.
 
 ## Pipeline
 

@@ -1,4 +1,4 @@
-"""Regenerate every table in the paper from a graded result tree.
+"""Generate tables in the paper from a graded result tree.
 
 Steps (run all by default, or select with --steps):
   audits       Tables S1/S2 reliability bins and the Table S3 realized
@@ -7,8 +7,7 @@ Steps (run all by default, or select with --steps):
                question-level bootstrap (matched_abstention_gaps.csv).
   containment  The Assumption-1 support-containment audit
                (support_containment.csv).
-  tables       LaTeX table bodies for Tables 1, 2, S1, S2, S3, S5 in the
-               manuscript's exact formatting (table_bodies.txt).
+  tables       Tables 1, 2, S1, S2, S3, S5 (table_bodies.txt).
   headline     Machine-readable headline numbers quoted in the text
                (headline_report.json).
   tokens       Average answer-model token cost per question, Table S4
@@ -18,7 +17,7 @@ Steps (run all by default, or select with --steps):
                both trees and ignores --grader.
 
 Select the result tree with --grader openai|gemini (default: openai, the
-paper's primary grading).  Run:  python analysis/make_tables.py
+paper's primary grading). Run: python analysis/make_tables.py
 """
 from __future__ import annotations
 
@@ -72,10 +71,7 @@ def tree_for_grader(grader: str) -> Path:
     return REPO_ROOT / "results" / f"graded_by_{grader}"
 
 
-# ---------------------------------------------------------------------------
 # Audits: reliability bins (Tables S1/S2) and realized log loss (Table S3)
-# ---------------------------------------------------------------------------
-
 def question_stats(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for _, r in df.iterrows():
@@ -89,10 +85,7 @@ def question_stats(df: pd.DataFrame) -> pd.DataFrame:
             top = max(concrete, key=lambda c: float(c["probability"]))
             top_prob = float(top["probability"])
             top_correct = float(top["grade"] == "correct")
-        # cell containing the adjudicated truth: pooled correct cell if the
-        # truth is listed, else the residual cell
         q_py = q_true if any_correct else idk
-        # unflagged miss for the top-p display
         ordered = sorted(cands, key=lambda c: float(c["probability"]), reverse=True)
         cum, in_prefix_truth, in_prefix_idk = 0.0, False, False
         for c in ordered:
@@ -137,13 +130,10 @@ def dy_stats(qs: pd.DataFrame, weights: np.ndarray) -> dict:
     miss = qs["unflagged_miss"].to_numpy(dtype=float)
     wsum = w.sum()
     u = float((w * miss).sum() / wsum)
-    # each unflagged miss carries D_Y >= log(1/(1-p)) since the truth's cell
-    # lies outside a prefix holding stated mass >= p
     bound = u * float(np.log(1.0 / (1.0 - P)))
     finite = q > 0
     dy = np.full_like(q, np.inf)
     dy[finite] = -np.log(q[finite])
-    # weighted median of dy (including infinities)
     order = np.argsort(dy)
     cw = np.cumsum(w[order]) / wsum
     median = float(dy[order][np.searchsorted(cw, 0.5)])
@@ -196,10 +186,7 @@ def audits(out_dir: Path) -> None:
     print(dy_tab.round(4).to_string(index=False))
 
 
-# ---------------------------------------------------------------------------
 # Matched-abstention gaps with paired bootstrap (Table S5)
-# ---------------------------------------------------------------------------
-
 def _paired_inputs(key: str, penalty: float):
     dlog = load_run(common.RUNS[key]["run"]).set_index("question_id", drop=False)
     dpen = mf.load_penalty_arm(key, penalty)
@@ -272,10 +259,7 @@ def matched_gaps(out_dir: Path) -> None:
     print("wrote", out_dir / "matched_abstention_gaps.csv")
 
 
-# ---------------------------------------------------------------------------
 # Support-containment audit (Assumption 1)
-# ---------------------------------------------------------------------------
-
 def _log_report_keys(cands: list[dict]) -> tuple[set, bool]:
     keys = set()
     has_correct = False
@@ -289,12 +273,11 @@ def _log_report_keys(cands: list[dict]) -> tuple[set, bool]:
 
 
 def support_containment(out_dir: Path) -> None:
-    """How often an answered penalty-arm sample names an answer that the same
-    model's log report also lists: a correct-graded penalty answer is
-    contained iff the log report lists any correct-graded candidate (both
-    land in the pooled gold cell), and an incorrect-graded penalty answer is
-    contained iff its canonical string (or any raw source variant) matches
-    the canonical string of a concrete log candidate."""
+    """How often an answered penalty-arm sample names an answer the model's log
+    report also lists. A correct-graded penalty answer is contained iff the log
+    report lists any correct-graded candidate; an incorrect-graded one is
+    contained iff its canonical string (or any raw variant) matches the
+    canonical string of a concrete log candidate."""
     rows = []
     for _label, key, _run, _cons in MODELS:
         label = common.RUNS[key]["label"]
@@ -345,10 +328,7 @@ def support_containment(out_dir: Path) -> None:
     print("wrote", out_dir / "support_containment.csv")
 
 
-# ---------------------------------------------------------------------------
-# LaTeX table bodies (Tables 1, 2, S1, S2, S3, S5)
-# ---------------------------------------------------------------------------
-
+# Tables 1, 2, S1, S2, S3, S5
 def _f3(x):
     return f"{x:.3f}"
 
@@ -403,7 +383,7 @@ def table_bodies(out_dir: Path) -> None:
     pens = {(label, L): mf.load_penalty_arm(key, float(L))
             for label, key, _run, _cons in MODELS for L in [0, 3, 6]}
 
-    # ---------------- Table 1 ----------------
+    # Table 1 
     t1 = []
     for label, _key, _run, _cons in MODELS:
         df = logs[label]
@@ -423,7 +403,7 @@ def table_bodies(out_dir: Path) -> None:
     emit("==== TABLE 1 BODY ====")
     emit("\n".join(t1))
 
-    # ---------------- Table 2 ----------------
+    # Table 2
     t2 = []
     for label, _key, _run, _cons in MODELS:
         df = logs[label]
@@ -444,7 +424,7 @@ def table_bodies(out_dir: Path) -> None:
     emit("\n==== TABLE 2 BODY ====")
     emit("\n".join(t2))
 
-    # ---------------- Tables S1/S2 from audit CSVs ----------------
+    # Tables S1/S2 (from audit CSVs)
     idk = pd.read_csv(out_dir / "theory_audit_residual_reliability.csv")
     top = pd.read_csv(out_dir / "theory_audit_top_reliability.csv")
     bins_idk = [(0.0, 0.05, "$[0,0.05)$"), (0.05, 0.2, "$[0.05,0.2)$"), (0.2, 0.4, "$[0.2,0.4)$"),
@@ -464,7 +444,7 @@ def table_bodies(out_dir: Path) -> None:
                     cells += [f"{int(r['n'])}", f"{r['mean_stated']:.3f}", f"{r['empirical']:.3f}"]
             emit("  & ".join(cells) + "\\\\")
 
-    # ---------------- Table S3 ----------------
+    # Table S3
     dy = pd.read_csv(out_dir / "theory_audit_realized_log_loss.csv")
     emit("\n==== TABLE S3 BODY ====")
     for label, _key, _run, _cons in MODELS:
@@ -480,7 +460,7 @@ def table_bodies(out_dir: Path) -> None:
                                    for _, r in dy.iterrows()
                                    if r.model == label and r.group == "penalty-incorrect"}))
 
-    # ---------------- Table S5 ----------------
+    # Table S5
     g = pd.read_csv(out_dir / "matched_abstention_gaps.csv")
     emit("\n==== TABLE S5 BODY ====")
     for label, _key, _run, _cons in MODELS:
@@ -495,10 +475,7 @@ def table_bodies(out_dir: Path) -> None:
     (out_dir / "table_bodies.txt").write_text("\n".join(lines) + "\n")
 
 
-# ---------------------------------------------------------------------------
-# Headline numbers quoted in the running text
-# ---------------------------------------------------------------------------
-
+# Results and values quoted in the text
 def headline(out_dir: Path) -> None:
     report = {}
     for _label, key, run, _cons in MODELS:
@@ -541,16 +518,13 @@ def headline(out_dir: Path) -> None:
               f"unflagged={s['unflagged_miss']:.3f}")
 
 
-# ---------------------------------------------------------------------------
 # Token costs (Table S4)
-# ---------------------------------------------------------------------------
-
 def token_costs(out_dir: Path) -> None:
     """Average answer-model token cost per question (input plus output).
 
-    Log row: one elicited report per question.  Penalty rows: totals across
-    the 50 samples per question at each level; the per-sample row divides
-    the L=3 totals by 50."""
+    Log row: one elicited report per question. Penalty rows: totals across the
+    50 samples per question at each level; the per-sample row divides the L=3
+    totals by 50."""
     rows = []
     for label, key, run, _cons in MODELS:
         entry = {"model": label}
@@ -569,10 +543,7 @@ def token_costs(out_dir: Path) -> None:
     print("wrote", out_dir / "token_costs.csv")
 
 
-# ---------------------------------------------------------------------------
-# Grader-agreement audit between the two shipped trees
-# ---------------------------------------------------------------------------
-
+# Grader-agreement audit
 def _iter_grade_pairs(path_a: Path, path_b: Path, field: str):
     """Yield (grade_a, grade_b, question_id, row_index) for matched candidates."""
     with open_result(path_a) as fa, open_result(path_b) as fb:
@@ -619,7 +590,6 @@ def grader_agreement(out_dir: Path) -> None:
                 agree += ga == gb
                 if ga != gb:
                     confusion[(gb, ga)] = confusion.get((gb, ga), 0) + 1
-        # coverage flips on the log run
         da, db = {}, {}
         for tree, store in [(tree_a, da), (tree_b, db)]:
             common.OUTPUTS_DIR = tree
@@ -645,8 +615,6 @@ def grader_agreement(out_dir: Path) -> None:
     print(f"pooled agreement: {np.average(tab['agreement'], weights=pooled):.4f}")
     print("wrote", out_dir / "grader_agreement.csv")
 
-
-# ---------------------------------------------------------------------------
 
 STEPS = {
     "audits": audits,

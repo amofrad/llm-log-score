@@ -1462,7 +1462,7 @@ _SIMPLEQA_TOLERANT_ANSWER_ITEM = re.compile(
 
 
 def _decode_tolerant_json_answer(token: str) -> tuple[str | None, set[str]]:
-    """Recover an answer token without guessing its semantic content."""
+    """Recover an answer token without inferring its content."""
     value = token.strip()
     repairs: set[str] = set()
     if not value:
@@ -1488,11 +1488,11 @@ def _decode_tolerant_json_answer(token: str) -> tuple[str | None, set[str]]:
 def extract_repaired_simpleqa_topp_object(
     text: str,
 ) -> tuple[dict[str, Any] | None, str | None]:
-    """Recover the requested answer/points schema after strict JSON failure.
+    """Recover the answer/points schema after strict JSON parsing fails.
 
-    The fallback only recognizes complete answer/points objects. It preserves
-    answer text verbatim apart from decoding string syntax and treats an
-    unquoted answer value as text, so it does not infer or correct an answer.
+    Only complete answer/points objects are recognized. Answer text is kept
+    verbatim apart from string-syntax decoding, so nothing is inferred or
+    corrected.
     """
     answers: list[dict[str, Any]] = []
     repairs: set[str] = set()
@@ -1711,11 +1711,10 @@ def parse_simpleqa_topp_response(
                 point_value = 0.0
             extracted.append((normalize_open_answer_text(str(answer)), max(0.0, point_value)))
 
-    # Some APIs follow the requested schema but place probabilities in the
-    # ``points`` field.  Recover that unambiguous intent when the raw total is
-    # below the requested minimum and treating subunit values as probabilities
-    # produces a valid point total.  This also handles mixed responses such as
-    # 0.4, 0.3, 0.1, and 20.
+    # Some APIs follow the schema but put probabilities in the points field.
+    # When the raw total is below the minimum and reading subunit values as
+    # probabilities yields a valid point total, use that reading. Covers mixed
+    # responses like 0.4, 0.3, 0.1, 20.
     raw_total = sum(points for _, points in extracted)
     if raw_total + 1e-9 < PROBABILITY_POINT_TOTAL * top_p:
         probability_scaled = [

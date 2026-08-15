@@ -1,23 +1,20 @@
-"""The two graders and the shared grading rubric.
+"""Graders and the grading rubric.
 
-Every response in this study is graded against the SimpleQA gold answer by a
-language-model grader.  Two interchangeable graders are provided:
+Every response is graded against the SimpleQA gold answer by a language-model
+grader. Two are interchangeable:
 
-- ``OpenAIGrader``  -- GPT-5.6 Terra via the OpenAI API (the paper's primary
-  grader).
-- ``GeminiGrader``  -- Gemini via a Vertex client from ``runner/engine.py``
-  (the paper's second grader, used for the grader-agreement audit).
+- OpenAIGrader: GPT-5.6 Terra via the OpenAI API (primary grader).
+- GeminiGrader: Gemini via a Vertex client from runner/engine.py (second
+  grader, for the grader-agreement audit).
 
-Both graders use the identical rubric: the label-only prompt built by
-``simpleqa_grade_prompt``, the system message ``GRADER_SYSTEM_MESSAGE``,
-temperature 0, and the parser ``parse_simpleqa_grade``.  Abstention-style
-responses are recognized mechanically by ``is_open_not_attempted`` and never
-sent to a grader.
+Both use the same rubric: the label-only prompt from simpleqa_grade_prompt,
+the GRADER_SYSTEM_MESSAGE system message, temperature 0, and the
+parse_simpleqa_grade parser. Abstention-style responses are caught
+mechanically by is_open_not_attempted and never sent to a grader.
 
-This module is also the home of the answer-string canonicalization used to
-pool semantically identical answers (``open_answer_key`` for deduplication
-and ``canonical_incorrect_answer_key`` for equivalence-class matching); the
-runner engine and the analysis stage import it from here.
+Answer-string canonicalization also lives here (open_answer_key for
+deduplication, canonical_incorrect_answer_key for equivalence-class
+matching); the runner engine and analysis stage import it from this module.
 """
 
 from __future__ import annotations
@@ -36,12 +33,9 @@ DEFAULT_GEMINI_GRADER_MODEL = "google/gemini-3.5-flash"
 DEFAULT_GRADER_MAX_TOKENS = 128
 
 
-# ---------------------------------------------------------------------------
 # Rubric
-# ---------------------------------------------------------------------------
-
 def simpleqa_grade_prompt(example, response: str) -> str:
-    """Label-only grading prompt.  ``example`` needs .question and .answer."""
+    """Label-only grading prompt. example needs .question and .answer."""
     return f"""[Grade whether the model answer is equivalent to the target answer.]
 
 Question:
@@ -71,10 +65,7 @@ def parse_simpleqa_grade(text: str) -> str | None:
     return None
 
 
-# ---------------------------------------------------------------------------
 # Answer-string normalization and canonicalization
-# ---------------------------------------------------------------------------
-
 def normalize_open_answer_text(text: str) -> str:
     value = re.sub(r"\s+", " ", text.strip())
     value = value.strip().strip("\"'`*_")
@@ -232,10 +223,6 @@ def is_open_not_attempted(text: str) -> bool:
     }
     return key in markers
 
-
-# ---------------------------------------------------------------------------
-# Backends
-# ---------------------------------------------------------------------------
 
 class OpenAIGrader:
     """GPT-5.6 Terra via the OpenAI Responses API (label-only protocol)."""

@@ -1,10 +1,9 @@
 """Generate the paper's figures from the graded results.
 
-Outputs, written to results/figures/ with the CSV data behind each figure:
+Outputs, written to results/figures/ with the CSV data corresponding to each figure:
 F2A/F2B_Frontier.pdf (Fig. 2), F3_OutcomeTable_L3.pdf (Fig. 3),
 FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
 FS3_cumulative.pdf (Fig. S3), and FS4_response_counts.pdf (Fig. S4).
-F1_Concept.pdf is a hand-authored illustration shipped as a static asset.
 
 Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
@@ -242,11 +241,10 @@ def _penalty_df_from_rows(
     source: str,
     penalty: float | None = None,
 ) -> pd.DataFrame:
-    """Return one penalty row per (model, question_id), keeping the last row.
+    """Return one penalty row per (model, question_id), keeping the last.
 
-    The standalone penalty runner is resumable, so an interrupted/restarted
-    run can append duplicate question rows.  The generation seeds are fixed;
-    for analysis we treat the latest completed row as the canonical one.
+    The penalty runner is resumable, so a restarted run can append duplicate
+    question rows. Seeds are fixed, so the latest completed row is canonical.
     """
     dedup: dict[tuple[str, str], dict] = {}
     raw_rows = 0
@@ -280,7 +278,7 @@ def _penalty_df_from_rows(
 def load_penalty_arm(key: str, penalty: float = PRIMARY_PENALTY) -> pd.DataFrame:
     """Load one penalty arm for a model.
 
-    L=3 lives in the model's main run directory; other levels are read from
+    L=3 is in the model's main run directory; other levels are read from
     separate directories, e.g. *_L6.
     """
     cfg = RUNS[key]
@@ -319,7 +317,7 @@ def _interp_frontier_on_abstention(
     y: np.ndarray,
     x_grid: np.ndarray,
 ) -> np.ndarray:
-    """Interpolate a monotone threshold frontier onto abstention-rate values."""
+    """Interpolate a threshold frontier onto abstention-rate values."""
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     ok = np.isfinite(x) & np.isfinite(y)
@@ -817,10 +815,10 @@ def _penalty_three_way_arrays(dpen: pd.DataFrame) -> tuple[np.ndarray, np.ndarra
 def cumulative_rates_for_key(paired, key: str) -> pd.DataFrame:
     """Cumulative three-way outcome rates.
 
-    Log reports are evaluated as top-p sets: truth in the prefix is accuracy,
-    an IDK-only prefix is abstention, and every other truth-missing prefix is
-    hallucination.  Penalty prompts use their empirical sample partition into
-    correct, incorrect, and abstain/not-attempted samples.
+    Log reports are scored as top-p sets: truth in the prefix is accuracy, an
+    IDK-only prefix is abstention, any other truth-missing prefix is
+    hallucination. Penalty prompts use their empirical sample partition into
+    correct, incorrect, and abstain/not-attempted.
     """
     specs = [
         (

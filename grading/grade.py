@@ -13,12 +13,12 @@ A manifest (GRADING_MANIFEST.json) records the grader and row counts.
     python grading/grade.py --grader gemini --runs <tree> --out <tree2> \\
         --gcp-project <project> --gcp-location <location>
 
-Grading never feeds back into generation, so grading is a pure
-post-processing stage: the input tree's grades (if any) are ignored, and
-any tree with the runner's file schema can serve as input.  Mechanical
-abstentions (the explicit abstain token and I-don't-know variants) are
-recognized without a model call.  Grades are checkpointed to
-<out>/grades.jsonl, so an interrupted run resumes without re-grading.
+Grading never feeds back into generation, so it is a pure post-processing
+stage: the input tree's grades (if any) are ignored, and any tree with the
+runner's file schema works as input. Mechanical abstentions (the explicit
+abstain token and I-don't-know variants) are caught without a model call.
+Grades are checkpointed to <out>/grades.jsonl, so an interrupted run resumes
+without re-grading.
 """
 from __future__ import annotations
 
@@ -184,9 +184,6 @@ def refresh_penalty_fields(record: dict, candidates: list[dict]) -> None:
     for candidate in candidates:
         grade = str(candidate.get("grade", "incorrect"))
         counts[grade if grade in counts else "incorrect"] += int(candidate.get("count", 0) or 0)
-    # The distribution contains only non-abstaining parsed answers.  Explicit
-    # abstentions are a separate outcome and keep their original count,
-    # independent of the factual grader.
     original_abstain = int(record.get("penalty_abstain_samples") or 0)
     requested = int(record.get("n_samples_requested") or (sum(counts.values()) + original_abstain) or 1)
     answered = counts["correct"] + counts["incorrect"]

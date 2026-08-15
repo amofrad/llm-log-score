@@ -1,5 +1,4 @@
-"""Reproduce every figure and table in the paper from the shipped graded
-results, with no API access required.
+"""Reproduce every figure and table in the paper (no API access required).
 
     python analysis/reproduce_all.py                  # primary (OpenAI-graded)
     python analysis/reproduce_all.py --grader gemini  # second-grader replication
@@ -8,11 +7,7 @@ Writes into results/figures (or results/figures_gemini for the second
 grader): all figure PDFs and their CSV side-outputs, the audit CSVs behind
 Tables S1-S3, the matched-abstention gaps behind Table S5, the
 support-containment audit, the LaTeX table bodies for Tables 1, 2, S1, S2,
-S3, and S5, the headline numbers quoted in the running text, and the
-grader-agreement audit.
-
-The matched-abstention bootstrap is seeded, so every regenerated number is
-bit-for-bit reproducible.
+S3, and S5, the values quoted in the text, and the grader-agreement audit.
 """
 from __future__ import annotations
 
@@ -26,8 +21,7 @@ sys.path.insert(0, str(HERE))
 import make_figures as mf  # noqa: E402
 import make_tables as mt  # noqa: E402
 
-# The four repeated-elicitation runs behind Fig. S2, capped to a common
-# 1,000 questions x 50 replicates.
+# Repeated-elicitation runs for Fig. S2 (1,000 questions x 50 replicates)
 CONSISTENCY_RUNS = ",".join([
     "gemini35flash_consistency",
     "claudesonnet46_consistency",

@@ -1,22 +1,11 @@
-"""Shared utilities for the log-scoring top-p vs penalty-rubric analysis.
+"""Shared loaders and post-hoc decision helpers for the analysis.
 
-Reads the graded simpleqa_topp_results.jsonl files produced by the runner
-(runner/run.py) and grading stage (grading/grade.py) and provides:
+Reads the graded simpleqa_topp_results.jsonl files from the runner and
+grader; every loader accepts either .jsonl or .jsonl.gz.
 
-- run loading / candidate parsing,
-- top-p confidence-set construction from the elicited distribution,
-- post-hoc threshold decisions (the penalty-rubric family applied offline).
-
-Result files may be stored either as plain ``*.jsonl`` or gzip-compressed
-``*.jsonl.gz``; every loader in this module resolves both transparently.
-
-Conventions
------------
-A "candidate" is a dict with keys: answer (str), probability (float),
-points (float), grade ("correct" | "incorrect" | "not_attempted").
-Candidates with grade == "not_attempted" are IDK-type entries; the rest are
-"concrete" answers.  Grades come from the LLM grader (grading/graders.py)
-and are treated as authoritative.
+A candidate is a dict with keys answer, probability, points, and grade
+(correct/incorrect/not_attempted). not_attempted entries are IDK; the rest
+are concrete answers. Grades come from grading/graders.py.
 """
 
 from __future__ import annotations
@@ -37,6 +26,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 OUTPUTS_DIR = Path(
     os.environ.get("GRADED_RESULTS_DIR", REPO_ROOT / "results" / "graded_by_openai")
 )
+# size of the SimpleQA 'test' split; the 5 'few_shot' questions are appended after
 SIMPLEQA_TEST_SPLIT_SIZE = 4321
 
 RUNS = {
@@ -72,12 +62,12 @@ MODEL_COLORS = {
 
 
 def norm_answer(s: str) -> str:
-    """Light answer-string normalization used for within-report matching."""
+    """Normalize an answer string for within-report matching."""
     return " ".join(str(s).lower().replace(".", " ").replace(",", " ").split())
 
 
 def result_file(path: Path) -> Path | None:
-    """Resolve a result path, accepting a gzip-compressed variant."""
+    """Return the path, its .gz variant, or None if neither exists."""
     path = Path(path)
     if path.exists():
         return path
@@ -88,7 +78,7 @@ def result_file(path: Path) -> Path | None:
 
 
 def open_result(path: Path):
-    """Open (gzip-compressed) result file for text reading."""
+    """Open a result file for reading, gzip or plain."""
     path = Path(path)
     if path.suffix == ".gz":
         return gzip.open(path, "rt")
@@ -97,11 +87,10 @@ def open_result(path: Path):
 
 @lru_cache(maxsize=1)
 def simpleqa_full_question_order() -> tuple[str, ...]:
-    """Canonical full SimpleQA order used for running-prefix diagnostics.
+    """The runner's deterministic question order (shuffle seed 17).
 
-    Result files are append/resume artifacts: an extended run can contain the
-    original completed prefix followed by newly completed rows.  Running curves
-    should instead follow the deterministic SimpleQA order used by the runner.
+    Result files are resume artifacts and may reorder rows, so running-prefix
+    curves follow this order rather than file order.
     """
     question_ids = [f"simpleqa-{i}" for i in range(SIMPLEQA_TEST_SPLIT_SIZE)]
     random.Random(17).shuffle(question_ids)
@@ -125,10 +114,7 @@ def load_jsonl(path: Path) -> list[dict]:
 
 
 def parse_candidates(rec: dict) -> list[dict]:
-    """Parse log_candidates_json into a list of candidate dicts.
-
-    Candidates are returned in reported order.
-    """
+    """Parse log_candidates_json into candidate dicts, in reported order."""
     raw = rec.get("log_candidates_json")
     if not raw:
         return []
@@ -216,7 +202,7 @@ def _float(x):
 
 # Confidence sets and post-hoc decisions
 def sorted_candidates(cands: list[dict]) -> list[dict]:
-    """Sort candidates by reported probability, descending (stable)."""
+    """Stable-sort candidates by reported probability, descending."""
     return sorted(cands, key=lambda c: -c["probability"])
 
 
@@ -251,11 +237,10 @@ def top_p_set(cands: list[dict], p: float) -> TopPSet:
 
 
 def posthoc_decision(cands: list[dict], t: float) -> str:
-    """Apply the penalty-rubric decision rule offline to the elicited
-    distribution: answer with the top *concrete* candidate iff its reported
-    probability >= t (with t=0 meaning always answer); otherwise abstain.
+    """Offline penalty-rubric decision on the elicited distribution.
 
-    Returns "correct" | "incorrect" | "abstain".
+    Answer with the top concrete candidate if its probability >= t (t=0
+    always answers), else abstain. Returns correct, incorrect, or abstain.
     """
     concrete = [c for c in cands if c["grade"] != "not_attempted"]
     if not concrete:
