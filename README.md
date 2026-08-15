@@ -1,9 +1,13 @@
 # Log-Score Elicitation of Uncertainty in Language Models
 
-Code and results for the paper *Log-Score Elicitation of Uncertainty
-in Language Models* (Kaazempur-Mofrad and Dai).
+Code and results for:
 
-## Reproducing the paper
+> *Log-Score Elicitation of Uncertainty
+in Language Models*
+>
+>  Ali Kaazempur-Mofrad and Xiaowu Dai
+
+## Quick start
 
 The graded model outputs behind the paper's figures and tables are included
 under `results/`, so reproduction needs no API access:
@@ -18,15 +22,27 @@ This rebuilds every figure and table into `results/figures/` from
 the second grader instead. The bootstrap is seeded, so regenerated numbers
 match exactly.
 
-## Layout
+## Repository structure
 
 ```
-runner/     data collection: engine.py + run.py (subcommands simpleqa,
-            consistency, and batch)
-grading/    graders.py (both graders and the shared rubric) + grade.py
-analysis/   common.py, make_figures.py, make_tables.py, reproduce_all.py
-results/    graded_by_openai/ (primary grading), graded_by_gemini/ (second
-            grader), figures/ (the paper's figures, tables, and audits)
+.
+├── runner/                  data collection
+│   ├── engine.py            API clients, caching, prompts, scoring, grading
+│   └── run.py               subcommands: simpleqa, consistency, batch
+├── grading/                 post-hoc grading
+│   ├── graders.py           both graders and the shared rubric
+│   └── grade.py             grade a run tree into a parallel graded tree
+├── analysis/                figures and tables
+│   ├── common.py            loaders and post-hoc decision helpers
+│   ├── make_figures.py
+│   ├── make_tables.py
+│   └── reproduce_all.py     rebuild every paper artifact
+├── results/
+│   ├── graded_by_openai/    primary grading
+│   ├── graded_by_gemini/    second grader
+│   └── figures/             the paper's figures, tables, and audits
+├── README.md
+└── requirements.txt
 ```
 
 ## Data
@@ -96,19 +112,32 @@ Run directories, identical in both trees:
 | DeepSeek V3.2 | `deepseekv32` | `deepseekv32_L0` | `deepseekv32_L6` | `deepseekv32_consistency` |
 | Qwen3 235B-A22B | `qwen3_235b` | `qwen3_235b_L0` | `qwen3_235b_L6` | `qwen3_235b_consistency` |
 
-## Paper artifacts
+## Figures and tables
 
-In `results/figures/`: `F2A`/`F2B_Frontier.pdf` (Fig. 2),
-`F3_OutcomeTable_L3.pdf` (Fig. 3), and `FS1`-`FS4` (Figs. S1-S4) come from
-`make_figures.py`; `F1_Concept.pdf` is a hand-authored illustration.
-`make_tables.py` writes `table_bodies.txt` (Tables 1, 2, and the SI table
-bodies), `theory_audit_*.csv` (Tables S1-S3), `token_costs.csv` (Table S4),
-`matched_abstention_gaps.csv` (Table S5), `support_containment.csv`,
-`headline_report.json`, and `grader_agreement.csv`.
+`results/figures/` holds every figure and table in the paper. Apart from
+Fig. 1, figures are produced by `make_figures.py` (each with its plotted data
+saved as a `.csv`) and the tables and audits by `make_tables.py`;
+`reproduce_all.py` runs both.
 
-On grading: `graded_by_openai` (grader `gpt-5.6-terra`, via the OpenAI API)
-is the paper's primary grading; `graded_by_gemini`
-(`google/gemini-3.5-flash`) is the second grading used for the agreement
-audit. The two agree on 99.8% of candidate grades, and the top-0.9 coverage
-outcome changes on 0.1-0.6% of questions per model
-(`make_tables.py --steps agreement` recomputes this).
+| Paper | File(s) in `results/figures/` |
+|---|---|
+| Fig. 1 | `F1_Concept.pdf` (schematic) |
+| Fig. 2 | `F2A_Frontier.pdf`, `F2B_Frontier.pdf` |
+| Fig. 3 | `F3_OutcomeTable_L3.pdf` |
+| Fig. S1 | `FS1_OutcomeTable_L0.pdf`, `FS1_OutcomeTable_L6.pdf` |
+| Fig. S2 | `FS2_JSD.pdf` |
+| Fig. S3 | `FS3_cumulative.pdf` |
+| Fig. S4 | `FS4_response_counts.pdf` |
+| Tables 1, 2, and SI table bodies | `table_bodies.txt` |
+| Tables S1-S3 | `theory_audit_*.csv` |
+| Table S4 | `token_costs.csv` |
+| Table S5 | `matched_abstention_gaps.csv` |
+| Assumption 1 audit | `support_containment.csv` |
+| Numbers quoted in the text | `headline_report.json` |
+| Grader agreement | `grader_agreement.csv` |
+
+Grading: `graded_by_openai` (`gpt-5.6-terra`, via the OpenAI API) is the
+primary grading; `graded_by_gemini` (`google/gemini-3.5-flash`) is the second
+grader used for the agreement audit. The two agree on 99.8% of candidate
+grades, and the top-0.9 coverage outcome changes on 0.1-0.6% of questions per
+model (`make_tables.py --steps agreement`).
