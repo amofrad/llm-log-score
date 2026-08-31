@@ -1,0 +1,37 @@
+scoring_guidance,residual_log_outcome,alternative_outcome,count
+no scoring rule,abstain,incorrect,77
+no scoring rule,abstain,correct,27
+no scoring rule,abstain,abstain,164
+no scoring rule,correct,incorrect,18
+no scoring rule,correct,correct,637
+no scoring rule,correct,abstain,20
+no scoring rule,incorrect,incorrect,40
+no scoring rule,incorrect,correct,9
+no scoring rule,incorrect,abstain,8
+linear score,abstain,incorrect,44
+linear score,abstain,correct,30
+linear score,abstain,abstain,194
+linear score,correct,incorrect,18
+linear score,correct,correct,634
+linear score,correct,abstain,23
+linear score,incorrect,incorrect,43
+linear score,incorrect,correct,6
+linear score,incorrect,abstain,8
+Brier score,abstain,incorrect,43
+Brier score,abstain,correct,22
+Brier score,abstain,abstain,203
+Brier score,correct,incorrect,16
+Brier score,correct,correct,637
+Brier score,correct,abstain,22
+Brier score,incorrect,incorrect,37
+Brier score,incorrect,correct,9
+Brier score,incorrect,abstain,11
+quadratic score,abstain,incorrect,23
+quadratic score,abstain,correct,28
+quadratic score,abstain,abstain,217
+quadratic score,correct,incorrect,9
+quadratic score,correct,correct,633
+quadratic score,correct,abstain,33
+quadratic score,incorrect,incorrect,37
+quadratic score,incorrect,correct,6
+quadratic score,incorrect,abstain,14

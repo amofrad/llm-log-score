@@ -5,9 +5,9 @@
 
 Writes into results/figures (or results/figures_gemini for the second
 grader): all figure PDFs and their CSV side-outputs, the audit CSVs behind
-Tables S1-S3, the matched-abstention gaps behind Table S5, the
-support-containment audit, the LaTeX table bodies for Tables 1, 2, S1, S2,
-S3, and S5, the values quoted in the text, and the grader-agreement audit.
+Tables S1-S3, the matched-abstention gaps behind Table S5, the fixed-report
+calculation behind Table S6, the support-containment audit, the LaTeX table
+bodies, the values quoted in the text, and the grader-agreement audit.
 """
 from __future__ import annotations
 
@@ -20,6 +20,8 @@ sys.path.insert(0, str(HERE))
 
 import make_figures as mf  # noqa: E402
 import make_tables as mt  # noqa: E402
+import rho_sensitivity as rs  # noqa: E402
+import rule_sensitivity as rules  # noqa: E402
 
 # Repeated-elicitation runs for Fig. S2 (1,000 questions x 50 replicates)
 CONSISTENCY_RUNS = ",".join([
@@ -62,6 +64,17 @@ def main(argv=None) -> None:
             "--consistency-question-limit", CONSISTENCY_QUESTION_LIMIT,
             "--consistency-repeat-limit", CONSISTENCY_REPEAT_LIMIT,
         ])
+
+    if args.grader == "openai" and not (args.skip_figures and args.skip_tables):
+        sensitivity_tree = mt.tree_for_grader(args.grader)
+        rs.run(
+            sensitivity_tree / "rho_sensitivity",
+            out_dir,
+            include_figure_outputs=not args.skip_figures,
+            include_table_output=not args.skip_tables,
+        )
+        if not args.skip_figures:
+            rules.run(sensitivity_tree / "rule_sensitivity", out_dir)
 
     print(f"\nDone. Regenerated paper artifacts in {out_dir}")
 

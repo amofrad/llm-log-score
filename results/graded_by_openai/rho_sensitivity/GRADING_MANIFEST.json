@@ -1,0 +1,18 @@
+{
+  "grader": "openai",
+  "grader_model": "gpt-5.6-terra",
+  "sources": [
+    {
+      "source": "gemini35flash_rho10/simpleqa_topp_results.jsonl",
+      "rows": 1000
+    },
+    {
+      "source": "gemini35flash_rho50/simpleqa_topp_results.jsonl",
+      "rows": 1000
+    },
+    {
+      "source": "gemini35flash_rho90/simpleqa_topp_results.jsonl",
+      "rows": 1000
+    }
+  ]
+}

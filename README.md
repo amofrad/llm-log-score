@@ -18,9 +18,9 @@ python analysis/reproduce_all.py
 ```
 
 This rebuilds every figure and table into `results/figures/` from
-`results/graded_by_openai/`. Use `--grader gemini` to rerun everything under
-the second grader instead. The bootstrap is seeded, so regenerated numbers
-match exactly.
+`results/graded_by_openai/`. Use `--grader gemini` to reproduce the main
+analyses under the second grader. The sensitivity analyses use the primary
+grader only. The bootstrap is seeded, so regenerated numbers match exactly.
 
 ## Repository structure
 
@@ -36,9 +36,11 @@ llm-log-score/
 │   ├── common.py            loaders and post-hoc decision helpers
 │   ├── make_figures.py
 │   ├── make_tables.py
+│   ├── rho_sensitivity.py   Fig. S4 and Table S6
+│   ├── rule_sensitivity.py  Fig. S5
 │   └── reproduce_all.py     rebuild every paper artifact
 ├── results/
-│   ├── graded_by_openai/    primary grading
+│   ├── graded_by_openai/    primary grading, including sensitivity runs
 │   ├── graded_by_gemini/    second grader
 │   └── figures/             the paper's figures, tables, and audits
 ├── README.md
@@ -81,8 +83,9 @@ questions appended after.
    flags. The runner can also grade inline while collecting (`--use-grader`).
 
 3. **Analyze.** `analysis/reproduce_all.py` runs everything;
-   `make_figures.py` and `make_tables.py` also run standalone (`--steps`
-   selects individual tables/audits). The analysis reads
+   `make_figures.py`, `make_tables.py`, `rho_sensitivity.py`, and
+   `rule_sensitivity.py` also run standalone (`--steps` selects individual
+   tables/audits in `make_tables.py`). The analysis reads
    `results/graded_by_openai` or `results/graded_by_gemini`; to point it at
    a graded tree saved somewhere else (for example, one produced by
    `grade.py` under a custom path), set the environment variable
@@ -96,7 +99,9 @@ Each run directory holds gzip-compressed JSONL, one record per question
 - `simpleqa_topp_results.jsonl` -- the uncertainty-report arm:
   `log_candidates_json` (reported candidates with `answer`, `probability`,
   `points`, `grade`), stated IDK mass, token counts, and the rule parameters
-  (`log_idk_rule = "residual"`, `log_idk_rho = 0.5`, `simpleqa_top_p = 0.9`).
+  (`log_idk_rule`, `log_idk_rho`, `simpleqa_top_p`). The main runs use the
+  residual-log rule with `log_idk_rho = 0.5`; the sensitivity records identify
+  their corresponding discount or scoring statement.
 - `simpleqa_penalty_results.jsonl` -- one penalty arm: `penalty_value` (L),
   per-question sample counts, and `penalty_distribution_json` (the graded,
   canonicalized answer distribution).
@@ -112,26 +117,43 @@ Run directories, identical in both trees:
 | DeepSeek V3.2 | `deepseekv32` | `deepseekv32_L0` | `deepseekv32_L6` | `deepseekv32_consistency` |
 | Qwen3 235B-A22B | `qwen3_235b` | `qwen3_235b_L0` | `qwen3_235b_L6` | `qwen3_235b_consistency` |
 
+The primary grading tree also contains the 1,000-question Gemini sensitivity
+runs used in Figs. S4-S5 and Table S6:
+
+| Analysis | Directory | Runs |
+|---|---|---|
+| Residual discount | `rho_sensitivity/` | `gemini35flash_rho10`, `gemini35flash_rho50`, `gemini35flash_rho90` |
+| Scoring guidance | `rule_sensitivity/` | `gemini35flash_log`, `gemini35flash_quadratic`, `gemini35flash_brier`, `gemini35flash_linear`, `gemini35flash_unscored` |
+
+The three residual-discount runs use the standard uncertainty-report prompt at
+ρ = 0.1, 0.5, and 0.9. The five scoring-guidance runs use the same
+questions, reporting instructions, and return format and differ only in the
+stated scoring rule.
+
 ## Figures and tables
 
 `results/figures/` holds every figure and table in the paper. Apart from
-Fig. 1, figures are produced by `make_figures.py` (each with its plotted data
-saved as a `.csv`) and the tables and audits by `make_tables.py`;
-`reproduce_all.py` runs both.
+Fig. 1, figures are produced by `make_figures.py`, `rho_sensitivity.py`, and
+`rule_sensitivity.py`, with the plotted data saved as CSV files. Tables and
+audits are produced by `make_tables.py` and `rho_sensitivity.py`;
+`reproduce_all.py` runs all four scripts.
 
 | Paper | File(s) in `results/figures/` |
 |---|---|
 | Fig. 1 | `F1_Concept.pdf` (schematic) |
 | Fig. 2 | `F2A_Frontier.pdf`, `F2B_Frontier.pdf` |
 | Fig. 3 | `F3_OutcomeTable_L3.pdf` |
+| Fig. 4 | `F4_response_counts.pdf` |
 | Fig. S1 | `FS1_OutcomeTable_L0.pdf`, `FS1_OutcomeTable_L6.pdf` |
 | Fig. S2 | `FS2_JSD.pdf` |
 | Fig. S3 | `FS3_cumulative.pdf` |
-| Fig. S4 | `FS4_response_counts.pdf` |
+| Fig. S4 | `FS4_rho_sensitivity.pdf`, `FS4_rho_sensitivity.csv`, `FS4_rho_summary.csv`, `FS4_rho_paired_comparisons.csv` |
+| Fig. S5 | `FS5A_rule_sensitivity.pdf`, `FS5A_rule_sensitivity.csv`, `FS5B_rule_outcome_tables.pdf`, `FS5B_rule_outcome_tables.csv`, `FS5_rule_paired_comparisons.csv` |
 | Tables 1, 2, and SI table bodies | `table_bodies.txt` |
 | Tables S1-S3 | `theory_audit_*.csv` |
 | Table S4 | `token_costs.csv` |
 | Table S5 | `matched_abstention_gaps.csv` |
+| Table S6 | `TableS6_ideal_list_extent.csv` |
 | Assumption 1 audit | `support_containment.csv` |
 | Numbers quoted in the text | `headline_report.json` |
 | Grader agreement | `grader_agreement.csv` |

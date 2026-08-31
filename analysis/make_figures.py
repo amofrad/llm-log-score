@@ -3,7 +3,7 @@
 Outputs, written to results/figures/ with the CSV data corresponding to each figure:
 F2A/F2B_Frontier.pdf (Fig. 2), F3_OutcomeTable_L3.pdf (Fig. 3),
 FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
-FS3_cumulative.pdf (Fig. S3), and FS4_response_counts.pdf (Fig. S4).
+FS3_cumulative.pdf (Fig. S3), and F4_response_counts.pdf (Fig. 4).
 
 Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
@@ -521,7 +521,7 @@ def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     )
 
 
-# Fig. S4: distinct response entries per question, by method
+# Fig. 4: distinct response entries per question, by method
 def _json_distribution_items(raw) -> list[dict]:
     if raw is None:
         return []
@@ -587,7 +587,7 @@ def _penalty_distribution_items(row: pd.Series) -> list[dict]:
 
 
 def fig_response_counts(paired):
-    print("== Fig. S4: responses per question ==")
+    print("== Fig. 4: responses per question ==")
     fig, axes = model_panel_subplots(height=4.8, sharey=True)
     count_rows = []
     count_data = {}
@@ -667,6 +667,14 @@ def fig_response_counts(paired):
                 linewidth=linewidth,
                 zorder=3,
             )
+        ax.text(0.78, 0.965, "mean", transform=ax.transAxes,
+                ha="left", va="top", fontsize=10.5, color="#111827")
+        for idx, (method, penalty, counts) in enumerate(series):
+            mean_label = "log" if method == "log" else penalty_label(penalty)
+            ax.text(0.78, 0.965 - 0.068 * (idx + 1),
+                    f"{mean_label}: {np.mean(counts):.1f}",
+                    transform=ax.transAxes, ha="left", va="top",
+                    fontsize=10.5, color="#111827")
         ax.set_title(
             RUNS[key]["label"], fontsize=16, color="#111827"
         ).set_path_effects([withStroke(linewidth=0.5, foreground="#111827")])
@@ -709,7 +717,7 @@ def fig_response_counts(paired):
     ]
     legend_handles.append(Patch(facecolor="#ffffff", edgecolor="#111827",
                                 label="log report (model color)"))
-    pd.DataFrame(count_rows).to_csv(OUT / "FS4_response_counts.csv", index=False)
+    pd.DataFrame(count_rows).to_csv(OUT / "F4_response_counts.csv", index=False)
     fig.tight_layout()
     fig.legend(
         handles=legend_handles,
@@ -719,10 +727,10 @@ def fig_response_counts(paired):
         frameon=False,
         fontsize=17,
     )
-    savefig(fig, "FS4_response_counts")
+    savefig(fig, "F4_response_counts")
 
 
-# Fig. S3: running outcome rates
+# Fig. S3: cumulative mean display-content frequencies
 def bootstrap_cumulative_rate_bands(
     halluc: np.ndarray,
     acc: np.ndarray,
@@ -813,12 +821,11 @@ def _penalty_three_way_arrays(dpen: pd.DataFrame) -> tuple[np.ndarray, np.ndarra
 
 
 def cumulative_rates_for_key(paired, key: str) -> pd.DataFrame:
-    """Cumulative three-way outcome rates.
+    """Cumulative rates for the three display-content categories.
 
-    Log reports are scored as top-p sets: truth in the prefix is accuracy, an
-    IDK-only prefix is abstention, any other truth-missing prefix is
-    hallucination. Penalty prompts use their empirical sample partition into
-    correct, incorrect, and abstain/not-attempted.
+    For a log report, the top-p prefix is truth-containing, no-concrete-answer,
+    or a concrete response without the truth. Penalty-prompt samples map to the same categories
+    through correct, abstain/not-attempted, and incorrect, respectively.
     """
     specs = [
         (
@@ -856,7 +863,7 @@ def cumulative_rates_for_key(paired, key: str) -> pd.DataFrame:
 
 
 def fig_cumulative_rates(paired) -> pd.DataFrame:
-    print("== Fig. S3: cumulative three-way top-p outcome rates ==")
+    print("== Fig. S3: cumulative mean display-content frequencies ==")
     rows = pd.concat(
         [cumulative_rates_for_key(paired, key) for key in ACTIVE_MODEL_ORDER],
         ignore_index=True,
@@ -865,9 +872,9 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
 
     fig, axes = plt.subplots(1, 3, figsize=(12.9, 4.65), sharex=False)
     panels = [
-        ("accuracy_rate", "accuracy"),
-        ("hallucination_rate", "hallucination"),
-        ("abstention_rate", "abstention"),
+        ("accuracy_rate", "truth-containing response"),
+        ("hallucination_rate", "concrete response, truth absent"),
+        ("abstention_rate", "no concrete answer"),
     ]
     band_seed = 15000
     method_specs_by_model = {}
@@ -927,7 +934,7 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
                     alpha=alpha,
                 )
         ax.set_xlabel("questions", fontsize=14)
-        ax.set_ylabel(ylab, fontsize=14)
+        ax.set_ylabel(ylab, fontsize=12)
         ax.set_ylim(-0.02, 1.02)
         ax.grid(alpha=0.18, lw=0.6)
         ax.tick_params(axis="both", labelsize=10.5)
@@ -978,7 +985,8 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
 # Fig. 3 / Fig. S1: penalty-vs-log outcome tables
 OUTCOME_KEYS = ["abstain", "correct", "incorrect"]
 PENALTY_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
-LOG_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
+# Column display order is mirrored so agreement runs bottom-left to top-right.
+LOG_OUTCOME_LABELS = ["incorrect", "correct", "abstain"]
 
 
 def _parse_final_text_response(text: str) -> str | None:
@@ -1155,7 +1163,7 @@ def _plot_outcome_tables(
     norm = Normalize(vmin=0, vmax=vmax)
     for ax, key in zip(axes, model_keys):
         mat = matrices[key]
-        arr = mat.to_numpy(dtype=float)
+        arr = mat[LOG_OUTCOME_LABELS].to_numpy(dtype=float)
         base_color = MODEL_COLORS.get(key, "#1a73e8")
         cmap = _model_question_cmap(key, base_color)
         ax.imshow(arr, cmap=cmap, norm=norm)

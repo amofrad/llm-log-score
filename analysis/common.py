@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import math
 import os
 import random
 from functools import lru_cache
@@ -135,9 +136,12 @@ def parse_candidates(rec: dict) -> list[dict]:
     return out
 
 
-def load_run(run_dir_name: str) -> pd.DataFrame:
+def load_run(
+    run_dir_name: str, *, results_dir: Path | None = None
+) -> pd.DataFrame:
     """Load one run directory into a tidy per-question DataFrame."""
-    path = OUTPUTS_DIR / run_dir_name / "simpleqa_topp_results.jsonl"
+    tree = Path(results_dir) if results_dir is not None else OUTPUTS_DIR
+    path = tree / run_dir_name / "simpleqa_topp_results.jsonl"
     records = load_jsonl(path)
     rows = []
     for rec in records:
@@ -184,11 +188,26 @@ def load_run(run_dir_name: str) -> pd.DataFrame:
                 "imported_from": rec.get("imported_from"),
                 "log_idk_rule": rec.get("log_idk_rule"),
                 "log_idk_rho": _float(rec.get("log_idk_rho")),
+                "log_prompt_variant": rec.get("log_prompt_variant"),
+                "simpleqa_top_p": _float(rec.get("simpleqa_top_p")),
             }
         )
     df = pd.DataFrame(rows)
     df["run_dir"] = run_dir_name
     return df
+
+
+def wilson_interval(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    """Wilson confidence interval for a binomial proportion."""
+    if n == 0:
+        return (np.nan, np.nan)
+    phat = k / n
+    denom = 1 + z * z / n
+    center = (phat + z * z / (2 * n)) / denom
+    half = z * math.sqrt(
+        phat * (1 - phat) / n + z * z / (4 * n * n)
+    ) / denom
+    return (center - half, center + half)
 
 
 def _float(x):
@@ -236,6 +255,48 @@ def top_p_set(cands: list[dict], p: float) -> TopPSet:
     return s
 
 
+REPORT_METRICS = (
+    "list_size",
+    "idk_mass",
+    "top_concrete_probability",
+    "truth_in_list",
+    "coverage",
+    "coverage_or_idk",
+    "incorrect",
+)
+
+
+def report_metrics(df: pd.DataFrame, p: float = 0.9) -> pd.DataFrame:
+    """Compute the report summaries used by the sensitivity analyses."""
+    rows = []
+    for _, record in df.iterrows():
+        candidates = record["candidates"]
+        concrete = [
+            candidate
+            for candidate in candidates
+            if candidate["grade"] != "not_attempted"
+        ]
+        prefix = top_p_set(candidates, p)
+        rows.append(
+            {
+                "question_id": record["question_id"],
+                "list_size": len(concrete),
+                "idk_mass": record["log_idk_mass"],
+                "top_concrete_probability": max(
+                    (candidate["probability"] for candidate in concrete),
+                    default=np.nan,
+                ),
+                "truth_in_list": any(
+                    candidate["grade"] == "correct" for candidate in candidates
+                ),
+                "coverage": prefix.covers,
+                "coverage_or_idk": prefix.covers or prefix.has_idk,
+                "incorrect": not prefix.covers and not prefix.has_idk,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def posthoc_decision(cands: list[dict], t: float) -> str:
     """Offline penalty-rubric decision on the elicited distribution.
 
@@ -277,5 +338,3 @@ def frontier(df: pd.DataFrame, thresholds: np.ndarray) -> pd.DataFrame:
             }
         )
     return pd.DataFrame(rows)
-
-

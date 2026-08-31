@@ -1,0 +1,6 @@
+scoring_guidance,n_questions,mean_list_size,single_candidate_rate,concentrated_report_rate,reports_including_idk_rate,mean_idk_mass,mean_top_concrete_probability,mean_reported_mass,truth_in_list_rate,coverage_rate,coverage_or_idk_rate,incorrect_rate
+residual-log score,1000,1.648,0.414,0.013,0.947,0.21864,0.6733615221987315,0.9987999999999999,0.682,0.675,0.943,0.057
+quadratic score,1000,1.581,0.439,0.042,0.902,0.2227,0.7001604278074866,0.9999,0.672,0.667,0.931,0.069
+Brier score,1000,1.486,0.458,0.069,0.842,0.20634000000000002,0.7412869274010286,0.99975,0.672,0.668,0.904,0.096
+linear score,1000,1.662,0.403,0.046,0.861,0.18615,0.713953488372093,0.9995499999999999,0.678,0.67,0.895,0.105
+no scoring rule,1000,1.596,0.443,0.095,0.732,0.13728000000000004,0.7799584631360333,0.9985,0.679,0.673,0.865,0.135
