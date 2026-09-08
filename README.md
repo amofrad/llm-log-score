@@ -2,8 +2,7 @@
 
 Code and results for:
 
-> *Log-Score Elicitation of Uncertainty
-in Language Models*
+> *Beyond a Single Output: A Proper Scoring Rule for Language-Model Probability Reports*
 >
 >  Ali Kaazempur-Mofrad and Xiaowu Dai
 
