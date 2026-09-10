@@ -1,8 +1,8 @@
-# Log-Score Elicitation of Uncertainty in Language Models
+# Beyond a Single Answer: Proper Scoring of LLM Uncertainty
 
 Code and results for:
 
-> *Beyond a Single Output: A Proper Scoring Rule for Language-Model Probability Reports*
+> *Beyond a Single Answer: Proper Scoring of LLM Uncertainty*
 >
 >  Ali Kaazempur-Mofrad and Xiaowu Dai
 
