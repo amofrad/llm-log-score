@@ -872,9 +872,9 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
 
     fig, axes = plt.subplots(1, 3, figsize=(12.9, 4.65), sharex=False)
     panels = [
-        ("accuracy_rate", "truth-containing response"),
-        ("hallucination_rate", "concrete response, truth absent"),
-        ("abstention_rate", "no concrete answer"),
+        ("accuracy_rate", "correct answer present"),
+        ("hallucination_rate", "only incorrect candidate answers"),
+        ("abstention_rate", "no candidate answer"),
     ]
     band_seed = 15000
     method_specs_by_model = {}
@@ -945,7 +945,7 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
     ]
     method_handles = [
         Line2D([0], [0], color="black", lw=2.4, ls="-",
-               label="log top-p report"),
+               label=f"Log top-{NOMINAL_P:g} set"),
     ]
     for penalty in sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]}):
         method_handles.append(
@@ -1237,7 +1237,7 @@ def _plot_outcome_tables(
             ).set_path_effects(
                 [withStroke(linewidth=0.2, foreground="#4b5563")]
             )
-        ax.set_xlabel("log top-p report", labelpad=14, fontsize=14)
+        ax.set_xlabel(f"Log top-{NOMINAL_P:g} set", labelpad=14, fontsize=14)
         ax.set_title(
             RUNS[key]["label"],
             fontsize=16,

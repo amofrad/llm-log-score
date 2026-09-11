@@ -145,7 +145,7 @@ def make_figure(metrics: dict[float, pd.DataFrame], out_dir: Path) -> None:
             label=f"$\\rho={rho:g}$",
         )
     axes[0].set_xticks(x)
-    axes[0].set_xlabel("concrete candidates per question")
+    axes[0].set_xlabel("candidate answers per question")
     axes[0].set_ylabel("fraction of questions")
     axes[0].set_title("List size")
     axes[0].legend(frameon=False)
@@ -160,9 +160,9 @@ def make_figure(metrics: dict[float, pd.DataFrame], out_dir: Path) -> None:
             color=COLORS[rho],
             label=f"$\\rho={rho:g}$",
         )
-    axes[1].set_xlabel("stated IDK mass")
+    axes[1].set_xlabel("reported IDK probability")
     axes[1].set_ylabel("cumulative fraction of questions")
-    axes[1].set_title("Residual/IDK mass")
+    axes[1].set_title("IDK probability")
     axes[1].set_xlim(0, 1)
     axes[1].legend(frameon=False, loc="lower right")
 

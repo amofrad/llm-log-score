@@ -51,7 +51,7 @@ RULES = (
         "gemini35flash_log",
         "residual",
         "#9334e6",
-        "Residual log\n($\\rho=0.5$)",
+        "Log\n($\\rho=0.5$)",
     ),
     RuleSpec(
         "quadratic",
@@ -83,7 +83,7 @@ RULES = (
         "gemini35flash_unscored",
         "unscored",
         "#5f6368",
-        "No scoring\nrule",
+        "Unspecified",
     ),
 )
 
@@ -234,7 +234,7 @@ def make_summary_figure(
                     "#9334e6",
                 ),
                 (
-                    "mean top concrete probability",
+                    "mean top-candidate probability",
                     [
                         mean_with_interval(metrics[spec.slug]["top_concrete_probability"])
                         for spec in RULES
@@ -242,7 +242,7 @@ def make_summary_figure(
                     "#e8710a",
                 ),
                 (
-                    "mean stated IDK mass",
+                    "mean reported IDK probability",
                     [
                         mean_with_interval(metrics[spec.slug]["idk_mass"])
                         for spec in RULES
@@ -264,7 +264,7 @@ def make_summary_figure(
                     "#188038",
                 ),
                 (
-                    "truth in list",
+                    "full-list coverage",
                     [
                         rate_with_interval(metrics[spec.slug]["truth_in_list"])
                         for spec in RULES
@@ -304,7 +304,7 @@ def make_summary_figure(
         ax.set_title(title)
         ax.grid(axis="y", alpha=0.18, lw=0.6)
         ax.legend(frameon=False, fontsize=8.5, loc="center left")
-    axes[0].set_ylabel("rate or mean stated mass")
+    axes[0].set_ylabel("Fraction or mean reported probability")
 
     fig.tight_layout()
     target = out_dir / "FS5A_rule_sensitivity.pdf"
@@ -419,10 +419,15 @@ def make_outcome_figure(reports: dict[str, pd.DataFrame], out_dir: Path) -> None
                 ],
                 fontsize=10,
             )
-            ax.set_ylabel("residual-log outcome", fontsize=11)
+            ax.set_ylabel(f"Log top-{NOMINAL_COVERAGE:g} set outcome", fontsize=11)
         else:
             ax.set_yticklabels([])
-        ax.set_title(spec.label, fontsize=12)
+        ax.set_title(
+            {"no_rule": "unspecified rule", "linear": "linear score (improper)"}.get(
+                spec.slug, spec.label
+            ),
+            fontsize=12,
+        )
 
     fig.tight_layout()
     target = out_dir / "FS5B_rule_outcome_tables.pdf"
