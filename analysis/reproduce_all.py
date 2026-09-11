@@ -1,13 +1,14 @@
-"""Reproduce every figure and table in the paper (no API access required).
+"""Reproduce computed figures, tables, and audits (no API access required).
 
     python analysis/reproduce_all.py                  # primary (OpenAI-graded)
     python analysis/reproduce_all.py --grader gemini  # second-grader replication
 
 Writes into results/figures (or results/figures_gemini for the second
-grader): all figure PDFs and their CSV side-outputs, the audit CSVs behind
-Tables S1-S3, the matched-abstention gaps behind Table S5, the fixed-report
-calculation behind Table S6, the support-containment audit, the LaTeX table
+grader): computed figure PDFs and their CSV side-outputs, the audit CSVs behind
+Tables S1-S3, the matched-abstention gaps behind Table S4, the fixed-report
+calculation behind Table S6, observed answer overlap, the LaTeX table
 bodies, the values quoted in the text, and the grader-agreement audit.
+Fig. 1 is supplied separately as a schematic.
 """
 from __future__ import annotations
 

@@ -16,10 +16,11 @@ pip install -r requirements.txt
 python analysis/reproduce_all.py
 ```
 
-This rebuilds every figure and table into `results/figures/` from
-`results/graded_by_openai/`. Use `--grader gemini` to reproduce the main
-analyses under the second grader. The sensitivity analyses use the primary
-grader only. The bootstrap is seeded, so regenerated numbers match exactly.
+This rebuilds the computed figures, tables, and audits into `results/figures/`
+from `results/graded_by_openai/`; Fig. 1 is supplied as a schematic. Use
+`--grader gemini` to reproduce the main analyses under the second grader.
+The sensitivity analyses use the primary grader only. Bootstrap resampling
+uses fixed seeds for reproducibility.
 
 ## Repository structure
 
@@ -37,7 +38,7 @@ llm-log-score/
 │   ├── make_tables.py
 │   ├── rho_sensitivity.py   Fig. S4 and Table S6
 │   ├── rule_sensitivity.py  Fig. S5
-│   └── reproduce_all.py     rebuild every paper artifact
+│   └── reproduce_all.py     rebuild computed figures, tables, and audits
 ├── results/
 │   ├── graded_by_openai/    primary grading, including sensitivity runs
 │   ├── graded_by_gemini/    second grader
@@ -60,16 +61,17 @@ questions appended after.
 
 ## Pipeline
 
-1. **Run.** `runner/run.py simpleqa` collects the uncertainty-report arm and
-   the penalty arms (L = 0, 3, 6; 50 samples per question, temperature 0 with
-   per-sample seeds) on the 4,326 SimpleQA questions; `consistency` collects
-   repeated reports (50 replicates on 1,000 questions); `batch` is a batch-API
-   variant. The four models, all accessed through GCP Vertex AI:
+1. **Run.** `runner/run.py simpleqa` collects the probability-report condition
+   and the answer-or-abstain conditions (L = 0, 3, 6; 50 samples per question,
+   temperature 0 with per-sample seeds) on the 4,326 SimpleQA questions;
+   `consistency` collects repeated reports (50 replicates on 1,000 questions);
+   `batch` is a batch-API variant. The four models, all accessed through GCP Vertex AI:
    `google/gemini-3.5-flash`, `claude-sonnet-4-6`,
    `deepseek-ai/deepseek-v3.2-maas`, `qwen/qwen3-235b-a22b-instruct-2507-maas`.
    Needs gcloud credentials and `--gcp-project`/`--gcp-location`. Responses
-   are cached locally (SQLite), so interrupted runs resume. The full study is
-   about 2.6M answer-model calls.
+   are cached locally (SQLite), so interrupted runs resume. The main experiment
+   uses about 2.6M answer-model calls; repeated-report and sensitivity experiments
+   add further calls.
 
 2. **Grade.** `grading/grade.py --grader openai --runs <tree> --out <tree>`
    (or `--grader gemini`)
@@ -90,20 +92,30 @@ questions appended after.
    `grade.py` under a custom path), set the environment variable
    `GRADED_RESULTS_DIR` to that directory.
 
+   Before thresholding and set construction, answers graded correct are merged
+   into one entry, non-answers are combined with IDK, and remaining answer
+   strings are canonicalized using fixed rules. This processing uses the
+   benchmark grades. Threshold decisions and top-*p* sets use retained
+   probabilities without renormalization or assigning unallocated probability
+   to IDK. Repeated-report divergence and the score-optimal list analysis
+   normalize the retained probabilities.
+
 ## Graded results
 
 Each run directory holds gzip-compressed JSONL, one record per question
 (loaders read `.jsonl` and `.jsonl.gz` interchangeably):
 
-- `simpleqa_topp_results.jsonl` -- the uncertainty-report arm:
+- `simpleqa_topp_results.jsonl` -- the probability-report condition:
   `log_candidates_json` (reported candidates with `answer`, `probability`,
-  `points`, `grade`), stated IDK mass, token counts, and the rule parameters
-  (`log_idk_rule`, `log_idk_rho`, `simpleqa_top_p`). The main runs use the
-  residual-log rule with `log_idk_rho = 0.5`; the sensitivity records identify
-  their corresponding discount or scoring statement.
-- `simpleqa_penalty_results.jsonl` -- one penalty arm: `penalty_value` (L),
-  per-question sample counts, and `penalty_distribution_json` (the graded,
-  canonicalized answer distribution).
+  `points`, `grade`), reported IDK probability, token counts, and the rule
+  parameters (`log_idk_rule`, `log_idk_rho`, `simpleqa_top_p`). The main runs use
+  the logarithmic scoring rule with an additional penalty for an unlisted correct
+  answer. The multiplier `log_idk_rho` (ρ) is 0.5, and the additional penalty
+  is −log ρ; the sensitivity records identify their corresponding multiplier
+  or scoring statement.
+- `simpleqa_penalty_results.jsonl` -- one answer-or-abstain condition:
+  `penalty_value` (L), per-question sample counts, and
+  `penalty_distribution_json` (the graded, canonicalized answer distribution).
 - `simpleqa_log_consistency_results.jsonl` -- repeated reports, one record
   per (question, replicate).
 
@@ -121,13 +133,15 @@ runs used in Figs. S4-S5 and Table S6:
 
 | Analysis | Directory | Runs |
 |---|---|---|
-| Residual discount | `rho_sensitivity/` | `gemini35flash_rho10`, `gemini35flash_rho50`, `gemini35flash_rho90` |
+| Sensitivity to ρ | `rho_sensitivity/` | `gemini35flash_rho10`, `gemini35flash_rho50`, `gemini35flash_rho90` |
 | Scoring guidance | `rule_sensitivity/` | `gemini35flash_log`, `gemini35flash_quadratic`, `gemini35flash_brier`, `gemini35flash_linear`, `gemini35flash_unscored` |
 
-The three residual-discount runs use the standard uncertainty-report prompt at
-ρ = 0.1, 0.5, and 0.9. The five scoring-guidance runs use the same
-questions, reporting instructions, and return format and differ only in the
-stated scoring rule.
+The three ρ-sensitivity runs use the main probability-report template at
+ρ = 0.1, 0.5, and 0.9; the ρ = 0.5 reports were elicited separately from the
+main experiment. The scoring-guidance comparison uses a separate template
+with optional IDK and no 90-point minimum, making its logarithmic condition
+a separate baseline. All five conditions use the same questions and JSON
+return format; four specify a scoring rule, and one provides no scoring rule.
 
 ## Figures and tables
 
@@ -150,10 +164,10 @@ audits are produced by `make_tables.py` and `rho_sensitivity.py`;
 | Fig. S5 | `FS5A_rule_sensitivity.pdf`, `FS5A_rule_sensitivity.csv`, `FS5B_rule_outcome_tables.pdf`, `FS5B_rule_outcome_tables.csv`, `FS5_rule_paired_comparisons.csv` |
 | Tables 1, 2, and SI table bodies | `table_bodies.txt` |
 | Tables S1-S3 | `theory_audit_*.csv` |
-| Table S4 | `token_costs.csv` |
-| Table S5 | `matched_abstention_gaps.csv` |
+| Table S4 | `matched_abstention_gaps.csv` |
+| Table S5 | `token_costs.csv` |
 | Table S6 | `TableS6_ideal_list_extent.csv` |
-| Assumption 1 audit | `support_containment.csv` |
+| Observed answer overlap | `support_containment.csv` |
 | Numbers quoted in the text | `headline_report.json` |
 | Grader agreement | `grader_agreement.csv` |
 

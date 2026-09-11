@@ -3,14 +3,14 @@
 Steps (run all by default, or select with --steps):
   audits       Tables S1/S2 reliability bins and the Table S3 realized
                log-loss audit (theory_audit_*.csv).
-  gaps         Table S5 matched-abstention gaps with the paired
+  gaps         Table S4 matched-abstention gaps with the paired
                question-level bootstrap (matched_abstention_gaps.csv).
-  containment  The Assumption-1 support-containment audit
+  containment  Observed answer overlap
                (support_containment.csv).
-  tables       Tables 1, 2, S1, S2, S3, S5 (table_bodies.txt).
+  tables       Tables 1, 2, S1, S2, S3, S4 (table_bodies.txt).
   headline     Machine-readable headline numbers quoted in the text
                (headline_report.json).
-  tokens       Average answer-model token cost per question, Table S4
+  tokens       Average answer-model token cost per question, Table S5
                (token_costs.csv).
   agreement    Grader-agreement audit between the OpenAI-graded and
                Gemini-graded trees (grader_agreement.csv); this step reads
@@ -54,7 +54,7 @@ PENALTIES = [0.0, 3.0, 6.0]
 TOP_BINS = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 0.9), (0.9, 1.0001)]
 IDK_BINS = [(0.0, 0.05), (0.05, 0.2), (0.2, 0.4), (0.4, 0.7), (0.7, 1.0001)]
 
-# Matched-gap bootstrap configuration (Table S5).
+# Matched-gap bootstrap configuration (Table S4).
 GAP_THRESHOLDS = np.linspace(0, 0.95, 96)  # same grid as the frontier figure
 N_BOOT = 2000
 SEED = 20260812
@@ -186,7 +186,7 @@ def audits(out_dir: Path) -> None:
     print(dy_tab.round(4).to_string(index=False))
 
 
-# Matched-abstention gaps with paired bootstrap (Table S5)
+# Matched-abstention gaps with paired bootstrap (Table S4)
 def _paired_inputs(key: str, penalty: float):
     dlog = load_run(common.RUNS[key]["run"]).set_index("question_id", drop=False)
     dpen = mf.load_penalty_arm(key, penalty)
@@ -259,7 +259,7 @@ def matched_gaps(out_dir: Path) -> None:
     print("wrote", out_dir / "matched_abstention_gaps.csv")
 
 
-# Support-containment audit (Assumption 1)
+# Empirical diagnostic: overlap of observed answers
 def _log_report_keys(cands: list[dict]) -> tuple[set, bool]:
     keys = set()
     has_correct = False
@@ -460,9 +460,9 @@ def table_bodies(out_dir: Path) -> None:
                                    for _, r in dy.iterrows()
                                    if r.model == label and r.group == "penalty-incorrect"}))
 
-    # Table S5
+    # Table S4
     g = pd.read_csv(out_dir / "matched_abstention_gaps.csv")
-    emit("\n==== TABLE S5 BODY ====")
+    emit("\n==== TABLE S4 BODY ====")
     for label, _key, _run, _cons in MODELS:
         rows = g[g.model == label]
         emit(f"\\multirow{{3}}{{*}}{{\\modelname{{{label}}}}}")
@@ -518,7 +518,7 @@ def headline(out_dir: Path) -> None:
               f"unflagged={s['unflagged_miss']:.3f}")
 
 
-# Token costs (Table S4)
+# Token costs (Table S5)
 def token_costs(out_dir: Path) -> None:
     """Average answer-model token cost per question (input plus output).
 
