@@ -58,8 +58,32 @@ class PaperArtifactsTests(unittest.TestCase):
         self.assertEqual(len(tables),13)
         for table in tables:
             self.assertTrue((FIGURES/'tables'/table['data']).is_file())
-            tex=(FIGURES/'tables'/table['latex']).read_text()
-            self.assertNotIn('\n@ROWS@\n',tex)
+            self.assertNotIn('latex', table)
+            self.assertFalse(pd.read_csv(FIGURES/'tables'/table['data']).empty)
+        self.assertEqual(list(FIGURES.rglob('*.tex')), [])
+
+    def test_numbered_exports_need_only_csv_inputs(self):
+        import json
+        import shutil
+        import sys
+        import tempfile
+        sys.path.insert(0, str(FIGURES.parents[1]/'analysis'))
+        from paper_tables import SOURCES, export
+
+        for primary, count in [(True, 13), (False, 12)]:
+            with self.subTest(primary=primary), tempfile.TemporaryDirectory() as directory:
+                source = Path(directory)
+                for stem, filename in SOURCES.items():
+                    if stem == 'TableS4_IdealListExtent' and not primary:
+                        continue
+                    shutil.copy2(FIGURES/filename, source/filename)
+                export(source, primary=primary)
+                manifest = json.loads((source/'tables/manifest.json').read_text())
+                self.assertEqual(len(manifest), count)
+                self.assertEqual(list(source.rglob('*.tex')), [])
+                for table in manifest:
+                    self.assertEqual((source/'tables'/table['data']).read_bytes(),
+                                     (FIGURES/'tables'/table['data']).read_bytes())
 
 
 if __name__ == '__main__':

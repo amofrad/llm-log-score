@@ -91,19 +91,6 @@ def main(argv=None):
     rel.to_csv(args.outdir / "matched_relative_accuracy.csv",index=False)
     tab.to_csv(args.outdir / "set_outcome_intervals.csv",index=False)
 
-    lines = ["% Table S2: pointwise 95% intervals; percentages within each EPP row."]
-    for mi, key in enumerate(MODEL_ORDER):
-        if mi:
-            lines.append(r"\midrule")
-        for ri, row in enumerate(row_names):
-            values = []
-            for col in col_names:
-                r = tab[(tab.model == key) & (tab.epp_outcome == row) & (tab.set_outcome == col)].iloc[0]
-                digits = 3 if 0 < r.row_percent < .01 else 2 if r.row_percent < .1 else 1
-                values.append(f"${r.row_percent:.{digits}f}$ $[{r.ci_low:.{digits}f}, {r.ci_high:.{digits}f}]$")
-            label = RUNS[key]["label"] if ri == 0 else ""
-            lines.append(label + " & " + row.title() + " & " + " & ".join(values) + r"\\")
-    (args.outdir / "TableS2_SetOutcomeIntervals_rows.tex").write_text("\n".join(lines) + "\n")
     return rel
 
 

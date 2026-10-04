@@ -74,7 +74,7 @@ llm-log-score/
 │   ├── graded_by_openai/    primary grading, including sensitivity runs
 │   ├── graded_by_gemini/    second grader
 │   └── figures/             the paper's figures, numerical data, and audits
-│       └── tables/          Tables 1–2 and S1–S11 as CSV and LaTeX
+│       └── tables/          Tables 1–2 and S1–S11 as CSV
 ├── README.md
 └── requirements.txt
 ```
@@ -241,8 +241,7 @@ an isotonic development grid with independent certification. A fixed grid on
 the same smaller certification sample separates the grid effect from sample
 size. All methods use a common held-out test half. The manuscript uses the
 fixed-grid method; the learned-grid comparison is retained as a repository-only
-analysis, with formatted results in `results/figures/RiskControlGridComparison.csv`
-and `RiskControlGridComparison_rows.tex`.
+analysis in `results/figures/RiskControlGridComparison.csv`.
 
 ```bash
 python analysis/alpha_risk_control.py
@@ -263,18 +262,18 @@ and splits; the [theory note](analysis/alpha_risk_control_theory.md) gives the
 guarantee. Detailed outputs and the
 [results report](results/exploratory/alpha_risk_control_report.md) are retained
 in `results/exploratory/alpha_risk_control_{openai,gemini}/` and its parent.
-`make_alpha_paper_tables.py` formats the saved results as SI Table S9 in
+`make_alpha_paper_tables.py` exports the saved results as SI Table S9 in
 `results/figures/`; add `--recompute` to rebuild the analysis for both graders.
 It also retains the full-test summaries across 100 additional 50–50 partitions
-as `RiskControlFullTestPartitions.csv` and `RiskControlFullTestPartitions_rows.tex`,
+as `RiskControlFullTestPartitions.csv`,
 alongside the repository-only grid comparison.
-`python analysis/make_split_sensitivity_table.py` formats Table S10 from the
+`python analysis/make_split_sensitivity_table.py` exports Table S10 from the
 saved 50–50 versus 70–30 analysis in
 `results/exploratory/threshold_split_sensitivity/`, evaluating both rules on
 the common 1,298 test questions in each partition. Table S10 reports qualifying
 partitions, mean answer rates, and median observed test errors with 25th–75th
 percentiles. Error summaries exclude partitions with no returned test answers.
-Both formatting commands display the primary grader by default; `--grader gemini`
+Both export commands select the primary grader by default; `--grader gemini`
 selects the second grader. Their partition-summary CSVs retain both graders.
 The default reproduction command includes both analyses, Tables S9–S10,
 and the repository-only comparisons.
@@ -352,12 +351,12 @@ without IDK.
 
 ### Tables
 
-Every table has a numbered CSV and LaTeX tabular snippet under
+Every table has a numbered CSV under
 [`results/figures/tables/`](results/figures/tables/). CSVs retain analysis
-precision and supporting fields; the LaTeX snippets reproduce the displayed
-layout, row selection, and rounding. The snippets use the manuscript's macros
-and packages. The descriptive tables have versioned templates; numerical
-rows are regenerated from the analyses.
+precision and supporting fields. Numerical rows are regenerated from the
+analyses; Table 1 also includes rounded display values. Table 2 uses a
+versioned comparison CSV in `analysis/table_data/`, and Table S11 uses the
+shared model configuration.
 
 | Paper | File stem in `results/figures/tables/` | Contents |
 |---|---|---|
@@ -376,7 +375,7 @@ rows are regenerated from the analyses.
 | Table S11 | `TableS11_Models` | Model names and API identifiers |
 
 `analysis/paper_tables.py` exports these tables from computed results.
-`table_bodies.txt` also retains an additional set-source comparison that is
+`set_source_comparison.csv` also retains an additional set-source comparison that is
 not a manuscript table. Table 1 uses largest-remainder rounding within each
 method and L so its displayed outcome proportions total 1.000. Other tables
 retain their specified units and precision.

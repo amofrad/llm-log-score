@@ -10,8 +10,8 @@ Tables S1, S6, and S7, the matched-abstention gaps behind Table S3, the fixed-re
 calculation behind Table S4, token costs (Table S5), threshold calibration
 (Fig. 5 and Table S8),
 error-controlled decisions on raw reports (Tables S9--S10),
-observed answer overlap, the LaTeX table
-bodies, the values quoted in the text, and the grader-agreement audit.
+observed answer overlap, numbered table CSVs,
+the values quoted in the text, and the grader-agreement audit.
 Fig. 1 is supplied separately as a schematic.
 """
 from __future__ import annotations

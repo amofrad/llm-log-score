@@ -7,8 +7,8 @@ Steps (run all by default, or select with --steps):
                question-level bootstrap (matched_abstention_gaps.csv).
   containment  Observed answer overlap
                (support_containment.csv).
-  tables       Table 1, SI table bodies, and an additional set-source
-               comparison retained for analysis (table_bodies.txt).
+  tables       Table 1 outcomes (Table1_DecisionOutcomes.csv) and an
+               additional set-source comparison (set_source_comparison.csv).
   headline     Machine-readable headline numbers quoted in the text
                (headline_report.json).
   tokens       Average answer-model token cost per question, Table S5
@@ -401,122 +401,51 @@ def _penalty_decision_rates(dpen):
             "halluc": float(inc.mean()), "acc": float(corr.mean())}
 
 
-def table_bodies(out_dir: Path) -> None:
-    lines = []
-
-    def emit(text=""):
-        lines.append(text)
-        print(text)
-
+def table_exports(out_dir: Path) -> None:
     logs = {label: load_run(run) for label, _key, run, _cons in MODELS}
     pens = {(label, L): mf.load_penalty_arm(key, float(L))
             for label, key, _run, _cons in MODELS for L in [0, 3, 6]}
 
-    # Table 1: methods side by side, with separate machine-readable results.
-    t1, decision_rows = [], []
-    split_labels = {"gemini35flash": ("Gemini", "3.5 Flash"),
-                    "sonnet46": ("Claude", "Sonnet 4.6"),
-                    "deepseekv32maas": ("DeepSeek", "V3.2")}
+    decision_rows = []
     for label, key, _run, _cons in MODELS:
         df = logs[label]
-        if t1:
-            t1.append(r"\midrule")
-        first, second = split_labels[key]
-        for i, L in enumerate([0, 3, 6]):
+        for L in [0, 3, 6]:
             dec = df["candidates"].map(lambda c, t=THRESH[L]: common.posthoc_decision(c, t))
             lg = {"abstain": (dec == "abstain").mean(), "halluc": (dec == "incorrect").mean(),
                   "acc": (dec == "correct").mean()}
             pn = _penalty_decision_rates(pens[(label, L)])
-            values = []
             for method, metrics in [("RBD", lg), ("EPP", pn)]:
                 displayed = _rounded_decision_outcomes(metrics)
-                values.extend(displayed)
                 decision_rows.append(dict(model=key, model_label=label, L=L, method=method,
                                           abstain=metrics["abstain"], incorrect=metrics["halluc"],
                                           correct=metrics["acc"], display_abstain=displayed[0],
                                           display_incorrect=displayed[1], display_correct=displayed[2]))
-            lead = (r"\multirow{3}{*}{\shortstack[l]{\modelname{" + first +
-                    r"}\\\modelname{" + second + "}}}") if i == 0 else ""
-            t1.append(lead + f" & ${L}$ & " + " & ".join(values) + r"\\")
-    emit("==== TABLE 1 BODY ====")
-    emit("\n".join(t1))
     pd.DataFrame(decision_rows).to_csv(out_dir / "Table1_DecisionOutcomes.csv", index=False)
-    (out_dir / "Table1_DecisionOutcomes_rows.tex").write_text("\n".join(t1) + "\n")
 
-    # Additional analysis: set-source comparison, no longer a manuscript table.
-    t2 = []
-    for label, _key, _run, _cons in MODELS:
-        df = logs[label]
+    # Additional analysis retained separately from the manuscript tables.
+    set_rows = []
+    for label, key, _run, _cons in MODELS:
         covers, has_idk = [], []
-        for cands in df["candidates"]:
-            s = top_p_set(cands, P)
-            covers.append(s.covers)
-            has_idk.append(s.has_idk)
+        for cands in logs[label]["candidates"]:
+            chosen = top_p_set(cands, P)
+            covers.append(chosen.covers)
+            has_idk.append(chosen.has_idk)
         covers = np.asarray(covers); has_idk = np.asarray(has_idk)
-        log_row = {"cov_idk": (covers | has_idk).mean(), "strict": covers.mean()}
-        distributions = [log_row] + [
-            _penalty_set_metrics(pens[(label, L)]) for L in [0, 3, 6]
+        report = {"cov_idk": (covers | has_idk).mean(), "strict": covers.mean()}
+        distributions = [("Probability report", None, report)] + [
+            ("EPP", L, _penalty_set_metrics(pens[(label, L)])) for L in [0, 3, 6]
         ]
-        t2.append(f"\\multicolumn{{5}}{{l}}{{\\modelname{{{label}}}}}\\\\")
-        rounded = [_rounded_set_outcomes(m) for m in distributions]
-        for index, outcome in enumerate([
-            "Coverage", "Miscoverage with IDK", "Miscoverage without IDK",
-        ]):
-            t2.append(outcome + " & " + " & ".join(m[index] for m in rounded) + r"\\")
-        t2.append("\\midrule")
-    t2 = t2[:-1]
-    emit("\n==== ADDITIONAL SET-SOURCE COMPARISON (NOT A MANUSCRIPT TABLE) ====")
-    emit("\n".join(t2))
-
-    # Tables S6/S7 (from audit CSVs)
-    idk = pd.read_csv(out_dir / "theory_audit_residual_reliability.csv")
-    top = pd.read_csv(out_dir / "theory_audit_top_reliability.csv")
-    bins_idk = [(0.0, 0.05, "$[0,0.05)$"), (0.05, 0.2, "$[0.05,0.2)$"), (0.2, 0.4, "$[0.2,0.4)$"),
-                (0.4, 0.7, "$[0.4,0.7)$"), (0.7, 1.0, "$[0.7,1]$")]
-    bins_top = [(0.0, 0.25, "$[0,0.25)$"), (0.25, 0.5, "$[0.25,0.5)$"), (0.5, 0.75, "$[0.5,0.75)$"),
-                (0.75, 0.9, "$[0.75,0.9)$"), (0.9, 1.0, "$[0.9,1]$")]
-    for name, tab, bins in [("S6 (residual)", idk, bins_idk), ("S7 (top)", top, bins_top)]:
-        emit(f"\n==== TABLE {name} BODY ====")
-        for lo, hi, lab in bins:
-            cells = [lab]
-            for label, _key, _run, _cons in MODELS:
-                r = tab[(tab.model == label) & (np.isclose(tab.bin_lo, lo))]
-                if len(r) == 0:
-                    cells += ["--", "--", "--"]
-                else:
-                    r = r.iloc[0]
-                    cells += [f"{int(r['n'])}", f"{r['mean_stated']:.3f}", f"{r['empirical']:.3f}"]
-            emit("  & ".join(cells) + "\\\\")
-
-    # Table S1
-    dy = pd.read_csv(out_dir / "theory_audit_realized_log_loss.csv")
-    emit("\n==== TABLE S1 BODY ====")
-    for label, _key, _run, _cons in MODELS:
-        o = dy[(dy.model == label) & (dy.group == "overall")].iloc[0]
-        p_ = dy[(dy.model == label) & (dy.group == "penalty-incorrect")].iloc[0]
-        emit(f"\\modelname{{{label}}} & {o.u:.3f} & {o.bound:.3f} & {o.median_dy:.2f} & {o.mean_dy_finite:.2f} & {p_.u:.3f} & {p_.bound:.3f} & {p_.median_dy:.2f} & {p_.mean_dy_finite:.2f}\\\\")
-    emit("\nS1 4dp bounds: " + str({label: (round(r.u, 4), round(r.bound, 4))
-                                    for label, *_ in MODELS
-                                    for _, r in dy.iterrows()
-                                    if r.model == label and r.group == "overall"}))
-    emit("S1 4dp pen-inc: " + str({label: (round(r.u, 4), round(r.bound, 4))
-                                   for label, *_ in MODELS
-                                   for _, r in dy.iterrows()
-                                   if r.model == label and r.group == "penalty-incorrect"}))
-
-    # Table S3
-    g = pd.read_csv(out_dir / "matched_abstention_gaps.csv")
-    emit("\n==== TABLE S3 BODY ====")
-    for label, _key, _run, _cons in MODELS:
-        rows = g[g.model == label]
-        emit(f"\\multirow{{3}}{{*}}{{\\modelname{{{label}}}}}")
-        for _, r in rows.sort_values("L").iterrows():
-            gh = r.gap_hallucination * 100; gl = r.gap_hallucination_lo * 100; gu = r.gap_hallucination_hi * 100
-            ah = r.gap_accuracy * 100; al = r.gap_accuracy_lo * 100; au = r.gap_accuracy_hi * 100
-            emit(f" & {int(r.L)} & {r.pen_abstention:.3f} & ${gh:.2f}$ $[{gl:.2f}, {gu:.2f}]$ & ${ah:.2f}$ $[{al:.2f}, {au:.2f}]$\\\\")
-        emit("\\midrule")
-
-    (out_dir / "table_bodies.txt").write_text("\n".join(lines) + "\n")
+        for method, L, metrics in distributions:
+            displayed = _rounded_set_outcomes(metrics)
+            set_rows.append(dict(model=key, model_label=label, method=method, L=L,
+                                 coverage=metrics["strict"],
+                                 miscoverage_with_idk=metrics["cov_idk"]-metrics["strict"],
+                                 miscoverage_without_idk=1-metrics["cov_idk"],
+                                 display_coverage=displayed[0],
+                                 display_miscoverage_with_idk=displayed[1],
+                                 display_miscoverage_without_idk=displayed[2]))
+    pd.DataFrame(set_rows).to_csv(out_dir / "set_source_comparison.csv", index=False)
+    print("Wrote Table1_DecisionOutcomes.csv and set_source_comparison.csv")
 
 
 # Results and values quoted in the text
@@ -664,7 +593,7 @@ STEPS = {
     "audits": audits,
     "gaps": matched_gaps,
     "containment": support_containment,
-    "tables": table_bodies,
+    "tables": table_exports,
     "headline": headline,
     "tokens": token_costs,
     "agreement": grader_agreement,

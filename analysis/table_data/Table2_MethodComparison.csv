@@ -1,0 +1,6 @@
+aspect,RLCR,RBD
+Approach,Reinforcement learning to train the answer model,Prompting existing models without additional training
+Output,A prediction and its reported probability of correctness,List $S$ and probabilities $q$ across candidates and IDK
+Scoring objective,Correctness reward minus Brier loss for reported confidence,Logarithmic score with an omission penalty
+Incentives,Select the prediction most likely to be correct and report its correctness probability,"Report $q=\pi$ on fixed $S$. With beliefs and the finite candidate pool fixed, optimal list size stays the same or increases as $\rho$ decreases."
+Use,Select the prediction with highest confidence or weight votes by confidence across repeated samples,"Vary decision thresholds or display top-$p$ sets for inspecting alternatives and IDK, using the same report"

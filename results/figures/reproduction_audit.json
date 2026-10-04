@@ -171,8 +171,8 @@
     }
   ],
   "git_actions": "No staging, commits, or pushes.",
-  "artifact_consistency_tests_passed": 4,
-  "total_tests_passed": 44,
+  "artifact_consistency_tests_passed": 5,
+  "total_tests_passed": 45,
   "pdf_check": {
     "main_pages": 10,
     "unresolved_internal_links": [],
@@ -185,5 +185,14 @@
       "Shortened panel C axis to Relative gain (%)"
     ],
     "plotted_values": "Unchanged; all three generated frontier data files match."
+  },
+  "csv_only_table_exports": {
+    "date": "2026-10-04",
+    "removed_tex_files": 33,
+    "numbered_table_csvs": 13,
+    "all_pre_existing_csv_and_pdf_files_unchanged": true,
+    "verification": "Primary and second-grader CSV-only numbered exports passed. Table 1, risk-control summaries, split sensitivity, comparison intervals, and the primary legacy threshold results reproduced unchanged.",
+    "legacy_table_bodies": "Replaced by set_source_comparison.csv; no table TeX exports or templates remain.",
+    "git_actions": "No staging, commits, or pushes."
   }
 }

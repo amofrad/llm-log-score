@@ -205,26 +205,6 @@ def analyze_split(frame, seed, *, include_baseline=True):
     return pd.DataFrame(rows), bounds
 
 
-def latex_table(data: pd.DataFrame) -> str:
-    lines = []
-    for key in common.MODEL_ORDER:
-        part = data[data.model_key == key]
-        for index, alpha in enumerate(TARGETS):
-            pair = part[np.isclose(part.alpha, alpha)]
-            fixed = pair[pair.method == "fixed"].iloc[0]
-            selected = pair[pair.method == "selected"].iloc[0]
-            name = common.RUNS[key]["label"] if index == 0 else ""
-            a = "$1/7$" if alpha == 1/7 else f"${alpha:g}$"
-            if selected.supported:
-                chosen = f"{selected.threshold:.2f}"
-                error = f"{100*selected.observed_error:.1f} [{100*selected.error_lo:.1f}, {100*selected.error_hi:.1f}]"
-            else:
-                chosen, error = "---", "---"
-            lines.append(f"{name} & {a} & {int(fixed.n_answered):,} & {100*fixed.observed_error:.1f} & {chosen} & {int(selected.n_answered):,} & {error} \\\\")
-        lines.append(r"\addlinespace")
-    return "\n".join(lines) + "\n"
-
-
 def run(results_dir: Path, out_dir: Path, *, repeats=REPEATED_SPLITS):
     out_dir.mkdir(parents=True, exist_ok=True)
     inputs = []
@@ -252,7 +232,6 @@ def run(results_dir: Path, out_dir: Path, *, repeats=REPEATED_SPLITS):
         print(f"Threshold selection: completed {key}", flush=True)
     primary = pd.concat(primary, ignore_index=True)
     primary.to_csv(out_dir / "ThresholdSelectionLegacy.csv", index=False)
-    (out_dir / "ThresholdSelectionLegacy_rows.tex").write_text(latex_table(primary))
     pd.concat(sweeps).to_csv(out_dir / "threshold_selection_bounds.csv", index=False)
     pd.concat(predictions).to_csv(out_dir / "threshold_selection_predictions.csv", index=False)
     if repeated:
