@@ -1,0 +1,4 @@
+rho,n_questions,mean_optimal_list_size,all_idk_rate
+0.1,1000,2.076,0.103
+0.5,1000,0.406,0.596
+0.9,1000,0.005,0.995

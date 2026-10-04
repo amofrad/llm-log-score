@@ -1,0 +1,19 @@
+{
+  "primary_reconstructions": 180,
+  "processed_TableS7_checks": 6,
+  "threshold_equivalences": 4812,
+  "graders": {
+    "openai": {
+      "primary_models_and_representations": 6,
+      "fit_test_disjoint": true,
+      "smooth_fit_KKT_residual_below": 1e-06,
+      "primary_metrics_reconstructed": true
+    },
+    "gemini": {
+      "primary_models_and_representations": 6,
+      "fit_test_disjoint": true,
+      "smooth_fit_KKT_residual_below": 1e-06,
+      "primary_metrics_reconstructed": true
+    }
+  }
+}

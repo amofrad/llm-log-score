@@ -46,19 +46,13 @@ RUNS = {
         "model_id": "deepseek-ai/deepseek-v3.2-maas",
         "label": "DeepSeek V3.2",
     },
-    "qwen3_235b": {
-        "run": "qwen3_235b",
-        "model_id": "qwen/qwen3-235b-a22b-instruct-2507-maas",
-        "label": "Qwen3 235B-A22B",
-    },
 }
 
-MODEL_ORDER = ["gemini35flash", "sonnet46", "deepseekv32maas", "qwen3_235b"]
+MODEL_ORDER = ["gemini35flash", "sonnet46", "deepseekv32maas"]
 MODEL_COLORS = {
     "gemini35flash": "#1a73e8",
     "sonnet46": "#d97706",
     "deepseekv32maas": "#009E73",
-    "qwen3_235b": "#CC79A7",
 }
 
 

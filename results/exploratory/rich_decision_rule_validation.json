@@ -1,0 +1,19 @@
+{
+  "analysis_tests_passed": 18,
+  "graders": [
+    "openai",
+    "gemini"
+  ],
+  "ranking_rows_per_grader": 1212,
+  "decision_rows_per_grader": 9696,
+  "checks": [
+    "raw features identical across graders",
+    "input, protocol and code hashes agree",
+    "saved estimators reproduce primary scores within 1e-12",
+    "primary calibration and test counts independently recomputed",
+    "exact binomial p-values satisfy allocated error budgets",
+    "fixed-sequence traces stop at first failure",
+    "no unsupported selection reports conditional error as zero"
+  ],
+  "manuscript_modified": false
+}

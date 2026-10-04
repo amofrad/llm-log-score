@@ -1,0 +1,355 @@
+{
+  "main_pages": 10,
+  "si_pages": 24,
+  "tests_passed": 24,
+  "verified_primary_selections_and_split_summaries": 168,
+  "existing_figure_assets_unchanged": 14,
+  "protected_front_matter_unchanged": true,
+  "red_comment_lines_preserved": true,
+  "new_material": "Algorithm 1 with unnumbered bound in main text; SI Sections 5.2-5.3, Equation S1, Proposition 8 with proof in Section 2, Tables S8-S9",
+  "pdfs": {
+    "Project/manuscript/1-main.pdf": "4d4490a1b339c9b406459029b389625c45014d3c807faacebb6a60c0618cf24b",
+    "Project/manuscript/1-si_appendix.pdf": "74573aadec2aff9d92f524bcc85dfc2da501d706bfd4d025b998e6625053ce52"
+  },
+  "publication_targets": [
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4
+  ],
+  "publication_rows_per_csv": 15,
+  "retained_publication_values_unchanged": true,
+  "manuscript_tables": [
+    "S8",
+    "S9"
+  ],
+  "grid_comparison_in_manuscript": false,
+  "preserved_grid_comparison": "results/figures/RiskControlGridComparison.csv",
+  "main_algorithm": 1,
+  "main_algorithm_page": 7,
+  "decision_rule_algorithm_matches_existing_method": true,
+  "algorithm_notation_revision": "Answer/error counts and threshold selection expressed mathematically in Algorithm 1; duplicate SI definitions removed; exact binomial bound included as Equation 2 in the main text.",
+  "notation_revision_checks": [
+    "Unrelated source and red comments preserved",
+    "Figure and table assets unchanged",
+    "Resolved references and stable labels",
+    "Main pages 7, 8, 10 and SI pages 20, 21 visually inspected"
+  ],
+  "terminology_revision": "Defined alpha as a user-specified limit on the probability that a returned answer is incorrect. Replaced certification terminology with labeled sample or cutoff selection, and specified reports with top-candidate correctness labels as algorithm inputs.",
+  "terminology_revision_checks": [
+    "Numerical values and displayed equations unchanged",
+    "Figure and table assets and red comments preserved",
+    "Resolved references and stable labels",
+    "Main pages 7 and 10 and SI pages 20 and 21 visually inspected"
+  ],
+  "bound_relocation": "Binomial bound remains unnumbered in Algorithm 1; complete piecewise expression is numbered Equation S1 in SI Section 5.2, with the SI reference pointing to it.",
+  "bound_relocation_checks": [
+    "Unrelated manuscript text preserved",
+    "Figure assets, numerical results, and table data unchanged",
+    "References resolved with a unique bound label",
+    "Final algorithm and SI pages match visually reviewed renders"
+  ],
+  "editorial_review": {
+    "date": "2026-09-12",
+    "summary": "Standardized threshold terminology; combined SI calibration and error-controlled decisions in Section 5; combined evaluation and results in Section 5.3; retained Table S9 with sample-allocation sensitivity explanation; removed algorithm reuse note and explained alpha-independent counts and bounds in SI; removed duplicated opening Results paragraph; clarified metric definitions, calibration, latent-belief distinctions, and empirical procedures.",
+    "new_revisions_blue": true,
+    "preservation_checks": {
+      "1-main.tex": {
+        "displayed_math": 7,
+        "figures": 5,
+        "prompts": 0,
+        "tables": 3
+      },
+      "1-si_appendix.tex": {
+        "displayed_math": 45,
+        "figures": 5,
+        "prompts": 8,
+        "tables": 9
+      },
+      "assets_unchanged": 16,
+      "protected_front_matter_unchanged": true,
+      "comments_and_environments_preserved": true
+    },
+    "main_and_si_pages_visually_inspected": true,
+    "cross_references_resolved": true,
+    "analysis_not_rerun_for_editorial_changes": true
+  },
+  "source_integration": {
+    "review_bibliography_coloring_in_both_preambles": false,
+    "review_additions_tex_removed": true,
+    "tables_S8_S9_inlined_in_si": true,
+    "compiled_without_review_helper_or_table_row_files": true,
+    "wording_equations_and_results_unchanged": true,
+    "verification": {
+      "1-main": {
+        "pages": 10,
+        "all_rendered_pages_identical_to_previous_pdf": true
+      },
+      "1-si_appendix": {
+        "pages": 24,
+        "all_rendered_pages_identical_to_previous_pdf": true
+      }
+    },
+    "bibliography_review_coloring_removed": true
+  },
+  "algorithm_boundary_revision": {
+    "explicit_if_else_for_binomial_upper_bound": true,
+    "quantile_formula_and_boundary_cases_unchanged": true,
+    "result_paragraphs_unchanged_pending_editorial_choice": false,
+    "no_external_input_files_added": true,
+    "all_changed_pdf_pages_visually_inspected": true,
+    "pdf_checks": {
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          8,
+          9,
+          10
+        ]
+      },
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": [
+          24
+        ]
+      }
+    }
+  },
+  "reference_wording_and_proof_organization": {
+    "gold_terminology_replaced_with_reference_answers_and_correctness_grades": true,
+    "main_application_paragraph_replaced_with_approved_si_pointer": true,
+    "proposition_8_retained_in_section_5_2_proof_moved_to_section_2": true,
+    "redundant_N_zero_parenthetical_removed": true,
+    "new_wording_and_relocated_proof_blue_bibliography_normal": true,
+    "preservation_checks": {
+      "1-main.tex equations": 7,
+      "1-main.tex tables": 3,
+      "1-main.tex figures": 5,
+      "1-main.tex prompts": 0,
+      "1-si_appendix.tex equations": 45,
+      "1-si_appendix.tex tables": 9,
+      "1-si_appendix.tex figures": 5,
+      "1-si_appendix.tex prompts": 8,
+      "protected_front_matter_comments_and_figure_assets_unchanged": true,
+      "figure_S1_placement_adjusted_to_follow_proof": true,
+      "proof_in_section_2": true
+    },
+    "pdf_checks": {
+      "algorithm_page": 8,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": [
+          13,
+          14,
+          19,
+          20
+        ]
+      }
+    },
+    "all_changed_pages_visually_reviewed": true
+  },
+  "list_refinement_comment_revision": {
+    "red_comment_preserved_exactly": true,
+    "blue_explanation_defines_IDK_r_candidate_x_probability_transfer_and_share_x_over_r": true,
+    "rho_half_threshold_verified": 0.7729078047806519,
+    "binomial_citation_moved_from_algorithm_to_introductory_prose": true,
+    "only_requested_main_source_edits": true,
+    "si_source_front_matter_equations_tables_figures_and_bibliography_database_preserved": true,
+    "bibliographies_rebuilt_from_current_sources": true,
+    "pdf_checks": {
+      "algorithm_page": 8,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "all_changed_pages_visually_inspected": true
+  },
+  "compact_bound_citation": {
+    "main_citations_combined_after_simultaneous_risk_bounds": true,
+    "separate_clopper_pearson_sentence_removed": true,
+    "si_citation_aligned_with_user_renamed_clopper1934_entry": true,
+    "only_requested_text_and_citation_changes": true,
+    "red_comments_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 8,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "changed_pages_visually_inspected": true
+  },
+  "beta_quantile_definition_relocation": {
+    "definition_moved_to_algorithm_introductory_paragraph": true,
+    "definition_retains_blue_formatting": true,
+    "only_two_approved_main_source_replacements": true,
+    "si_source_and_bibliography_unchanged": true,
+    "user_algorithm_edits_and_comments_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 8,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "changed_main_pages_7_and_8_visually_reviewed": true,
+    "no_unresolved_references_or_new_overfull_warnings": true,
+    "empirical_analyses_not_rerun_for_editorial_change": true
+  },
+  "algorithm_placement_and_notation": {
+    "algorithm_follows_introductory_paragraph_on_page_7": true,
+    "float_changed_to_H_and_suppressfloats_removed": true,
+    "final_step_uses_existing_R_S_qstar_astar_notation_and_if_else": true,
+    "empty_list_and_infinite_threshold_cases_abstain": true,
+    "only_approved_source_edits": true,
+    "si_source_bibliography_figures_and_red_comments_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 7,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "all_changed_pages_visually_reviewed": true,
+    "no_unresolved_references_or_new_overfull_warnings": true,
+    "empirical_analyses_not_rerun_for_editorial_change": true
+  },
+  "conditional_error_connection": {
+    "risk_defined_as_P_Z_zero_given_U_at_least_t_with_nonempty_reports_understood": true,
+    "explicit_reference_to_calibration_proposition": true,
+    "supported_rule_guarantee_written_r_selected_threshold_at_most_alpha": true,
+    "approved_paragraph_change_blue": true,
+    "algorithm_user_edits_placement_SI_source_bibliography_and_comments_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 7,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "all_changed_pages_visually_reviewed": true,
+    "no_unresolved_references_or_new_overfull_warnings": true,
+    "empirical_analyses_not_rerun_for_editorial_change": true
+  },
+  "si_numbered_bound_and_for_loop": {
+    "main_formula_unnumbered": true,
+    "complete_bound_numbered_S1_in_SI_section_5_2": true,
+    "equation_label_unique_and_reference_resolved": true,
+    "new_reports_processed_with_structured_for_loop_and_nested_if_else": true,
+    "per_report_decisions_use_output_within_loop": true,
+    "algorithm_remains_after_introductory_paragraph_on_page_7": true,
+    "new_SI_equation_and_notation_definition_blue": true,
+    "only_approved_changes_with_comments_bibliography_figures_and_results_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 7,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": [
+          20
+        ]
+      }
+    },
+    "all_changed_pages_visually_reviewed": true,
+    "no_unresolved_references_or_new_overfull_warnings": true,
+    "empirical_analyses_not_rerun_for_editorial_change": true
+  },
+  "compact_algorithm_assignments": {
+    "threshold_counts_and_bounds_in_structured_for_loop": true,
+    "count_bound_and_threshold_operations_use_assignment_notation": true,
+    "grid_size_M_defined_in_inputs": true,
+    "upper_confidence_bound_on_conditional_error_explained_in_introductory_prose": true,
+    "empty_set_convention_moved_to_following_paragraph_without_union_with_infinity": true,
+    "algorithm_remains_after_introductory_paragraph_on_page_7": true,
+    "current_SI_source_bibliography_comments_figures_and_results_preserved": true,
+    "pdf_checks": {
+      "algorithm_page": 7,
+      "1-main": {
+        "pages": 10,
+        "changed_pages": [
+          7,
+          8,
+          9
+        ]
+      },
+      "proof_page": 13,
+      "1-si_appendix": {
+        "pages": 24,
+        "changed_pages": []
+      }
+    },
+    "all_changed_pages_visually_reviewed": true,
+    "no_unresolved_references_or_new_overfull_warnings": true,
+    "empirical_analyses_not_rerun_for_editorial_change": true
+  }
+}

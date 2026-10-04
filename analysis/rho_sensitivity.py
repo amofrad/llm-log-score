@@ -1,4 +1,4 @@
-"""Reproduce Fig. S4 and Table S6 from the three rho-sensitivity runs.
+"""Reproduce Fig. S4 and Table S4 from the three rho-sensitivity runs.
 
 The analysis uses the standard uncertainty-report prompt on the same 1,000
 SimpleQA questions at rho = 0.1, 0.5, and 0.9. It writes the figure, its
@@ -146,7 +146,7 @@ def make_figure(metrics: dict[float, pd.DataFrame], out_dir: Path) -> None:
         )
     axes[0].set_xticks(x)
     axes[0].set_xlabel("candidate answers per question")
-    axes[0].set_ylabel("fraction of questions")
+    axes[0].set_ylabel("proportion of questions")
     axes[0].set_title("List size")
     axes[0].legend(frameon=False)
 
@@ -161,7 +161,7 @@ def make_figure(metrics: dict[float, pd.DataFrame], out_dir: Path) -> None:
             label=f"$\\rho={rho:g}$",
         )
     axes[1].set_xlabel("reported IDK probability")
-    axes[1].set_ylabel("cumulative fraction of questions")
+    axes[1].set_ylabel("cumulative proportion of questions")
     axes[1].set_title("IDK probability")
     axes[1].set_xlim(0, 1)
     axes[1].legend(frameon=False, loc="lower right")
@@ -257,7 +257,7 @@ def write_ideal_list_extent(report: pd.DataFrame, out_dir: Path) -> None:
             }
         )
     pd.DataFrame(rows).to_csv(
-        out_dir / "TableS6_ideal_list_extent.csv", index=False
+        out_dir / "TableS4_IdealListExtent.csv", index=False
     )
 
 

@@ -1,0 +1,15 @@
+{
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 20260911,
+  "seed_offset": "model index in common.MODEL_ORDER",
+  "bootstrap_unit": "question (including empty reports)",
+  "intervals": "pointwise paired percentile, 95%",
+  "plot_min_answered": 30,
+  "processing": "retained graded entries; no further merging or normalization",
+  "model_order": [
+    "gemini35flash",
+    "sonnet46",
+    "deepseekv32maas"
+  ],
+  "results_dir": "results/graded_by_openai"
+}

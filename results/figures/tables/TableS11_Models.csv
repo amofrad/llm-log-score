@@ -1,0 +1,4 @@
+model,api_identifier
+Gemini 3.5 Flash,google/gemini-3.5-flash
+Claude Sonnet 4.6,claude-sonnet-4-6
+DeepSeek V3.2,deepseek-ai/deepseek-v3.2-maas

@@ -1,0 +1,189 @@
+{
+  "date": "2026-10-03",
+  "main_figure_order": [
+    "F1_Concept",
+    "F2_ResponseCounts",
+    "F3_Frontier",
+    "F4_OutcomeTable_L3",
+    "F5_ThresholdCalibration"
+  ],
+  "csv_checks_against_pre_update_results": [
+    "FS3_cumulative.csv",
+    "RiskControlFullTestPartitions.csv",
+    "F5_ThresholdCalibration.csv",
+    "FS1_OutcomeTable_L6_long.csv",
+    "FS1_OutcomeTable_L6_set_outcomes.csv",
+    "FS5A_rule_sensitivity.csv",
+    "FS4_rho_paired_comparisons.csv",
+    "matched_relative_accuracy.csv",
+    "FS5B_rule_outcome_tables.csv",
+    "theory_audit_realized_log_loss.csv",
+    "FS4_rho_summary.csv",
+    "TableS9_RiskControl.csv",
+    "theory_audit_residual_reliability.csv",
+    "set_outcome_intervals.csv",
+    "F4_OutcomeTable_L3_long.csv",
+    "matched_abstention_gaps.csv",
+    "FS1_OutcomeTable_L0_long.csv",
+    "grader_agreement.csv",
+    "FS4_rho_sensitivity.csv",
+    "FS1_OutcomeTable_L0_set_outcomes.csv",
+    "F4_OutcomeTable_L3_set_outcomes.csv",
+    "FS2_JSD.csv",
+    "F2_ResponseCounts.csv",
+    "F4_OutcomeTable_L3.csv",
+    "theory_audit_top_reliability.csv",
+    "RiskControlGridComparison.csv",
+    "FS2_JSD_by_question.csv",
+    "support_containment.csv",
+    "FS1_OutcomeTable_L6.csv",
+    "TableS4_IdealListExtent.csv",
+    "token_costs.csv",
+    "TableS10_SplitSensitivity.csv",
+    "TableS8_ThresholdCalibration.csv",
+    "F3_Frontier.csv",
+    "FS5_rule_paired_comparisons.csv",
+    "FS1_OutcomeTable_L0.csv"
+  ],
+  "csv_tolerance": {
+    "rtol": 1e-11,
+    "atol": 1e-12
+  },
+  "csv_failures": [],
+  "table_checks": [
+    {
+      "table": "Table1_DecisionOutcomes",
+      "matches_manuscript": true
+    },
+    {
+      "table": "Table2_MethodComparison",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS1_LogLoss",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS2_SetOutcomeIntervals",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS3_MatchedAbstention",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS4_IdealListExtent",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS5_TokenCosts",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS6_IDKReliability",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS7_TopReliability",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS8_ThresholdCalibration",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS9_RiskControl",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS10_SplitSensitivity",
+      "matches_manuscript": true
+    },
+    {
+      "table": "TableS11_Models",
+      "matches_manuscript": true
+    }
+  ],
+  "full_reproduction": "completed from saved responses in an isolated output directory",
+  "existing_tests_passed": 40,
+  "no_api_calls": true,
+  "second_grader_table_reproduction": "passed (12 tables; rho sensitivity is primary-grader only)",
+  "figures": [
+    {
+      "file": "F1_Concept.pdf",
+      "sha256": "39c554003fa44c28170cda08c5d8c751b19e1db623d501ae82df3bf1b5d14c43",
+      "matches_manuscript": true
+    },
+    {
+      "file": "F2_ResponseCounts.pdf",
+      "sha256": "0d5c197ff263165c21cdb9629af62c1a4e91d357f2980ae6ba4840fb96a6485b",
+      "matches_manuscript": true
+    },
+    {
+      "file": "F3_Frontier.pdf",
+      "sha256": "cfe41685ef2fb84779572764d14c4ef4a14793291444444aef2b28a04179d011",
+      "matches_manuscript": true
+    },
+    {
+      "file": "F4_OutcomeTable_L3.pdf",
+      "sha256": "400808d23c8018ffdf3281443019f4efb53fcb3a1d3b5a941b52462f5d734b7d",
+      "matches_manuscript": true
+    },
+    {
+      "file": "F5_ThresholdCalibration.pdf",
+      "sha256": "1184a7622e753f59dfe38dab2da05c1141a21ca92a3edf714953085c80766a77",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS1_OutcomeTable_L0.pdf",
+      "sha256": "a86977bc66b172e4d6402035396c89f1efc5ce379c7f783182fc28b2215b5c5c",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS1_OutcomeTable_L6.pdf",
+      "sha256": "e8e7cf511ccaaae4c213d1ddbaf300e8e9d620f7cfd6a132c2b1d56674047093",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS2_JSD.pdf",
+      "sha256": "2a444f10ec821c0d702642463b2eded9e5999010968c536e69c6439e8042aec5",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS3_cumulative.pdf",
+      "sha256": "94744fc63d177e254766b0d995ed04994cf9e92ce8547b7cbe741177bc1875a8",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS4_rho_sensitivity.pdf",
+      "sha256": "5980064335502dffb8e536c94f3bfade79c774437328f36cd9925cfae6c9befc",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS5A_rule_sensitivity.pdf",
+      "sha256": "4f4d671f23845cb1e1e4d76defec314e56de17917ddb95379afdf5e2e2e969f0",
+      "matches_manuscript": true
+    },
+    {
+      "file": "FS5B_rule_outcome_tables.pdf",
+      "sha256": "7708c75dac45ae5473cf20f5635086bfc2204a953a73dbd6c761f0425cb310f3",
+      "matches_manuscript": true
+    }
+  ],
+  "git_actions": "No staging, commits, or pushes.",
+  "artifact_consistency_tests_passed": 4,
+  "total_tests_passed": 44,
+  "pdf_check": {
+    "main_pages": 10,
+    "unresolved_internal_links": [],
+    "figure_3_model_headings": "each appears once"
+  },
+  "figure_3_layout_update": {
+    "date": "2026-10-03",
+    "changes": [
+      "Reduced A\u2013B spacing by approximately 25%",
+      "Shortened panel C axis to Relative gain (%)"
+    ],
+    "plotted_values": "Unchanged; all three generated frontier data files match."
+  }
+}

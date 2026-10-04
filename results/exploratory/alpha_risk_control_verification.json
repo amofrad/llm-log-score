@@ -1,0 +1,16 @@
+{
+  "primary_bounds_reconstructed": 2589,
+  "primary_test_metrics_reconstructed": 252,
+  "archived_reference_rows_matched": 12,
+  "models_representations_and_methods": 36,
+  "original_result_rows_preserved": 26496,
+  "source_and_input_hashes_match": true,
+  "analysis_tests_passed": 30,
+  "original_bounds_and_inputs_unchanged": true,
+  "primary_lookup_curve_unchanged": true,
+  "additional_targets": [
+    0.3,
+    0.35,
+    0.4
+  ]
+}

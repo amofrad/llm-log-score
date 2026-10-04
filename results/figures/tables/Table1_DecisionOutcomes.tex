@@ -1,0 +1,20 @@
+% Table layout from the manuscript; generated numeric rows replace @ROWS@.
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}llccc@{\hspace{10pt}}ccc@{}}
+\toprule
+& & \multicolumn{3}{c}{RBD} & \multicolumn{3}{c}{EPP}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Model & $L$ & Abstain & Incorrect & Correct & Abstain & Incorrect & Correct\\
+\midrule
+\multirow{3}{*}{\shortstack[l]{\modelname{Gemini}\\\modelname{3.5 Flash}}} & $0$ & 0.022 & 0.426 & 0.552 & 0.001 & 0.460 & 0.539\\
+ & $3$ & 0.455 & 0.151 & 0.394 & 0.150 & 0.336 & 0.514\\
+ & $6$ & 0.788 & 0.033 & 0.179 & 0.189 & 0.306 & 0.505\\
+\midrule
+\multirow{3}{*}{\shortstack[l]{\modelname{Claude}\\\modelname{Sonnet 4.6}}} & $0$ & 0.004 & 0.672 & 0.324 & 0.003 & 0.707 & 0.290\\
+ & $3$ & 0.835 & 0.044 & 0.121 & 0.396 & 0.359 & 0.245\\
+ & $6$ & 0.957 & 0.006 & 0.037 & 0.508 & 0.270 & 0.222\\
+\midrule
+\multirow{3}{*}{\shortstack[l]{\modelname{DeepSeek}\\\modelname{V3.2}}} & $0$ & 0.017 & 0.795 & 0.188 & 0.015 & 0.818 & 0.167\\
+ & $3$ & 0.751 & 0.160 & 0.089 & 0.677 & 0.227 & 0.096\\
+ & $6$ & 0.979 & 0.009 & 0.012 & 0.690 & 0.217 & 0.093\\
+\bottomrule
+\end{tabular*}

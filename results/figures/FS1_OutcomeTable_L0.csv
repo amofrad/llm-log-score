@@ -26,12 +26,3 @@ deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,incorrect,49.5200000000
 deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,abstain,2126.4600000000196,49.15533980582545
 deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,correct,557.66,12.89089227924173
 deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,incorrect,855.2200000000029,19.769301895515454
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,abstain,492.0600000000002,11.374479889042991
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,correct,7.679999999999996,0.17753120665742006
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,abstain,incorrect,6.679999999999999,0.15441516412390185
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,abstain,307.1400000000004,7.099861303744803
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,correct,1164.3000000000013,26.914008321775324
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,correct,incorrect,138.92000000000002,3.2112806287563553
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,abstain,1051.8000000000004,24.3134535367545
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,correct,245.0200000000001,5.663892741562643
-qwen3_235b,Qwen3 235B-A22B,sample_average,0.0,incorrect,incorrect,912.4000000000002,21.091077207582053

@@ -1,0 +1,183 @@
+{
+  "primary_seed": 20260912,
+  "additional_splits": 100,
+  "fit_n": 2163,
+  "test_n": 2163,
+  "tabulated_penalties": [
+    0.0,
+    3.0,
+    6.0
+  ],
+  "curve_penalties": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2,
+    1.3,
+    1.4,
+    1.5,
+    1.6,
+    1.7,
+    1.8,
+    1.9,
+    2.0,
+    2.1,
+    2.2,
+    2.3,
+    2.4,
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9,
+    3.0,
+    3.1,
+    3.2,
+    3.3,
+    3.4,
+    3.5,
+    3.6,
+    3.7,
+    3.8,
+    3.9,
+    4.0,
+    4.1,
+    4.2,
+    4.3,
+    4.4,
+    4.5,
+    4.6,
+    4.7,
+    4.8,
+    4.9,
+    5.0,
+    5.1,
+    5.2,
+    5.3,
+    5.4,
+    5.5,
+    5.6,
+    5.7,
+    5.8,
+    5.9,
+    6.0,
+    6.1,
+    6.2,
+    6.3,
+    6.4,
+    6.5,
+    6.6,
+    6.7,
+    6.8,
+    6.9,
+    7.0,
+    7.1,
+    7.2,
+    7.3,
+    7.4,
+    7.5,
+    7.6,
+    7.7,
+    7.8,
+    7.9,
+    8.0,
+    8.1,
+    8.2,
+    8.3,
+    8.4,
+    8.5,
+    8.6,
+    8.7,
+    8.8,
+    8.9,
+    9.0,
+    9.1,
+    9.2,
+    9.3,
+    9.4,
+    9.5,
+    9.6,
+    9.7,
+    9.8,
+    9.9,
+    10.0
+  ],
+  "primary_representation": "raw",
+  "representations": [
+    "raw",
+    "processed"
+  ],
+  "primary_method": "isotonic_direct",
+  "beta_regularizer": 0.001,
+  "beta_clip": 1e-06,
+  "primary_interval_scope": "six raw OpenAI-graded isotonic-vs-original comparisons at L=3,6; other intervals secondary",
+  "route1_route2_all_thresholds_equal": true,
+  "design": "retrospective benchmark; no fixed-error certification; overlapping splits are descriptive",
+  "inputs": [
+    {
+      "file": "results/graded_by_gemini/gemini35flash/simpleqa_topp_results.jsonl.gz",
+      "sha256": "70c7ccd63dca5bcba9cf14d694d83028bb3e8c9a4b57dd975d7e8e78c5d3e179"
+    },
+    {
+      "file": "results/graded_by_gemini/gemini35flash_L0/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "506924f0646b4b75c870771c4720b628a818969b5176c8dbd6de908d8feb0d76"
+    },
+    {
+      "file": "results/graded_by_gemini/gemini35flash/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "773ea8033a01c604503b7bba9bcd068176c46260f21cb75725237edeeca52eaf"
+    },
+    {
+      "file": "results/graded_by_gemini/gemini35flash_L6/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "778ff41d0aef6fbd8972fb095b804b112818de7aa9aca832592d8e94cde2c9e6"
+    },
+    {
+      "file": "results/graded_by_gemini/claudesonnet46/simpleqa_topp_results.jsonl.gz",
+      "sha256": "d92e422180e05e3e093f364464362f498797e4bc9c2f0a9683c46f8e764192de"
+    },
+    {
+      "file": "results/graded_by_gemini/claudesonnet46_L0/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "708241692385419dad4e62eca3df28c60b36ffd48dfd4c2f19c4eccabe488216"
+    },
+    {
+      "file": "results/graded_by_gemini/claudesonnet46/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "d80642d3faee91df79bd313f698d2cee8f44930c3ad5cce140d230c197d05da6"
+    },
+    {
+      "file": "results/graded_by_gemini/claudesonnet46_L6/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "70176b827f7d2756dea894661d1c43c8e4242cfbcdf00fe0b27b495113ca22a0"
+    },
+    {
+      "file": "results/graded_by_gemini/deepseekv32/simpleqa_topp_results.jsonl.gz",
+      "sha256": "cba29692b24532dba047ba95bee3e767106485f20ca5a78da7e9bdb82675e7f5"
+    },
+    {
+      "file": "results/graded_by_gemini/deepseekv32_L0/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "8c1b7304c2a8b3bf4e1de741d55c30d3b347d87a6c0086288517d2cda6ed3502"
+    },
+    {
+      "file": "results/graded_by_gemini/deepseekv32/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "9c44eee839f682a703df8b9e0b4f426572d47849883c6ccc9d3c726b04c03335"
+    },
+    {
+      "file": "results/graded_by_gemini/deepseekv32_L6/simpleqa_penalty_results.jsonl.gz",
+      "sha256": "ca0e40924fb793118efa2e0a2f2a8f2ddde693d42a2199fdd533a1c6b68d8a70"
+    }
+  ],
+  "code_sha256": "e3ab0de4ba744bc47551ccc0f809137b0551cca2201186fdfaef33ff85a7b17c",
+  "protocol_sha256": "5dd0a7b5828683db57377ca8379d856648487823ec007b60f765165003b6c51e",
+  "software": {
+    "python": "3.14.3",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "scipy": "1.17.1"
+  }
+}

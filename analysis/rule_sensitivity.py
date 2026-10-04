@@ -256,9 +256,9 @@ def make_summary_figure(
             "Graded outcomes",
             (
                 (
-                    "coverage-or-IDK@0.9",
+                    "top-0.9 coverage",
                     [
-                        rate_with_interval(metrics[spec.slug]["coverage_or_idk"])
+                        rate_with_interval(metrics[spec.slug]["coverage"])
                         for spec in RULES
                     ],
                     "#188038",
@@ -272,7 +272,7 @@ def make_summary_figure(
                     "#1a73e8",
                 ),
                 (
-                    "incorrect@0.9",
+                    "top-0.9 miscoverage without IDK",
                     [
                         rate_with_interval(metrics[spec.slug]["incorrect"])
                         for spec in RULES
@@ -304,7 +304,7 @@ def make_summary_figure(
         ax.set_title(title)
         ax.grid(axis="y", alpha=0.18, lw=0.6)
         ax.legend(frameon=False, fontsize=8.5, loc="center left")
-    axes[0].set_ylabel("Fraction or mean reported probability")
+    axes[0].set_ylabel("Proportion or mean reported probability")
 
     fig.tight_layout()
     target = out_dir / "FS5A_rule_sensitivity.pdf"
@@ -313,8 +313,11 @@ def make_summary_figure(
     print(f"wrote {target}")
 
 
-OUTCOME_ROWS = ("abstain", "correct", "incorrect")
-OUTCOME_COLUMNS = ("incorrect", "correct", "abstain")
+# Rows run from top to bottom; columns run from left to right.
+OUTCOME_ROWS = ("incorrect", "abstain", "correct")
+OUTCOME_COLUMNS = ("correct", "abstain", "incorrect")
+# Preserve the raw category keys for the three set-coverage outcomes.
+OUTCOME_LABELS = {"abstain": "miscoverage\nwith IDK", "correct": "coverage", "incorrect": "miscoverage\nwithout IDK"}
 
 
 def report_outcome(candidates: list[dict]) -> str:
@@ -409,12 +412,12 @@ def make_outcome_figure(reports: dict[str, pd.DataFrame], out_dir: Path) -> None
                         "count": int(value),
                     }
                 )
-        ax.set_xticks(range(3), OUTCOME_COLUMNS, fontsize=10)
+        ax.set_xticks(range(3), [OUTCOME_LABELS[x] for x in OUTCOME_COLUMNS], fontsize=10)
         ax.set_yticks(range(3))
         if index == 0:
             ax.set_yticklabels(
                 [
-                    f"{row}\n({int(total)})"
+                    f"{OUTCOME_LABELS[row]}\n({int(total)})"
                     for row, total in zip(OUTCOME_ROWS, row_totals)
                 ],
                 fontsize=10,

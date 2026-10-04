@@ -1,9 +1,9 @@
 """Generate the paper's figures from the graded results.
 
 Outputs, written to results/figures/ with the CSV data corresponding to each figure:
-F2A/F2B_Frontier.pdf (Fig. 2), F3_OutcomeTable_L3.pdf (Fig. 3),
+F3_Frontier.pdf (Fig. 3), F4_OutcomeTable_L3.pdf (Fig. 4),
 FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
-FS3_cumulative.pdf (Fig. S3), and F4_response_counts.pdf (Fig. 4).
+FS3_cumulative.pdf (Fig. S3), and F2_ResponseCounts.pdf (Fig. 2).
 
 Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
@@ -98,11 +98,6 @@ MODEL_ALIASES = {
     "deepseekv32": "deepseekv32maas",
     "deepseekv32maas": "deepseekv32maas",
     "deepseek-ai/deepseek-v3.2-maas": "deepseekv32maas",
-    "qwen": "qwen3_235b",
-    "qwen3": "qwen3_235b",
-    "qwen3_235b": "qwen3_235b",
-    "qwen3-235b-a22b-instruct-2507-maas": "qwen3_235b",
-    "qwen/qwen3-235b-a22b-instruct-2507-maas": "qwen3_235b",
 }
 
 
@@ -295,7 +290,7 @@ def load_penalty_arm(key: str, penalty: float = PRIMARY_PENALTY) -> pd.DataFrame
     )
 
 
-# Fig. 2: hallucination-abstention frontier
+# Fig. 3: hallucination-abstention frontier
 def _frontier_decision_matrices(
     df: pd.DataFrame,
     thresholds: np.ndarray,
@@ -377,139 +372,78 @@ def bootstrap_frontier_bands(
     return out
 
 
-def fig_frontier(paired):
-    """Writes F2A (hallucination row) and F2B (accuracy row)"""
-    print("== Fig. 2: frontier (residual-rho prompt vs penalty) ==")
+def fig_frontier(paired, relative):
+    """Figure 3: aligned A/B frontiers and C relative gains, with one legend."""
+    print("== Fig. 3: RBD/EPP frontiers and relative accuracy gains ==")
     grid = np.linspace(0, 0.95, 96)
-    band_rows = []
+    band_rows, curve_rows, point_rows = [], [], []
     n_models = len(ACTIVE_MODEL_ORDER)
-    fig_width = max(5.0, 4.05 * n_models)
-    row_figs = []
-    row_axes = []
-    # Row B is taller: it carries the shared legend below its x label.
-    for row_height in (3.09, 3.69):
-        fig, axes = plt.subplots(
-            1,
-            n_models,
-            figsize=(fig_width, row_height),
-            sharey=True,
-            squeeze=False,
-        )
-        row_figs.append(fig)
-        row_axes.append(axes[0])
-    row_specs = [
-        ("hallucination_rate", "penalty_hallucination_rate",
-         "empirical_hallucination_rate"),
-        ("accuracy_overall", "penalty_accuracy_overall",
-         "empirical_accuracy_overall"),
-    ]
+    fig = plt.figure(figsize=(max(5.0, 4.05 * n_models), 8.55))
+    # Separate spacer rows keep A--B compact while allowing B's x-axis labels.
+    layout = fig.add_gridspec(5, n_models, height_ratios=[1, .30, 1, .40, .72])
+    axes = np.empty((3, n_models), dtype=object)
+    for row in range(3):
+        for col in range(n_models):
+            axes[row, col] = fig.add_subplot(
+                layout[2 * row, col], sharey=axes[row, 0] if col else None,
+            )
+            axes[row, col].tick_params(labelleft=col == 0)
+    row_specs = [("hallucination_rate", "penalty_hallucination_rate"),
+                 ("accuracy_overall", "penalty_accuracy_overall")]
     for col, key in enumerate(ACTIVE_MODEL_ORDER):
-        c = MODEL_COLORS[key]
-        dlog_pen = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
-        fr = frontier(dlog_pen, grid)
-        band_x = np.linspace(
-            float(fr["abstention_rate"].min()),
-            float(fr["abstention_rate"].max()),
-            121,
-        )
-        bands = bootstrap_frontier_bands(
-            dlog_pen,
-            grid,
-            band_x,
-            seed=91000 + 97 * col,
-        )
-        dlog = paired[key]["log"]
-        for row, (frontier_col, penalty_col, empirical_col) in enumerate(row_specs):
-            ax = row_axes[row][col]
-            band_lo, band_hi = bands[frontier_col]
-            ax.fill_between(
-                band_x,
-                band_lo,
-                band_hi,
-                color=c,
-                alpha=0.38,
-                linewidth=0,
-            )
-            for xval, lo, hi in zip(band_x, band_lo, band_hi):
-                band_rows.append({
-                    "model": key,
-                    "model_label": RUNS[key]["label"],
-                    "metric": frontier_col,
-                    "abstention_rate": xval,
-                    "lo_95": lo,
-                    "hi_95": hi,
-                })
-            ax.plot(
-                fr["abstention_rate"],
-                fr[frontier_col],
-                color=c,
-                lw=2,
-                label="thresholded log report frontier",
-            )
-            for penalty, dpen in paired[key]["penalties"].items():
-                ax.scatter(
-                    [dpen["penalty_abstention_rate"].mean()],
-                    [dpen[penalty_col].mean()],
-                    color=PENALTY_COLORS.get(penalty, "crimson"),
-                    marker="o",
-                    s=52 if np.isclose(penalty, PRIMARY_PENALTY) else 44,
-                    edgecolors="white",
-                    linewidths=0.6,
-                    zorder=5,
-                    label=f"penalty {penalty_label(penalty)}",
-                )
-            if _has_empirical_baseline(dlog):
-                ax.scatter(
-                    [dlog["empirical_not_attempted_rate"].mean()],
-                    [dlog[empirical_col].mean()],
-                    color="black",
-                    marker="s",
-                    s=42,
-                    zorder=5,
-                    label=f"baseline prompt (≈L=0, n={len(dlog)})",
-                )
-            ax.set_xlim(-0.02, 1.02)
-            ax.set_ylim(-0.02, 0.90 if row == 0 else 0.65)
-            ax.grid(alpha=0.18, lw=0.6)
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-            ax.tick_params(axis="both", labelsize=11.5)
+        color = MODEL_COLORS[key]
+        reports = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
+        fr = frontier(reports, grid)
+        curve_rows.extend(fr.assign(model=key, model_label=RUNS[key]["label"]).to_dict("records"))
+        band_x = np.linspace(float(fr.abstention_rate.min()), float(fr.abstention_rate.max()), 121)
+        bands = bootstrap_frontier_bands(reports, grid, band_x, seed=91000 + 97 * col)
+        for row, (metric, epp_metric) in enumerate(row_specs):
+            ax = axes[row, col]
+            lo, hi = bands[metric]
+            ax.fill_between(band_x, lo, hi, color=color, alpha=.38, linewidth=0)
+            band_rows.extend(dict(model=key, model_label=RUNS[key]["label"], metric=metric,
+                                  abstention_rate=x, lo_95=l, hi_95=h)
+                             for x, l, h in zip(band_x, lo, hi))
+            ax.plot(fr.abstention_rate, fr[metric], color=color, lw=2, label="RBD")
+            for level, epp in paired[key]["penalties"].items():
+                x, y = epp.penalty_abstention_rate.mean(), epp[epp_metric].mean()
+                ax.scatter([x], [y], color=PENALTY_COLORS[level], marker="o",
+                           s=52 if level == PRIMARY_PENALTY else 44, edgecolors="white",
+                           linewidths=.6, zorder=5, label=fr"EPP, $L={level:g}$")
+                point_rows.append(dict(model=key, L=level, metric=metric, abstention=x, value=y))
+            ax.set(xlim=(-.02, 1.02), ylim=(-.02, .90 if row == 0 else .65))
+            ax.grid(alpha=.18, lw=.6)
             if row == 1:
                 ax.set_xlabel("abstention", fontsize=14)
-        row_axes[0][col].set_title(
-            RUNS[key]["label"],
-            fontsize=16,
-            color="#111827",
-        ).set_path_effects([withStroke(linewidth=0.5, foreground="#111827")])
-    row_axes[0][0].set_ylabel("hallucination", fontsize=14)
-    row_axes[1][0].set_ylabel("accuracy", fontsize=14)
-    pd.DataFrame(band_rows).to_csv(OUT / "F2_Frontier.csv", index=False)
-    shared_margins = dict(left=0.042, right=0.995, wspace=0.14)
-    # Keep the axes height identical across the two rows so the stacked
-    # panels stay aligned: (top-bottom)*height must equal 2.45in in both.
-    row_figs[0].subplots_adjust(top=0.8835, bottom=0.0905, **shared_margins)
-    row_figs[1].subplots_adjust(top=0.9755, bottom=0.3115, **shared_margins)
-    legend_handles, legend_labels = row_axes[1][0].get_legend_handles_labels()
-    legend_handles = [
-        Line2D([0], [0], color="black", lw=2)
-        if label.startswith("thresholded")
-        else handle
-        for handle, label in zip(legend_handles, legend_labels)
-    ]
-    row_figs[1].legend(
-        legend_handles,
-        legend_labels,
-        loc="lower center",
-        bbox_to_anchor=(0.5185, 0.01),
-        ncol=len(legend_labels),
-        frameon=False,
-        fontsize=13.5,
-        markerscale=1.6,
-    )
-    for fig, name in zip(row_figs, ("F2A_Frontier", "F2B_Frontier")):
-        fig.savefig(OUT / f"{name}.pdf")
-        plt.close(fig)
-        print(f"  wrote {name}.pdf")
+            ax.tick_params(axis="both", labelsize=11.5)
+        axes[0, col].set_title(RUNS[key]["label"], fontsize=16, fontweight="bold", pad=12)
+        ax = axes[2, col]
+        for pos, (_, r) in enumerate(relative[relative.model == key].sort_values("L").iterrows()):
+            ax.errorbar(pos, r.relative_accuracy_gain,
+                        yerr=[[r.relative_accuracy_gain-r.ci_low], [r.ci_high-r.relative_accuracy_gain]],
+                        fmt="s" if r.L == 3 else "^", markersize=7, color=color, capsize=4, lw=1.6)
+            ax.annotate(f"{r.relative_accuracy_gain:.1f}%", (pos, r.relative_accuracy_gain),
+                        xytext=(10, 0), textcoords="offset points", va="center", fontsize=13)
+        ax.axhline(0, color=".6", ls="--", lw=.9, zorder=0)
+        ax.set(xticks=[0, 1], xticklabels=["$L=3$", "$L=6$"], xlim=(-.45, 1.55),
+               ylim=(-3, 25), yticks=[0, 10, 20])
+        ax.tick_params(axis="both", labelsize=12)
+    axes[0, 0].set_ylabel("hallucination", fontsize=14)
+    axes[1, 0].set_ylabel("accuracy", fontsize=14)
+    axes[2, 0].set_ylabel("Relative gain (%)", fontsize=14)
+    fig.subplots_adjust(left=.085, right=.992, bottom=.065, top=.88, hspace=0, wspace=.16)
+    for row, letter in enumerate("ABC"):
+        fig.text(.008, axes[row, 0].get_position().y1 + .012, letter, fontsize=17, fontweight="bold", va="bottom")
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    handles[0] = Line2D([0], [0], color="black", lw=2)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(.535, .995),
+               ncol=len(labels), frameon=False, fontsize=13, markerscale=1.3)
+    pd.DataFrame(band_rows).to_csv(OUT / "F3_Frontier.csv", index=False)
+    pd.DataFrame(curve_rows).to_csv(OUT / "F3_Frontier_curves.csv", index=False)
+    pd.DataFrame(point_rows).to_csv(OUT / "F3_EPP_points.csv", index=False)
+    fig.savefig(OUT / "F3_Frontier.pdf")
+    plt.close(fig)
+    print("  wrote F3_Frontier.pdf")
 
 
 def _has_empirical_baseline(df: pd.DataFrame) -> bool:
@@ -521,7 +455,7 @@ def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     )
 
 
-# Fig. 4: distinct response entries per question, by method
+# Fig. 2: distinct response entries per question, by method
 def _json_distribution_items(raw) -> list[dict]:
     if raw is None:
         return []
@@ -587,7 +521,7 @@ def _penalty_distribution_items(row: pd.Series) -> list[dict]:
 
 
 def fig_response_counts(paired):
-    print("== Fig. 4: responses per question ==")
+    print("== Fig. 2: responses per question ==")
     fig, axes = model_panel_subplots(height=4.8, sharey=True)
     count_rows = []
     count_data = {}
@@ -655,7 +589,7 @@ def fig_response_counts(paired):
             alpha = 0.9 if method == "log" else 0.82
             edgecolor = "#111827" if method == "log" else "white"
             linewidth = 0.42 if method == "log" else 0.28
-            label = "log report" if method == "log" else f"penalty {penalty_label(penalty)}"
+            label = "RBD" if method == "log" else fr"EPP, $L = {penalty:g}$"
             ax.bar(
                 x + offsets[idx],
                 hist,
@@ -667,11 +601,11 @@ def fig_response_counts(paired):
                 linewidth=linewidth,
                 zorder=3,
             )
-        ax.text(0.78, 0.965, "mean", transform=ax.transAxes,
+        ax.text(0.66, 0.965, "mean", transform=ax.transAxes,
                 ha="left", va="top", fontsize=10.5, color="#111827")
         for idx, (method, penalty, counts) in enumerate(series):
-            mean_label = "log" if method == "log" else penalty_label(penalty)
-            ax.text(0.78, 0.965 - 0.068 * (idx + 1),
+            mean_label = "RBD" if method == "log" else f"EPP, {penalty_label(penalty)}"
+            ax.text(0.66, 0.965 - 0.068 * (idx + 1),
                     f"{mean_label}: {np.mean(counts):.1f}",
                     transform=ax.transAxes, ha="left", va="top",
                     fontsize=10.5, color="#111827")
@@ -709,15 +643,15 @@ def fig_response_counts(paired):
             f"max penalty={max((v.max(initial=0) for v in data['penalty'].values()), default=0)}, "
             f"panel cap={panel_cap}{' + overflow' if has_overflow else ''}"
         )
-    axes[0].set_ylabel("fraction of questions", fontsize=17)
+    axes[0].set_ylabel("proportion of questions", fontsize=17)
     legend_handles = [
-        Patch(facecolor=PENALTY_BAR_COLORS[p], alpha=0.82, label=f"penalty {penalty_label(p)}")
+        Patch(facecolor=PENALTY_BAR_COLORS[p], alpha=0.82, label=fr"EPP, $L = {p:g}$")
         for p in PENALTY_LEVELS
         if any(p in count_data[key]["penalty"] for key in count_data)
     ]
     legend_handles.append(Patch(facecolor="#ffffff", edgecolor="#111827",
-                                label="log report (model color)"))
-    pd.DataFrame(count_rows).to_csv(OUT / "F4_response_counts.csv", index=False)
+                                label="RBD\n(model color)"))
+    pd.DataFrame(count_rows).to_csv(OUT / "F2_ResponseCounts.csv", index=False)
     fig.tight_layout()
     fig.legend(
         handles=legend_handles,
@@ -727,7 +661,7 @@ def fig_response_counts(paired):
         frameon=False,
         fontsize=17,
     )
-    savefig(fig, "F4_response_counts")
+    savefig(fig, "F2_ResponseCounts")
 
 
 # Fig. S3: cumulative mean display-content frequencies
@@ -824,7 +758,7 @@ def cumulative_rates_for_key(paired, key: str) -> pd.DataFrame:
     """Cumulative rates for the three display-content categories.
 
     For a log report, the top-p prefix is truth-containing, no-concrete-answer,
-    or a concrete response without the truth. Penalty-prompt samples map to the same categories
+    or a concrete response without the truth. Error-penalty-prompt samples map to the same categories
     through correct, abstain/not-attempted, and incorrect, respectively.
     """
     specs = [
@@ -945,7 +879,7 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
     ]
     method_handles = [
         Line2D([0], [0], color="black", lw=2.4, ls="-",
-               label=f"Log top-{NOMINAL_P:g} set"),
+               label=f"RBD, Top-{NOMINAL_P:g}"),
     ]
     for penalty in sorted({p for k in ACTIVE_MODEL_ORDER for p in paired[k]["penalties"]}):
         method_handles.append(
@@ -955,7 +889,7 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
                 color="black",
                 lw=2.4,
                 ls=PENALTY_LINESTYLES.get(penalty, "--"),
-                label=f"penalty {penalty_label(penalty)}",
+                label=fr"EPP, $L = {penalty:g}$",
             )
         )
     if len(model_handles) == len(method_handles):
@@ -982,11 +916,11 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
     return rows
 
 
-# Fig. 3 / Fig. S1: penalty-vs-log outcome tables
+# Fig. 4 / Fig. S1: answer-or-abstain responses versus report-based set outcomes
 OUTCOME_KEYS = ["abstain", "correct", "incorrect"]
 PENALTY_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
-# Column display order is mirrored so agreement runs bottom-left to top-right.
-LOG_OUTCOME_LABELS = ["incorrect", "correct", "abstain"]
+SET_OUTCOME_KEYS = ["coverage", "miscoverage_with_idk", "miscoverage_without_idk"]
+SET_OUTCOME_LABELS = ["Coverage", "Miscoverage\nwith IDK", "Miscoverage\nwithout IDK"]
 
 
 def _parse_final_text_response(text: str) -> str | None:
@@ -1022,6 +956,9 @@ def _is_abstain_answer(answer: str | None) -> bool:
 
 
 def _log_top_p_outcome(candidates: list[dict], p: float = NOMINAL_P) -> str:
+    """Legacy raw keys: correct=coverage, abstain=miscoverage with IDK,
+    incorrect=miscoverage without IDK. These keys describe sets, not decisions.
+    """
     top = top_p_set(candidates, p)
     if top.covers:
         return "correct"
@@ -1147,26 +1084,47 @@ def _plot_outcome_tables(
 ) -> None:
     if model_keys is None:
         model_keys = ACTIVE_MODEL_ORDER
+    # Preserve all three mutually exclusive set outcomes, ordered as displayed.
+    matrices = {
+        key: pd.DataFrame({
+            "coverage": mat.loc[OUTCOME_KEYS, "correct"],
+            "miscoverage_with_idk": mat.loc[OUTCOME_KEYS, "abstain"],
+            "miscoverage_without_idk": mat.loc[OUTCOME_KEYS, "incorrect"],
+        })
+        for key, mat in matrices.items()
+    }
+    cells = []
+    for key in model_keys:
+        mat = matrices[key]
+        for row in OUTCOME_KEYS:
+            row_total = float(mat.loc[row].sum())
+            for column in SET_OUTCOME_KEYS:
+                value = float(mat.loc[row, column])
+                cells.append({
+                    "model": key, "model_label": RUNS[key]["label"],
+                    "mode": mode, "penalty_level": penalty,
+                    "penalty_outcome": row, "set_outcome": column,
+                    "count_or_expected_count": value,
+                    "row_percent": 100 * value / row_total if row_total else 0.0,
+                })
+    pd.DataFrame(cells).to_csv(OUT / f"{name}_set_outcomes.csv", index=False)
     n_models = len(model_keys)
-    fig_width = max(5.2, 4.75 * n_models)
-    fig, axes = plt.subplots(
-        1,
-        n_models,
-        figsize=(fig_width, 5.35),
-        sharex=False,
-        sharey=False,
-        gridspec_kw={"wspace": 0.34},
-    )
+    fig, axes = plt.subplots(1, n_models, figsize=(max(5.2, 4.6 * n_models), 5.1))
+    fig.subplots_adjust(left=.10, right=.947, bottom=.18, top=.88, wspace=.34)
     axes = np.atleast_1d(axes).ravel()
     vmax = max((float(mat.to_numpy().max()) for mat in matrices.values()), default=1.0)
     vmax = max(vmax, 1.0)
     norm = Normalize(vmin=0, vmax=vmax)
     for ax, key in zip(axes, model_keys):
         mat = matrices[key]
-        arr = mat[LOG_OUTCOME_LABELS].to_numpy(dtype=float)
+        arr = mat[SET_OUTCOME_KEYS].to_numpy(dtype=float)
         base_color = MODEL_COLORS.get(key, "#1a73e8")
         cmap = _model_question_cmap(key, base_color)
         ax.imshow(arr, cmap=cmap, norm=norm)
+        # Separate coverage from both miscoverage categories with a white gutter
+        # and a thin neutral divider, without altering the cell coordinates.
+        ax.axvline(.5, color="white", linewidth=6, zorder=2)
+        ax.axvline(.5, color="#64748b", linewidth=.8, zorder=3)
         row_totals = arr.sum(axis=1)
         for i in range(arr.shape[0]):
             row_total = float(row_totals[i])
@@ -1174,6 +1132,9 @@ def _plot_outcome_tables(
                 value = arr[i, j]
                 pct = 100 * value / row_total if row_total > 0 else 0.0
                 value_text = f"{value:.0f}" if mode == "first_sample" else f"{value:.1f}"
+                if mode != "first_sample" and 0 < value < 0.05:
+                    value_text = "<0.1"
+                pct_text = "<0.1%" if 0 < pct < 0.05 else f"{pct:.1f}%"
                 rgba = cmap(norm(value))
                 luminance = 0.299 * rgba[0] + 0.587 * rgba[1] + 0.114 * rgba[2]
                 text_color = "white" if luminance < 0.6 else "black"
@@ -1185,25 +1146,28 @@ def _plot_outcome_tables(
                     textcoords="offset points",
                     ha="center",
                     va="center",
-                    fontsize=12.8,
+                    fontsize=14.5,
                     fontweight=800,
                     color=text_color,
                 )
                 ax.annotate(
-                    f"({pct:.1f}%)",
+                    f"({pct_text})",
                     xy=(j, i),
                     xycoords="data",
                     xytext=(0, -9.6),
                     textcoords="offset points",
                     ha="center",
                     va="center",
-                    fontsize=11.6,
+                    fontsize=13.3,
                     color=text_color,
                 ).set_path_effects(
                     [withStroke(linewidth=0.01, foreground=text_color)]
                 )
         title_effect = [withStroke(linewidth=0.5, foreground="#111827")]
-        ax.set_xticks(range(len(OUTCOME_KEYS)), LOG_OUTCOME_LABELS, fontsize=12)
+        ax.set_xticks(
+            range(len(SET_OUTCOME_KEYS)), SET_OUTCOME_LABELS,
+            fontsize=12.3, fontfamily="Arial" if any(f.name == "Arial" for f in matplotlib.font_manager.fontManager.ttflist) else "DejaVu Sans",
+        )
         for label in ax.get_xticklabels():
             label.set_color("#111827")
         ax.set_yticks(range(len(OUTCOME_KEYS)))
@@ -1213,34 +1177,34 @@ def _plot_outcome_tables(
             row_label = base_label.replace("\n", " ")
             ax.annotate(
                 row_label,
-                xy=(-0.028, i),
+                xy=(-0.035, i),
                 xycoords=ax.get_yaxis_transform(),
                 xytext=(0, 6),
                 textcoords="offset points",
                 ha="right",
                 va="center",
-                fontsize=12,
+                fontsize=13.3,
                 color="#111827",
                 clip_on=False,
             )
             ax.annotate(
                 total_text,
-                xy=(-0.028, i),
+                xy=(-0.035, i),
                 xycoords=ax.get_yaxis_transform(),
                 xytext=(0, -9),
                 textcoords="offset points",
                 ha="right",
                 va="center",
-                fontsize=11.2,
+                fontsize=12.8,
                 color="#4b5563",
                 clip_on=False,
             ).set_path_effects(
                 [withStroke(linewidth=0.2, foreground="#4b5563")]
             )
-        ax.set_xlabel(f"Log top-{NOMINAL_P:g} set", labelpad=14, fontsize=14)
+        ax.set_xlabel(f"RBD, Top-{NOMINAL_P:g}", labelpad=12, fontsize=14)
         ax.set_title(
             RUNS[key]["label"],
-            fontsize=16,
+            fontsize=16.5,
             color="#111827",
             pad=11,
         ).set_path_effects(title_effect)
@@ -1248,7 +1212,7 @@ def _plot_outcome_tables(
         for spine in ax.spines.values():
             spine.set_visible(True)
     axes[0].set_ylabel(
-        f"penalty {penalty_label(penalty)}", labelpad=61, fontsize=14
+        f"EPP, {penalty_label(penalty)}", labelpad=66, fontsize=14.5
     )
     subtle_count_cmap = LinearSegmentedColormap.from_list(
         "subtle_question_counts",
@@ -1256,10 +1220,13 @@ def _plot_outcome_tables(
     )
     sm = plt.cm.ScalarMappable(norm=norm, cmap=subtle_count_cmap)
     sm.set_array([])
-    cbar = fig.colorbar(sm, ax=axes, fraction=0.008, pad=0.012, shrink=0.86)
+    cax = fig.add_axes([.965, .22, .008, .61])
+    cbar = fig.colorbar(sm, cax=cax)
     cbar.ax.tick_params(labelsize=8, length=2.5, width=0.5, colors="#111827")
     cbar.outline.set_visible(False)
-    savefig(fig, name)
+    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", pad_inches=.13)
+    plt.close(fig)
+    print(f"  wrote {name}.pdf")
 
 
 def _fig_outcome_table_for_penalty(
@@ -1322,10 +1289,10 @@ def _fig_outcome_table_for_penalty(
 
 
 def fig_outcome_tables(paired) -> dict[str, pd.DataFrame]:
-    print("== Fig. 3 / Fig. S1: penalty-vs-log outcome tables ==")
+    print("== Fig. 4 / Fig. S1: answer-or-abstain responses vs three set outcomes ==")
     outputs = {}
     for penalty in PENALTY_LEVELS:
-        name = ("F3_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
+        name = ("F4_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
                 else f"FS1_OutcomeTable_{penalty_tag(penalty)}")
         outputs.update(
             _fig_outcome_table_for_penalty(
@@ -1691,7 +1658,6 @@ def fig_jsd_ecdf(question_summary: pd.DataFrame, *, random_seed: int = 0) -> Non
         "gemini35flash": "Gemini",
         "sonnet46": "Sonnet",
         "deepseekv32maas": "DeepSeek",
-        "qwen3_235b": "Qwen",
     }
     median_by_model = {
         model_key: float(
@@ -1751,7 +1717,7 @@ def fig_jsd_ecdf(question_summary: pd.DataFrame, *, random_seed: int = 0) -> Non
             Line2D([0], [0], color=color, lw=2.2, label=model_label)
         )
     ax.set_xlabel(x_axis_label)
-    ax.set_ylabel("cumulative fraction of questions")
+    ax.set_ylabel("cumulative proportion of questions")
     ax.set_xlim(x_left, x_right)
     ax.set_ylim(0, 1.02)
     ax.grid(alpha=0.18, lw=0.6)
@@ -1926,7 +1892,9 @@ def main(argv: list[str] | None = None):
             raise SystemExit("No consistency figure was generated.")
         return
     paired = load_paired()
-    fig_frontier(paired)
+    from comparison_uncertainty import main as comparison_intervals
+    relative = comparison_intervals(["--outdir", str(OUT)])
+    fig_frontier(paired, relative)
     fig_outcome_tables(paired)
     fig_cumulative_rates(paired)
     fig_response_counts(paired)

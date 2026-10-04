@@ -1,0 +1,3 @@
+-r ../requirements.txt
+# Exact version used for the exploratory richer-rule experiment.
+scikit-learn==1.8.0

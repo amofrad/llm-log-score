@@ -1,0 +1,80 @@
+[
+  {
+    "table": "Table1_DecisionOutcomes",
+    "latex": "Table1_DecisionOutcomes.tex",
+    "data": "Table1_DecisionOutcomes.csv",
+    "source": "Table1_DecisionOutcomes.csv"
+  },
+  {
+    "table": "Table2_MethodComparison",
+    "latex": "Table2_MethodComparison.tex",
+    "data": "Table2_MethodComparison.csv",
+    "source": "descriptive table template"
+  },
+  {
+    "table": "TableS10_SplitSensitivity",
+    "latex": "TableS10_SplitSensitivity.tex",
+    "data": "TableS10_SplitSensitivity.csv",
+    "source": "TableS10_SplitSensitivity.csv"
+  },
+  {
+    "table": "TableS11_Models",
+    "latex": "TableS11_Models.tex",
+    "data": "TableS11_Models.csv",
+    "source": "descriptive table template"
+  },
+  {
+    "table": "TableS1_LogLoss",
+    "latex": "TableS1_LogLoss.tex",
+    "data": "TableS1_LogLoss.csv",
+    "source": "theory_audit_realized_log_loss.csv"
+  },
+  {
+    "table": "TableS2_SetOutcomeIntervals",
+    "latex": "TableS2_SetOutcomeIntervals.tex",
+    "data": "TableS2_SetOutcomeIntervals.csv",
+    "source": "set_outcome_intervals.csv"
+  },
+  {
+    "table": "TableS3_MatchedAbstention",
+    "latex": "TableS3_MatchedAbstention.tex",
+    "data": "TableS3_MatchedAbstention.csv",
+    "source": "matched_abstention_gaps.csv"
+  },
+  {
+    "table": "TableS4_IdealListExtent",
+    "latex": "TableS4_IdealListExtent.tex",
+    "data": "TableS4_IdealListExtent.csv",
+    "source": "TableS4_IdealListExtent.csv"
+  },
+  {
+    "table": "TableS5_TokenCosts",
+    "latex": "TableS5_TokenCosts.tex",
+    "data": "TableS5_TokenCosts.csv",
+    "source": "token_costs.csv"
+  },
+  {
+    "table": "TableS6_IDKReliability",
+    "latex": "TableS6_IDKReliability.tex",
+    "data": "TableS6_IDKReliability.csv",
+    "source": "theory_audit_residual_reliability.csv"
+  },
+  {
+    "table": "TableS7_TopReliability",
+    "latex": "TableS7_TopReliability.tex",
+    "data": "TableS7_TopReliability.csv",
+    "source": "theory_audit_top_reliability.csv"
+  },
+  {
+    "table": "TableS8_ThresholdCalibration",
+    "latex": "TableS8_ThresholdCalibration.tex",
+    "data": "TableS8_ThresholdCalibration.csv",
+    "source": "TableS8_ThresholdCalibration.csv"
+  },
+  {
+    "table": "TableS9_RiskControl",
+    "latex": "TableS9_RiskControl.tex",
+    "data": "TableS9_RiskControl.csv",
+    "source": "TableS9_RiskControl.csv"
+  }
+]

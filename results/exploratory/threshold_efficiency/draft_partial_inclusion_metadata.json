@@ -1,0 +1,13 @@
+{
+  "source": "ties_all_results.csv",
+  "source_sha256": "1af2c49dfe07a74fe953c94f4b0b3609e2b0693449d32e34d1c77b862db64311",
+  "method": "tied_bonferroni",
+  "grader": "openai",
+  "coin_rep": 0,
+  "primary_seed": 20260912,
+  "additional_seeds": [
+    20260913,
+    20261012
+  ],
+  "validation": "Primary bounds and exact intervals recomputed from integer counts; all S9 rates and contributing counts checked; 15 S8 numeric rows and 30 S9 numeric rows."
+}

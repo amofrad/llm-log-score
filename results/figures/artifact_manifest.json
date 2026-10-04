@@ -1,0 +1,16 @@
+{
+  "figure_numbering": "Current main text and SI Appendix",
+  "figures": [
+    {"label": "Figure 1", "files": ["F1_Concept.pdf"], "kind": "supplied schematic"},
+    {"label": "Figure 2", "files": ["F2_ResponseCounts.pdf"]},
+    {"label": "Figure 3", "files": ["F3_Frontier.pdf"]},
+    {"label": "Figure 4", "files": ["F4_OutcomeTable_L3.pdf"]},
+    {"label": "Figure 5", "files": ["F5_ThresholdCalibration.pdf"]},
+    {"label": "Figure S1", "files": ["FS1_OutcomeTable_L0.pdf", "FS1_OutcomeTable_L6.pdf"]},
+    {"label": "Figure S2", "files": ["FS2_JSD.pdf"]},
+    {"label": "Figure S3", "files": ["FS3_cumulative.pdf"]},
+    {"label": "Figure S4", "files": ["FS4_rho_sensitivity.pdf"]},
+    {"label": "Figure S5", "files": ["FS5A_rule_sensitivity.pdf", "FS5B_rule_outcome_tables.pdf"]}
+  ],
+  "tables": "tables/manifest.json"
+}
