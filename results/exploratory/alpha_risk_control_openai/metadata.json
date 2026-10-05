@@ -318,7 +318,6 @@
     "analysis/common.py": "205e4298a3da8d9874ed27fbc08066be77f8a3e1a88f695a2f78de5dba0c93de",
     "runner/engine.py": "b272b8711080df6559384af7c340622686572bb198fb38ef70f7a2620e5ca3d3"
   },
-  "protocol_sha256": "159c4791345be63a51afb5fd2e4e56b6733f93fbfda58ca3450b4b53d2aca1ff",
   "software": {
     "python": "3.14.3",
     "numpy": "2.4.6",

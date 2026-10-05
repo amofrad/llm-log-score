@@ -1,7 +1,7 @@
 """Map an error tolerance to a simultaneously supported answer threshold.
 
 Standalone retrospective analysis. Does not modify paper text or figures.
-See alpha_risk_control_protocol.md and alpha_risk_control_theory.md.
+See alpha_risk_control_theory.md for theoretical details.
 """
 from __future__ import annotations
 
@@ -157,8 +157,7 @@ def plot_curves(primary, out):
 def run(grader="openai", out=None, repeats=100):
     out=Path(out) if out else ROOT/"results"/"exploratory"/f"alpha_risk_control_{grader}"
     out.mkdir(parents=True,exist_ok=True)
-    for name in ("protocol","theory"):
-        shutil.copyfile(Path(__file__).with_name(f"alpha_risk_control_{name}.md"),out/f"{name}.md")
+    shutil.copyfile(Path(__file__).with_name("alpha_risk_control_theory.md"),out/"theory.md")
     frames,inputs=load_inputs(grader)
     results,bands,predictions=[],[],[]
     for (key,rep),frame in frames.items():
@@ -215,7 +214,6 @@ def run(grader="openai", out=None, repeats=100):
           "confidence_scope":"simultaneous thresholds and arbitrary alpha, separately per method, model, representation, and split",
           "design":"retrospective previously examined benchmark; no new external validation",
           "inputs":inputs,"source_hashes":{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_files},
-          "protocol_sha256":hashlib.sha256((out/"protocol.md").read_bytes()).hexdigest(),
           "software":{"python":platform.python_version(),"numpy":np.__version__,"pandas":pd.__version__,"scipy":scipy.__version__}}
     (out/"metadata.json").write_text(json.dumps(meta,indent=2)+"\n")
     print(f"Saved {out}",flush=True)

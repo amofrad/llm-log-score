@@ -1,7 +1,7 @@
 """Develop calibration and empirical score optimization as threshold decisions.
 
 Standalone retrospective analysis; does not change manuscript figures or text.
-See calibration_decisions_protocol.md and calibration_decisions_theory.md.
+See calibration_decisions_theory.md for theoretical details.
 """
 from __future__ import annotations
 
@@ -353,8 +353,7 @@ def plot_primary(data, predictions, out):
 def run(grader="openai", out_dir=None, repeats=REPEATS):
     out = Path(out_dir) if out_dir else ROOT/"results"/"exploratory"/f"calibration_decisions_{grader}"
     out.mkdir(parents=True,exist_ok=True)
-    for stem in ("protocol", "theory"):
-        shutil.copyfile(Path(__file__).with_name(f"calibration_decisions_{stem}.md"),out/f"{stem}.md")
+    shutil.copyfile(Path(__file__).with_name("calibration_decisions_theory.md"),out/"theory.md")
     frames,inputs=load_inputs(grader)
     all_rows,all_thresholds,all_contrasts,all_predictions,fit_records=[],[],[],[],[]
     for (key,representation),frame in frames.items():
@@ -408,7 +407,6 @@ def run(grader="openai", out_dir=None, repeats=REPEATS):
               "route1_route2_all_thresholds_equal":bool((thresholds.route1_threshold==thresholds.route2_threshold).all()),
               "design":"retrospective benchmark; no fixed-error certification; overlapping splits are descriptive",
               "inputs":inputs,"code_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              "protocol_sha256":hashlib.sha256((out/"protocol.md").read_bytes()).hexdigest(),
               "software":{"python":platform.python_version(),"numpy":np.__version__,"pandas":pd.__version__,"scipy":scipy.__version__}}
     (out/"metadata.json").write_text(json.dumps(metadata,indent=2)+"\n")
     print(f"Saved results to {out}",flush=True)

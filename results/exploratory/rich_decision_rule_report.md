@@ -174,7 +174,6 @@ the desired contribution.
 
 ## Reproduction and verification
 
-The fixed design is in [the analysis plan](../../analysis/rich_decision_rule_protocol.md).
 The repository README gives installation and execution commands. Both output
 directories retain all methods and all splits, primary per-question features
 and scores, testing traces, fitted estimators, input hashes, and software

@@ -171,7 +171,6 @@
   "baseline_bounds_reproduced": 61812,
   "baseline_results_reproduced": 6060,
   "source_sha256": "a8df075f67705dc6b15c805640e44ce0f6e00d5b6039f1628bc901c13039845b",
-  "protocol_sha256": "97e65f54b25ddf11d7571042099aa735d0cbbac3dbacc6ba4c25cbc93ddfb60e",
   "python": "3.14.3",
   "numpy": "2.4.6",
   "scipy": "1.17.1",

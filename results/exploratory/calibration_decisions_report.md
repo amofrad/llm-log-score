@@ -211,7 +211,6 @@ currently separate review artifacts.
 - [Processed-report decision scores and answer rates](calibration_decisions_openai/decision_scores_processed.pdf)
 - [Primary-grader split summary](calibration_decisions_openai/split_summary.csv)
 - [Second-grader split summary](calibration_decisions_gemini/split_summary.csv)
-- [Fixed protocol](../../analysis/calibration_decisions_protocol.md)
 - [Theory and proofs](../../analysis/calibration_decisions_theory.md)
 
 Twenty-five analysis tests passed. Independent checks reconstructed all 180

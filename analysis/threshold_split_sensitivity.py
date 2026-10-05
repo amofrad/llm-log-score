@@ -1,7 +1,7 @@
 """Compare fixed-grid threshold decisions under 50–50 and 70–30 allocations.
 
 Read existing per-question selections and grades; no model or grading calls.
-Only numpy and scipy are required. See threshold_split_sensitivity_protocol.md.
+Only numpy and scipy are required.
 """
 from __future__ import annotations
 
@@ -11,7 +11,6 @@ import hashlib
 import json
 import platform
 from pathlib import Path
-import shutil
 
 import numpy as np
 import scipy
@@ -225,7 +224,7 @@ def make_report(out, rows, summaries, paired):
         '- Smaller test sets can make test-error estimates less precise at a fixed threshold. Actual precision also depends on how many answers the selected rule returns.',
         '- These are overlapping retrospective splits of an already examined benchmark, not independent external replications. The individual risk guarantee does not automatically extend to selecting the allocation with the best observed result.', '',
         'Reproduce from the repository root with `python3 analysis/threshold_split_sensitivity.py` (requires NumPy and SciPy).', '',
-        'Saved outputs: `all_results.csv`, `all_bounds.csv`, `primary_results.csv`, `split_summary.csv`, `paired_comparisons.csv`, `primary_assignments.csv`, `metadata.json`, and the prespecified `protocol.md`.', '']
+        'Saved outputs: `all_results.csv`, `all_bounds.csv`, `primary_results.csv`, `split_summary.csv`, `paired_comparisons.csv`, `primary_assignments.csv`, and `metadata.json`.', '']
     (out/'report.md').write_text('\n'.join(lines))
 
 
@@ -291,12 +290,11 @@ def run(out, analysis_dir=None):
     out.mkdir(parents=True,exist_ok=True)
     for name,rows in [('all_results',results),('all_bounds',bands),('primary_results',[r for r in results if r['seed']==SEED]),('split_summary',summary),('paired_comparisons',paired),('primary_assignments',assignments)]:
         write_csv(out/(name+'.csv'),rows)
-    protocol=Path(__file__).with_name('threshold_split_sensitivity_protocol.md');shutil.copy2(protocol,out/'protocol.md')
     meta={'seed':SEED,'additional_splits':REPEATS,'alphas':ALPHAS,'delta':DELTA,'grid':grid.tolist(),
           'selection_sizes':{'50-50':2163,'70-30':3028},'test_sizes':{'50-50':2163,'70-30':1298},
           'primary_grader':'openai','representation':'raw','common_test_size':1298,
           'verification':{'original_bounds_reproduced':61812,'original_result_rows_reproduced':3030},
-          'inputs':inputs,'source_sha256':sha(__file__),'protocol_sha256':sha(protocol),
+          'inputs':inputs,'source_sha256':sha(__file__),
           'software':{'python':platform.python_version(),'numpy':np.__version__,'scipy':scipy.__version__}}
     (out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
     make_report(out,results,summary,paired)

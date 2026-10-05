@@ -368,4 +368,4 @@ All 61,812 saved 50–50 baseline bounds and all 6,060 baseline selections/test 
 
 These are exploratory comparisons on a previously examined benchmark. Any later method choice should be stated explicitly and confirmed independently. In particular, selecting the best method separately for each model/alpha after seeing these outcomes is not covered by the individual methods’ guarantees. There is no need for observed test error to equal alpha; the objective is more answered questions at controlled underlying conditional error.
 
-The methods use established exact binomial testing and multiple-testing arguments. See [Learn then Test, Sections 2.3.1–2.3.2](https://arxiv.org/html/2110.01052v5#S2.SS3). The detailed protocol, proof of guarantee scope, all selections, and paired summaries are retained alongside this report in the repository.
+The methods use established exact binomial testing and multiple-testing arguments. See [Learn then Test, Sections 2.3.1–2.3.2](https://arxiv.org/html/2110.01052v5#S2.SS3). The theory note, all selections, and paired summaries are retained in the repository.

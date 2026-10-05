@@ -190,4 +190,4 @@ The bounds below are from threshold selection; errors and exact pointwise 95% in
 
 Reproduce from the repository root with `python3 analysis/threshold_split_sensitivity.py` (requires NumPy and SciPy).
 
-Saved outputs: `all_results.csv`, `all_bounds.csv`, `primary_results.csv`, `split_summary.csv`, `paired_comparisons.csv`, `primary_assignments.csv`, `metadata.json`, and the prespecified `protocol.md`.
+Saved outputs: `all_results.csv`, `all_bounds.csv`, `primary_results.csv`, `split_summary.csv`, `paired_comparisons.csv`, `primary_assignments.csv`, and `metadata.json`.

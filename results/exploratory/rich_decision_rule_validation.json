@@ -8,7 +8,7 @@
   "decision_rows_per_grader": 9696,
   "checks": [
     "raw features identical across graders",
-    "input, protocol and code hashes agree",
+    "input and code hashes agreed at validation",
     "saved estimators reproduce primary scores within 1e-12",
     "primary calibration and test counts independently recomputed",
     "exact binomial p-values satisfy allocated error budgets",

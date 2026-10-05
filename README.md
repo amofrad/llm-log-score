@@ -75,7 +75,7 @@ llm-log-score/
 │   ├── make_split_sensitivity_table.py   Table S10
 │   ├── rich_decision_rule.py             Additional report features for decisions
 │   ├── calibration_decisions.py          Calibration and decision-score analyses
-│   └── *_protocol.md, *_theory.md        Analysis settings and theoretical details
+│   └── *_theory.md                      Theoretical details for additional analyses
 ├── results/
 │   ├── graded_by_openai/                 Primary grading, including sensitivity runs
 │   ├── graded_by_gemini/                 Second-grader results
@@ -145,8 +145,7 @@ python analysis/make_tables.py --steps tables
 Benchmark comparisons merge answer variants using correctness grades and fixed
 string rules. The error-controlled analysis instead selects candidates from
 original parsed reports before attaching grades. Threshold selection and testing
-use separate question samples. The linked protocols below describe the processing,
-statistical assumptions, and uncertainty calculations.
+use separate question samples.
 
 ## Figures and tables
 
@@ -185,15 +184,6 @@ The CSVs retain analysis precision; Table 1 also includes rounded display values
 | Table S9 | `TableS9_RiskControl.csv` | Selected thresholds and held-out error |
 | Table S10 | `TableS10_SplitSensitivity.csv` | Sensitivity to sample allocation |
 | Table S11 | `TableS11_Models.csv` | Model names and API identifiers |
-
-## Additional analyses
-
-Detailed settings and assumptions are documented with the analyses:
-
-- [Error-controlled decisions](analysis/alpha_risk_control_protocol.md)
-- [Sensitivity to threshold-selection sample size](analysis/threshold_split_sensitivity_protocol.md)
-- [Exploratory decision rules](analysis/rich_decision_rule_protocol.md)
-- [Exploratory calibration and decision scores](analysis/calibration_decisions_protocol.md)
 
 ## Collect or grade new responses
 

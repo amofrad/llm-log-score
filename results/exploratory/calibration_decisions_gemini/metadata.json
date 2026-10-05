@@ -173,7 +173,6 @@
     }
   ],
   "code_sha256": "e3ab0de4ba744bc47551ccc0f809137b0551cca2201186fdfaef33ff85a7b17c",
-  "protocol_sha256": "5dd0a7b5828683db57377ca8379d856648487823ec007b60f765165003b6c51e",
   "software": {
     "python": "3.14.3",
     "numpy": "2.4.6",

@@ -1,7 +1,7 @@
 """Exploratory efficiency comparison; never modifies manuscript artifacts.
 
-Run with the Project Python environment. See the accompanying protocol and
-theory note for fixed choices, exact guarantee scopes, and interpretation.
+Run with the Project Python environment. See threshold_efficiency_theory.md
+for guarantee scopes and interpretation.
 """
 from __future__ import annotations
 
@@ -256,7 +256,6 @@ def main():
                 'methods':methods, 'source_inputs':sources,
                 'baseline_bounds_reproduced':checked_bounds, 'baseline_results_reproduced':checked_results,
                 'source_sha256':prior.sha(__file__),
-                'protocol_sha256':prior.sha(Path(__file__).with_name('threshold_efficiency_protocol.md')),
                 'python':platform.python_version(),'numpy':np.__version__,'scipy':scipy.__version__,
                 'interpretation':'Exploratory, overlapping partitions; no new external validation. Test error above alpha is not a guarantee-failure estimate.'}
     (OUT/f'{args.stage}_metadata.json').write_text(json.dumps(metadata,indent=2)+'\n')

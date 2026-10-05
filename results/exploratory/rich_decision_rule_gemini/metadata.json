@@ -164,7 +164,6 @@
       "sha256": "cba29692b24532dba047ba95bee3e767106485f20ca5a78da7e9bdb82675e7f5"
     }
   ],
-  "protocol_sha256": "500c9e9a5378fa7310171d9f02d9d78d38d3316359bca9661c2757f46d3bfb17",
   "code_sha256": "9acef4b9a6a21bcffe5cad6e61859b3366aef0cc924dfc12df94785256a4eb26",
   "software": {
     "python": "3.14.3",

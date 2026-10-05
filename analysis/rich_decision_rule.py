@@ -1,6 +1,5 @@
 """Retrospective, label-free report features with learned selective decisions.
 
-See rich_decision_rule_protocol.md for the frozen design and guarantee scope.
 Runs locally on existing reports and grades; never calls a model or grader API.
 """
 from __future__ import annotations
@@ -12,7 +11,6 @@ import os
 import tempfile
 from pathlib import Path
 import platform
-import shutil
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
@@ -312,7 +310,6 @@ def plot_primary(predictions, target):
 def run(grader="openai", out_dir=None, repeats=REPEATS):
     out = Path(out_dir) if out_dir else ROOT / "results" / "exploratory" / f"rich_decision_rule_{grader}"
     out.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(Path(__file__).with_name("rich_decision_rule_protocol.md"), out / "protocol.md")
     tree = ROOT / "results" / f"graded_by_{grader}"
     frames, inputs = {}, []
     for key in common.MODEL_ORDER:
@@ -375,7 +372,6 @@ def run(grader="openai", out_dir=None, repeats=REPEATS):
                 "fixed_sequence_tail": selection.DELTA / len(selection.TARGETS),
                 "confidence_scope": "joint targets, separately per model, fixed rule, and split",
                 "grid": selection.GRID.tolist(), "inputs": inputs,
-                "protocol_sha256": hashlib.sha256((out / "protocol.md").read_bytes()).hexdigest(),
                 "code_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                 "software": {"python": platform.python_version(), "numpy": np.__version__,
                              "pandas": pd.__version__, "scipy": scipy.__version__, "sklearn": sklearn.__version__}}

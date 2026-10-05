@@ -56,9 +56,8 @@ for independent certification to be valid.
 We retained raw and gold-informed processed representations separately and
 repeated every analysis under both graders. Another 100 fixed splits describe
 allocation sensitivity. No test outcomes select thresholds or tune the methods.
-The [protocol](../../analysis/alpha_risk_control_protocol.md) fixes the initial
-targets, methods, sample allocation, and confidence scope. Its amendment records
-the user's subsequent request for 30%, 35%, and 40%, with methods unchanged.
+The saved metadata records the targets, methods, sample allocation, and confidence
+scope, including the extension to 30%, 35%, and 40% with methods unchanged.
 
 ## Primary results on raw reports
 
