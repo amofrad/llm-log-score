@@ -81,10 +81,8 @@ llm-log-score/
 │   ├── graded_by_gemini/                 Second-grader results
 │   ├── figures/                         Paper figures and supporting numerical data
 │   │   ├── tables/                      Tables 1–2 and S1–S11 as CSV
-│   │   ├── artifact_manifest.json       Figure index
-│   │   └── reproduction_audit.json      Verification against the manuscript
+│   │   └── artifact_manifest.json       Figure index
 │   └── exploratory/                     Detailed and additional analysis outputs
-├── tests/                               Analysis and result-consistency tests
 ├── README.md
 └── requirements.txt
 ```
@@ -199,15 +197,3 @@ Their available options are listed by:
 python runner/run.py --help
 python grading/grade.py --help
 ```
-
-## Verification
-
-To run the full test suite, including the exploratory analyses:
-
-```bash
-python -m pip install -r analysis/requirements-rich-decision-rule.txt
-python -m unittest discover -s tests -v
-```
-
-The [reproduction audit](results/figures/reproduction_audit.json) records checks
-against the manuscript figures and tables.
