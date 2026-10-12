@@ -406,7 +406,10 @@ def fig_frontier(paired, relative):
                              for x, l, h in zip(band_x, lo, hi))
             ax.plot(fr.abstention_rate, fr[metric], color=color, lw=2, label="RBD")
             for level, epp in paired[key]["penalties"].items():
-                x, y = epp.penalty_abstention_rate.mean(), epp[epp_metric].mean()
+                # Include explicit abstentions and other non-answers, as in
+                # Tables 1/S3 and the matched-abstention gains in panel C.
+                x = (1 - epp.penalty_accuracy_overall - epp.penalty_hallucination_rate).mean()
+                y = epp[epp_metric].mean()
                 ax.scatter([x], [y], color=PENALTY_COLORS[level], marker="o",
                            s=52 if level == PRIMARY_PENALTY else 44, edgecolors="white",
                            linewidths=.6, zorder=5, label=fr"EPP, $L={level:g}$")
