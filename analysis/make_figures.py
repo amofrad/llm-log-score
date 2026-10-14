@@ -56,7 +56,6 @@ BOOT_BAND_STEP = 10
 PRIMARY_PENALTY = 3.0
 PENALTY_LEVELS = [0.0, 3.0, 6.0]
 PENALTY_COLORS = {0.0: "#111827", 3.0: "crimson", 6.0: "#7c3aed"}
-PENALTY_BAR_COLORS = {0.0: "#fca5a5", 3.0: "#ef4444", 6.0: "#991b1b"}
 PENALTY_LINESTYLES = {0.0: "-.", 3.0: "--", 6.0: ":"}
 PENALTY_MARKERS = {0.0: "o", 3.0: "s", 6.0: "^"}
 PENALTY_ALPHA = {0.0: 0.62, 3.0: 0.72, 6.0: 0.78}
@@ -525,10 +524,9 @@ def _penalty_distribution_items(row: pd.Series) -> list[dict]:
 
 def fig_response_counts(paired):
     print("== Fig. 2: responses per question ==")
-    fig, axes = model_panel_subplots(height=4.8, sharey=True)
     count_rows = []
     count_data = {}
-    for ax, key in zip(axes, ACTIVE_MODEL_ORDER):
+    for key in ACTIVE_MODEL_ORDER:
         df = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
         log_counts = df["candidates"].map(_distinct_response_count).to_numpy()
         penalty_counts = {}
@@ -558,113 +556,103 @@ def fig_response_counts(paired):
                 "distinct_response_entries": int(log_n),
             })
 
-    for ax, key in zip(axes, ACTIVE_MODEL_ORDER):
-        c = MODEL_COLORS[key]
-        data = count_data[key]
-        log_counts = data["log"]
-        observed_max = int(max(
-            [log_counts.max(initial=0)]
-            + [counts.max(initial=0) for counts in data["penalty"].values()]
-        ))
-        available_penalties = [p for p in PENALTY_LEVELS if p in data["penalty"]]
-        series = [("penalty", p, data["penalty"][p]) for p in available_penalties]
-        series.append(("log", None, log_counts))
-        panel_cap = int(np.ceil(max(
-            [np.quantile(counts, 0.99) for _method, _penalty, counts in series]
-        )))
-        has_overflow = observed_max > panel_cap
-        plot_max = panel_cap + int(has_overflow)
-        n_series = len(series)
-        width = min(0.34, 1.22 / max(1, n_series))
-        offsets = (np.arange(n_series) - (n_series - 1) / 2) * width
-
-        def panel_hist(counts: np.ndarray) -> np.ndarray:
-            hist = [(counts == k).mean() for k in range(panel_cap + 1)]
-            if has_overflow:
-                hist.append((counts > panel_cap).mean())
-            return np.asarray(hist)
-
-        log_hist = panel_hist(log_counts)
-        x = np.arange(plot_max + 1)
-        for idx, (method, penalty, counts) in enumerate(series):
-            hist = log_hist if method == "log" else panel_hist(counts)
-            color = c if method == "log" else PENALTY_BAR_COLORS[penalty]
-            alpha = 0.9 if method == "log" else 0.82
-            edgecolor = "#111827" if method == "log" else "white"
-            linewidth = 0.42 if method == "log" else 0.28
-            label = "RBD" if method == "log" else fr"EPP, $L = {penalty:g}$"
-            ax.bar(
-                x + offsets[idx],
-                hist,
-                width=width * 0.98,
-                color=color,
-                alpha=alpha,
-                label=label,
-                edgecolor=edgecolor,
-                linewidth=linewidth,
-                zorder=3,
-            )
-        ax.text(0.66, 0.965, "mean", transform=ax.transAxes,
-                ha="left", va="top", fontsize=10.5, color="#111827")
-        for idx, (method, penalty, counts) in enumerate(series):
-            mean_label = "RBD" if method == "log" else f"EPP, {penalty_label(penalty)}"
-            ax.text(0.66, 0.965 - 0.068 * (idx + 1),
-                    f"{mean_label}: {np.mean(counts):.1f}",
-                    transform=ax.transAxes, ha="left", va="top",
-                    fontsize=10.5, color="#111827")
-        ax.set_title(
-            RUNS[key]["label"], fontsize=16, color="#111827"
-        ).set_path_effects([withStroke(linewidth=0.5, foreground="#111827")])
-        ax.set_xlabel("distinct responses per question", fontsize=17)
-        if panel_cap <= 15:
-            ticks = np.arange(panel_cap + 1)
-        else:
-            step = max(1, int(np.ceil(panel_cap / 10)))
-            ticks = np.arange(0, panel_cap + 1, step)
-            if ticks[-1] != panel_cap:
-                ticks = np.r_[ticks, panel_cap]
-        if has_overflow and ticks[-1] == panel_cap:
-            ticks = ticks[:-1]
-        tick_labels = [str(k) for k in ticks]
-        if has_overflow:
-            ticks = np.r_[ticks, plot_max]
-            tick_labels.append(f">{panel_cap}")
-            ax.axvline(panel_cap + 0.5, color="#9ca3af", lw=0.6,
-                       linestyle=":", zorder=2)
-        ax.set_xticks(ticks, tick_labels)
-        ax.tick_params(axis="x", labelsize=11.5)
-        ax.set_xlim(-0.78, plot_max + 0.78)
-        ax.grid(axis="y", alpha=0.16, lw=0.55, zorder=0)
-        penalty_summary = ", ".join(
-            f"{penalty_label(p)}={np.median(data['penalty'][p]):.0f}"
-            for p in available_penalties
-        )
-        print(
-            f"  {key}: median distinct responses "
-            f"log={np.median(log_counts):.0f}, penalty ({penalty_summary}); "
-            f"max log={log_counts.max(initial=0)}, "
-            f"max penalty={max((v.max(initial=0) for v in data['penalty'].values()), default=0)}, "
-            f"panel cap={panel_cap}{' + overflow' if has_overflow else ''}"
-        )
-    axes[0].set_ylabel("proportion of questions", fontsize=17)
-    legend_handles = [
-        Patch(facecolor=PENALTY_BAR_COLORS[p], alpha=0.82, label=fr"EPP, $L = {p:g}$")
-        for p in PENALTY_LEVELS
-        if any(p in count_data[key]["penalty"] for key in count_data)
+    # Separate settings vertically, preserving every integer count and using
+    # the same axes across models. No smoothing or overflow pooling is used.
+    available_penalties = [
+        p for p in PENALTY_LEVELS
+        if any(p in values["penalty"] for values in count_data.values())
     ]
-    legend_handles.append(Patch(facecolor="#ffffff", edgecolor="#111827",
-                                label="RBD\n(model color)"))
-    pd.DataFrame(count_rows).to_csv(OUT / "F2_ResponseCounts.csv", index=False)
-    fig.tight_layout()
-    fig.legend(
-        handles=legend_handles,
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.03),
-        ncol=len(legend_handles),
-        frameon=False,
-        fontsize=17,
-    )
-    savefig(fig, "F2_ResponseCounts")
+    series = [("penalty", p) for p in available_penalties] + [("log", None)]
+    all_counts = [
+        counts
+        for data in count_data.values()
+        for counts in [data["log"], *data["penalty"].values()]
+        if len(counts)
+    ]
+    plot_min = min(1, min(int(counts.min()) for counts in all_counts))
+    plot_max = max(50, max(int(counts.max()) for counts in all_counts))
+    edges = np.arange(plot_min - 0.5, plot_max + 1.5)
+    histograms = {}
+    for key, data in count_data.items():
+        for method, penalty in series:
+            counts = data["log"] if method == "log" else data["penalty"].get(penalty)
+            if counts is not None and len(counts):
+                histograms[key, method, penalty] = (
+                    np.bincount(counts.astype(int), minlength=plot_max + 1)[plot_min:]
+                    / len(counts)
+                )
+    ymax = max(0.67, 1.04 * max(hist.max() for hist in histograms.values()))
+    ticks = [plot_min, 5, 10, *range(20, plot_max + 1, 10)]
+    nrows, ncols = len(series), len(ACTIVE_MODEL_ORDER)
+    height = 1.34 + 1.065 * nrows
+    with plt.rc_context({
+        "font.family": "DejaVu Sans",
+        "font.size": 12,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.linewidth": 0.65,
+        "pdf.fonttype": 42,
+        "savefig.facecolor": "white",
+    }):
+        fig, axes = plt.subplots(
+            nrows, ncols, figsize=(max(4.8, 5.2 * ncols), height),
+            sharex=True, sharey=True, squeeze=False,
+        )
+        for col, key in enumerate(ACTIVE_MODEL_ORDER):
+            for row, (method, penalty) in enumerate(series):
+                ax = axes[row, col]
+                color = MODEL_COLORS[key]
+                hist = histograms.get((key, method, penalty))
+                if hist is not None:
+                    ax.stairs(hist, edges, fill=True, color=color, alpha=0.65, linewidth=0)
+                    ax.stairs(hist, edges, color=color, linewidth=1.5)
+                ax.set_xlim(min(0, plot_min - 0.5), plot_max + 1)
+                ax.set_ylim(0, ymax)
+                ax.set_yticks([0, 0.3, 0.6])
+                ax.set_yticklabels(["0", ".3", ".6"], fontsize=10)
+                ax.set_xticks(ticks)
+                ax.tick_params(axis="x", labelsize=12, width=0.65, length=3)
+                ax.tick_params(axis="y", width=0.65, length=2)
+                ax.spines["left"].set_color("#b4b8be")
+                ax.spines["bottom"].set_color("#b4b8be")
+                ax.axhline(0.3, color="#e8eaed", linewidth=0.5, zorder=0)
+                if row < nrows - 1:
+                    ax.tick_params(axis="x", bottom=False, labelbottom=False)
+                else:
+                    ax.set_xlabel("Number of distinct response entries", fontsize=14, labelpad=8)
+                if col > 0:
+                    ax.tick_params(axis="y", left=False, labelleft=False)
+                    ax.spines["left"].set_visible(False)
+                else:
+                    label = "RBD" if method == "log" else fr"EPP, $L={penalty:g}$"
+                    ax.annotate(
+                        label, xy=(-0.12, 0.35), xycoords="axes fraction",
+                        ha="right", va="center", fontsize=16, color="#222222",
+                    )
+                if row == 0:
+                    ax.set_title(RUNS[key]["label"], fontsize=20.25, pad=13, color="#111827")
+            data = count_data[key]
+            penalty_summary = ", ".join(
+                f"{penalty_label(p)}={np.median(data['penalty'][p]):.0f}"
+                for p in available_penalties if p in data["penalty"]
+            )
+            print(
+                f"  {key}: median distinct responses "
+                f"log={np.median(data['log']):.0f}, penalty ({penalty_summary})"
+            )
+        fig.text(
+            0.021, 0.486, "Proportion of questions", rotation=90,
+            va="center", ha="center", fontsize=14,
+        )
+        fig.subplots_adjust(
+            left=0.145, right=0.985, top=1 - 0.75 / height, bottom=0.59 / height,
+            wspace=0.15, hspace=0.13,
+        )
+        pd.DataFrame(count_rows).to_csv(OUT / "F2_ResponseCounts.csv", index=False)
+        # Preserve the approved canvas and margins rather than tight-cropping.
+        fig.savefig(OUT / "F2_ResponseCounts.pdf")
+        plt.close(fig)
+        print("  wrote F2_ResponseCounts.pdf")
 
 
 # Fig. S3: cumulative mean display-content frequencies
