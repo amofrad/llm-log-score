@@ -61,7 +61,7 @@ llm-log-score/
 │   ├── reproduce_all.py                 Reproduce the paper's computed results
 │   ├── make_figures.py                   Main and supplementary figures
 │   ├── make_tables.py                    Numerical summaries and audits
-│   ├── comparison_uncertainty.py         Figure 3C and Table S2 intervals
+│   ├── comparison_uncertainty.py         Figure 2C and Table S2 intervals
 │   ├── paper_tables.py                   Numbered table CSV exports
 │   ├── paper_artifacts.json              Figure numbering and filenames
 │   ├── table_data/                       Method-comparison table data
@@ -152,8 +152,8 @@ Filenames follow the numbering in the paper and SI Appendix.
 | Paper figure | PDF |
 |---|---|
 | Fig. 1 | [F1_Concept.pdf](results/figures/F1_Concept.pdf) |
-| Fig. 2 | [F2_ResponseCounts.pdf](results/figures/F2_ResponseCounts.pdf) |
-| Fig. 3 | [F3_Frontier.pdf](results/figures/F3_Frontier.pdf) |
+| Fig. 2 | [F2_Frontier.pdf](results/figures/F2_Frontier.pdf) |
+| Fig. 3 | [F3_ResponseCounts.pdf](results/figures/F3_ResponseCounts.pdf) |
 | Fig. 4 | [F4_OutcomeTable_L3.pdf](results/figures/F4_OutcomeTable_L3.pdf) |
 | Fig. 5 | [F5_ThresholdCalibration.pdf](results/figures/F5_ThresholdCalibration.pdf) |
 | Fig. S1 | [L = 0](results/figures/FS1_OutcomeTable_L0.pdf), [L = 6](results/figures/FS1_OutcomeTable_L6.pdf) |

@@ -1,9 +1,9 @@
 """Generate the paper's figures from the graded results.
 
 Outputs, written to results/figures/ with the CSV data corresponding to each figure:
-F3_Frontier.pdf (Fig. 3), F4_OutcomeTable_L3.pdf (Fig. 4),
+F2_Frontier.pdf (Fig. 2), F4_OutcomeTable_L3.pdf (Fig. 4),
 FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
-FS3_cumulative.pdf (Fig. S3), and F2_ResponseCounts.pdf (Fig. 2).
+FS3_cumulative.pdf (Fig. S3), and F3_ResponseCounts.pdf (Fig. 3).
 
 Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
@@ -289,7 +289,7 @@ def load_penalty_arm(key: str, penalty: float = PRIMARY_PENALTY) -> pd.DataFrame
     )
 
 
-# Fig. 3: hallucination-abstention frontier
+# Fig. 2: hallucination-abstention frontier
 def _frontier_decision_matrices(
     df: pd.DataFrame,
     thresholds: np.ndarray,
@@ -372,8 +372,8 @@ def bootstrap_frontier_bands(
 
 
 def fig_frontier(paired, relative):
-    """Figure 3: aligned A/B frontiers and C relative gains, with one legend."""
-    print("== Fig. 3: RBD/EPP frontiers and relative accuracy gains ==")
+    """Figure 2: aligned A/B frontiers and C relative gains, with one legend."""
+    print("== Fig. 2: RBD/EPP frontiers and relative accuracy gains ==")
     grid = np.linspace(0, 0.95, 96)
     band_rows, curve_rows, point_rows = [], [], []
     n_models = len(ACTIVE_MODEL_ORDER)
@@ -440,12 +440,12 @@ def fig_frontier(paired, relative):
     handles[0] = Line2D([0], [0], color="black", lw=2)
     fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(.535, .995),
                ncol=len(labels), frameon=False, fontsize=13, markerscale=1.3)
-    pd.DataFrame(band_rows).to_csv(OUT / "F3_Frontier.csv", index=False)
-    pd.DataFrame(curve_rows).to_csv(OUT / "F3_Frontier_curves.csv", index=False)
-    pd.DataFrame(point_rows).to_csv(OUT / "F3_EPP_points.csv", index=False)
-    fig.savefig(OUT / "F3_Frontier.pdf")
+    pd.DataFrame(band_rows).to_csv(OUT / "F2_Frontier.csv", index=False)
+    pd.DataFrame(curve_rows).to_csv(OUT / "F2_Frontier_curves.csv", index=False)
+    pd.DataFrame(point_rows).to_csv(OUT / "F2_EPP_points.csv", index=False)
+    fig.savefig(OUT / "F2_Frontier.pdf")
     plt.close(fig)
-    print("  wrote F3_Frontier.pdf")
+    print("  wrote F2_Frontier.pdf")
 
 
 def _has_empirical_baseline(df: pd.DataFrame) -> bool:
@@ -457,7 +457,7 @@ def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     )
 
 
-# Fig. 2: distinct response entries per question, by method
+# Fig. 3: distinct response entries per question, by method
 def _json_distribution_items(raw) -> list[dict]:
     if raw is None:
         return []
@@ -523,7 +523,7 @@ def _penalty_distribution_items(row: pd.Series) -> list[dict]:
 
 
 def fig_response_counts(paired):
-    print("== Fig. 2: responses per question ==")
+    print("== Fig. 3: responses per question ==")
     count_rows = []
     count_data = {}
     for key in ACTIVE_MODEL_ORDER:
@@ -648,11 +648,11 @@ def fig_response_counts(paired):
             left=0.145, right=0.985, top=1 - 0.75 / height, bottom=0.59 / height,
             wspace=0.15, hspace=0.13,
         )
-        pd.DataFrame(count_rows).to_csv(OUT / "F2_ResponseCounts.csv", index=False)
+        pd.DataFrame(count_rows).to_csv(OUT / "F3_ResponseCounts.csv", index=False)
         # Preserve the approved canvas and margins rather than tight-cropping.
-        fig.savefig(OUT / "F2_ResponseCounts.pdf")
+        fig.savefig(OUT / "F3_ResponseCounts.pdf")
         plt.close(fig)
-        print("  wrote F2_ResponseCounts.pdf")
+        print("  wrote F3_ResponseCounts.pdf")
 
 
 # Fig. S3: cumulative mean display-content frequencies

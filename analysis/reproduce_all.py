@@ -5,7 +5,7 @@
 
 Writes into results/figures (or results/figures_gemini for the second
 grader): computed figure PDFs and their CSV side-outputs, including relative
-accuracy gains (Fig. 3C) and set-outcome intervals (Table S2), the audit CSVs behind
+accuracy gains (Fig. 2C) and set-outcome intervals (Table S2), the audit CSVs behind
 Tables S1, S6, and S7, the matched-abstention gaps behind Table S3, the fixed-report
 calculation behind Table S4, token costs (Table S5), threshold calibration
 (Fig. 5 and Table S8),
