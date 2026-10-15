@@ -67,7 +67,7 @@ llm-log-score/
 │   ├── table_data/                       Method-comparison table data
 │   ├── rho_sensitivity.py                Figure S4 and Table S4
 │   ├── rule_sensitivity.py               Figure S5
-│   ├── threshold_calibration.py          Figure 5 and Table S8
+│   ├── threshold_calibration.py          Figure 4 and Table S8
 │   ├── threshold_selection.py            Raw-report parsing and binomial bounds
 │   ├── alpha_risk_control.py             Error-controlled threshold selection
 │   ├── make_alpha_paper_tables.py        Table S9 and additional comparisons
@@ -124,7 +124,7 @@ Individual components can also be run separately:
 
 | Script | Main outputs |
 |---|---|
-| `make_figures.py` | Decision curves, response counts, set comparisons, and repeated-report figures |
+| `make_figures.py` | Decision curves, set comparisons, and repeated-report figures |
 | `make_tables.py` | Decision outcomes, calibration summaries, matched-abstention comparisons, and token costs |
 | `comparison_uncertainty.py` | Relative accuracy gains and set-outcome intervals |
 | `rho_sensitivity.py`, `rule_sensitivity.py` | Sensitivity to the omission penalty and scoring instructions |
@@ -153,9 +153,8 @@ Filenames follow the numbering in the paper and SI Appendix.
 |---|---|
 | Fig. 1 | [F1_Concept.pdf](results/figures/F1_Concept.pdf) |
 | Fig. 2 | [F2_Frontier.pdf](results/figures/F2_Frontier.pdf) |
-| Fig. 3 | [F3_ResponseCounts.pdf](results/figures/F3_ResponseCounts.pdf) |
-| Fig. 4 | [F4_OutcomeTable_L3.pdf](results/figures/F4_OutcomeTable_L3.pdf) |
-| Fig. 5 | [F5_ThresholdCalibration.pdf](results/figures/F5_ThresholdCalibration.pdf) |
+| Fig. 3 | [F3_OutcomeTable_L3.pdf](results/figures/F3_OutcomeTable_L3.pdf) |
+| Fig. 4 | [F4_ThresholdCalibration.pdf](results/figures/F4_ThresholdCalibration.pdf) |
 | Fig. S1 | [L = 0](results/figures/FS1_OutcomeTable_L0.pdf), [L = 6](results/figures/FS1_OutcomeTable_L6.pdf) |
 | Fig. S2 | [FS2_JSD.pdf](results/figures/FS2_JSD.pdf) |
 | Fig. S3 | [FS3_cumulative.pdf](results/figures/FS3_cumulative.pdf) |
@@ -172,7 +171,7 @@ The CSVs retain analysis precision; Table 1 also includes rounded display values
 | Table 1 | `Table1_DecisionOutcomes.csv` | RBD and EPP outcomes at each L |
 | Table 2 | `Table2_MethodComparison.csv` | RLCR and the probability-report setup for RBD |
 | Table S1 | `TableS1_LogLoss.csv` | Miscoverage bounds and realized log loss |
-| Table S2 | `TableS2_SetOutcomeIntervals.csv` | Figure 4 row percentages and uncertainty intervals |
+| Table S2 | `TableS2_SetOutcomeIntervals.csv` | Figure 3 row percentages and uncertainty intervals |
 | Table S3 | `TableS3_MatchedAbstention.csv` | Accuracy gains and hallucination reductions |
 | Table S4 | `TableS4_IdealListExtent.csv` | Score-optimal candidate-list sizes |
 | Table S5 | `TableS5_TokenCosts.csv` | Answer-model token use |

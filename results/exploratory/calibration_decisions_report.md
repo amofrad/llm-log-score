@@ -67,7 +67,7 @@ V_L(t)=c(t)[1-(1+L)r(t)],\qquad
 \]
 
 Here the tilde denotes the decision score implied by the model's stated
-probabilities. Thus the solid–dashed gap in Fig. 5 quantifies how much the
+probabilities. Thus the solid–dashed gap in Fig. 4 quantifies how much the
 report overstates decision value, after accounting for answer rate and penalty.
 This identity holds empirically on the same questions and representation;
 it does not require calibrated or normalized reports.
@@ -75,7 +75,7 @@ it does not require calibrated or normalized reports.
 At the original threshold t=L/(1+L), the dotted value 1−t is also the
 break-even error rate for this score. Being below it can yield positive score
 even if reported error is too low. This connects both visual comparisons in
-Fig. 5 to the user's decision objective.
+Fig. 4 to the user's decision objective.
 
 Better average calibration does not alone imply a lower optimal threshold.
 That ordering follows if one model's correctness curve is pointwise above
@@ -89,7 +89,7 @@ The design was fixed before computing this experiment. Each model uses the
 same 2,163 fitting questions and 2,163 test questions, followed by 100 additional
 fixed half-splits. Raw reports are primary: the parser selects the original
 candidate before its stored grade is attached. Gold-informed processed reports,
-which match Fig. 5, are analyzed separately. The full experiment is repeated
+which match Fig. 4, are analyzed separately. The full experiment is repeated
 with the second grader. No test label chooses a method, threshold, or parameter.
 
 The prespecified comparisons use L=0,3,6. Curves show the full L=0–10 range.
@@ -200,7 +200,7 @@ these results; changing the objective permits different decisions, not more
 accurate underlying candidates.
 
 If incorporated, the identity follows naturally after the interpretation of
-Fig. 5. The procedure and full comparison could then appear in the SI, with
+Fig. 4. The procedure and full comparison could then appear in the SI, with
 a short main-text statement of the held-out result and its limits. They are
 currently separate review artifacts.
 

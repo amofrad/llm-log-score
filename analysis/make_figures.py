@@ -1,9 +1,9 @@
 """Generate the paper's figures from the graded results.
 
 Outputs, written to results/figures/ with the CSV data corresponding to each figure:
-F2_Frontier.pdf (Fig. 2), F4_OutcomeTable_L3.pdf (Fig. 4),
+F2_Frontier.pdf (Fig. 2), F3_OutcomeTable_L3.pdf (Fig. 3),
 FS1_OutcomeTable_L0/L6.pdf (Fig. S1), FS2_JSD.pdf (Fig. S2),
-FS3_cumulative.pdf (Fig. S3), and F3_ResponseCounts.pdf (Fig. 3).
+and FS3_cumulative.pdf (Fig. S3).
 
 Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 """
@@ -457,7 +457,7 @@ def _has_empirical_baseline(df: pd.DataFrame) -> bool:
     )
 
 
-# Fig. 3: distinct response entries per question, by method
+# Helpers for parsing sampled EPP responses
 def _json_distribution_items(raw) -> list[dict]:
     if raw is None:
         return []
@@ -492,167 +492,6 @@ def _positive_float(value, default: float = 0.0) -> float:
     if np.isnan(out):
         return default
     return out
-
-
-def _distinct_response_count(items: list[dict]) -> int:
-    answers = set()
-    for item in items:
-        if _positive_float(item.get("probability")) <= 0:
-            continue
-        answer = str(item.get("answer", "")).strip()
-        if not answer:
-            continue
-        grade = str(item.get("grade", ""))
-        answers.add((norm_answer(answer), grade))
-    return len(answers)
-
-
-def _penalty_distribution_items(row: pd.Series) -> list[dict]:
-    items = _json_distribution_items(row.get("penalty_distribution_json"))
-    abstain_samples = row.get("penalty_abstain_samples")
-    if abstain_samples is not None:
-        n_samples = max(1, int(_positive_float(row.get("n_samples_requested"), 1.0)))
-        abstain_prob = _positive_float(abstain_samples) / n_samples
-        if abstain_prob > 0:
-            items = list(items) + [{
-                "answer": "ABSTAIN",
-                "probability": abstain_prob,
-                "grade": "not_attempted",
-            }]
-    return items
-
-
-def fig_response_counts(paired):
-    print("== Fig. 3: responses per question ==")
-    count_rows = []
-    count_data = {}
-    for key in ACTIVE_MODEL_ORDER:
-        df = paired[key]["log_by_penalty"][PRIMARY_PENALTY]
-        log_counts = df["candidates"].map(_distinct_response_count).to_numpy()
-        penalty_counts = {}
-        for penalty, dpen in sorted(paired[key]["penalties"].items()):
-            counts = dpen.apply(
-                lambda row: _distinct_response_count(_penalty_distribution_items(row)),
-                axis=1,
-            ).to_numpy()
-            penalty_counts[penalty] = counts
-            for qid, pen_n in zip(dpen["question_id"], counts):
-                count_rows.append({
-                    "model": key,
-                    "model_label": RUNS[key]["label"],
-                    "question_id": qid,
-                    "method": "penalty",
-                    "penalty_level": penalty,
-                    "distinct_response_entries": int(pen_n),
-                })
-        count_data[key] = {"log": log_counts, "penalty": penalty_counts}
-        for qid, log_n in zip(df["question_id"], log_counts):
-            count_rows.append({
-                "model": key,
-                "model_label": RUNS[key]["label"],
-                "question_id": qid,
-                "method": "log",
-                "penalty_level": np.nan,
-                "distinct_response_entries": int(log_n),
-            })
-
-    # Separate settings vertically, preserving every integer count and using
-    # the same axes across models. No smoothing or overflow pooling is used.
-    available_penalties = [
-        p for p in PENALTY_LEVELS
-        if any(p in values["penalty"] for values in count_data.values())
-    ]
-    series = [("penalty", p) for p in available_penalties] + [("log", None)]
-    all_counts = [
-        counts
-        for data in count_data.values()
-        for counts in [data["log"], *data["penalty"].values()]
-        if len(counts)
-    ]
-    plot_min = min(1, min(int(counts.min()) for counts in all_counts))
-    plot_max = max(50, max(int(counts.max()) for counts in all_counts))
-    edges = np.arange(plot_min - 0.5, plot_max + 1.5)
-    histograms = {}
-    for key, data in count_data.items():
-        for method, penalty in series:
-            counts = data["log"] if method == "log" else data["penalty"].get(penalty)
-            if counts is not None and len(counts):
-                histograms[key, method, penalty] = (
-                    np.bincount(counts.astype(int), minlength=plot_max + 1)[plot_min:]
-                    / len(counts)
-                )
-    ymax = max(0.67, 1.04 * max(hist.max() for hist in histograms.values()))
-    ticks = [plot_min, 5, 10, *range(20, plot_max + 1, 10)]
-    nrows, ncols = len(series), len(ACTIVE_MODEL_ORDER)
-    height = 1.34 + 1.065 * nrows
-    with plt.rc_context({
-        "font.family": "DejaVu Sans",
-        "font.size": 12,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.linewidth": 0.65,
-        "pdf.fonttype": 42,
-        "savefig.facecolor": "white",
-    }):
-        fig, axes = plt.subplots(
-            nrows, ncols, figsize=(max(4.8, 5.2 * ncols), height),
-            sharex=True, sharey=True, squeeze=False,
-        )
-        for col, key in enumerate(ACTIVE_MODEL_ORDER):
-            for row, (method, penalty) in enumerate(series):
-                ax = axes[row, col]
-                color = MODEL_COLORS[key]
-                hist = histograms.get((key, method, penalty))
-                if hist is not None:
-                    ax.stairs(hist, edges, fill=True, color=color, alpha=0.65, linewidth=0)
-                    ax.stairs(hist, edges, color=color, linewidth=1.5)
-                ax.set_xlim(min(0, plot_min - 0.5), plot_max + 1)
-                ax.set_ylim(0, ymax)
-                ax.set_yticks([0, 0.3, 0.6])
-                ax.set_yticklabels(["0", ".3", ".6"], fontsize=10)
-                ax.set_xticks(ticks)
-                ax.tick_params(axis="x", labelsize=12, width=0.65, length=3)
-                ax.tick_params(axis="y", width=0.65, length=2)
-                ax.spines["left"].set_color("#b4b8be")
-                ax.spines["bottom"].set_color("#b4b8be")
-                ax.axhline(0.3, color="#e8eaed", linewidth=0.5, zorder=0)
-                if row < nrows - 1:
-                    ax.tick_params(axis="x", bottom=False, labelbottom=False)
-                else:
-                    ax.set_xlabel("Number of distinct response entries", fontsize=14, labelpad=8)
-                if col > 0:
-                    ax.tick_params(axis="y", left=False, labelleft=False)
-                    ax.spines["left"].set_visible(False)
-                else:
-                    label = "RBD" if method == "log" else fr"EPP, $L={penalty:g}$"
-                    ax.annotate(
-                        label, xy=(-0.12, 0.35), xycoords="axes fraction",
-                        ha="right", va="center", fontsize=16, color="#222222",
-                    )
-                if row == 0:
-                    ax.set_title(RUNS[key]["label"], fontsize=20.25, pad=13, color="#111827")
-            data = count_data[key]
-            penalty_summary = ", ".join(
-                f"{penalty_label(p)}={np.median(data['penalty'][p]):.0f}"
-                for p in available_penalties if p in data["penalty"]
-            )
-            print(
-                f"  {key}: median distinct responses "
-                f"log={np.median(data['log']):.0f}, penalty ({penalty_summary})"
-            )
-        fig.text(
-            0.021, 0.486, "Proportion of questions", rotation=90,
-            va="center", ha="center", fontsize=14,
-        )
-        fig.subplots_adjust(
-            left=0.145, right=0.985, top=1 - 0.75 / height, bottom=0.59 / height,
-            wspace=0.15, hspace=0.13,
-        )
-        pd.DataFrame(count_rows).to_csv(OUT / "F3_ResponseCounts.csv", index=False)
-        # Preserve the approved canvas and margins rather than tight-cropping.
-        fig.savefig(OUT / "F3_ResponseCounts.pdf")
-        plt.close(fig)
-        print("  wrote F3_ResponseCounts.pdf")
 
 
 # Fig. S3: cumulative mean display-content frequencies
@@ -907,7 +746,7 @@ def fig_cumulative_rates(paired) -> pd.DataFrame:
     return rows
 
 
-# Fig. 4 / Fig. S1: answer-or-abstain responses versus report-based set outcomes
+# Fig. 3 / Fig. S1: answer-or-abstain responses versus report-based set outcomes
 OUTCOME_KEYS = ["abstain", "correct", "incorrect"]
 PENALTY_OUTCOME_LABELS = ["abstain", "correct", "incorrect"]
 SET_OUTCOME_KEYS = ["coverage", "miscoverage_with_idk", "miscoverage_without_idk"]
@@ -1280,10 +1119,10 @@ def _fig_outcome_table_for_penalty(
 
 
 def fig_outcome_tables(paired) -> dict[str, pd.DataFrame]:
-    print("== Fig. 4 / Fig. S1: answer-or-abstain responses vs three set outcomes ==")
+    print("== Fig. 3 / Fig. S1: answer-or-abstain responses vs three set outcomes ==")
     outputs = {}
     for penalty in PENALTY_LEVELS:
-        name = ("F4_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
+        name = ("F3_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
                 else f"FS1_OutcomeTable_{penalty_tag(penalty)}")
         outputs.update(
             _fig_outcome_table_for_penalty(
@@ -1888,7 +1727,6 @@ def main(argv: list[str] | None = None):
     fig_frontier(paired, relative)
     fig_outcome_tables(paired)
     fig_cumulative_rates(paired)
-    fig_response_counts(paired)
     fig_consistency(
         args.consistency_runs,
         question_limit=args.consistency_question_limit,

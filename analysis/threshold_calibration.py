@@ -1,4 +1,4 @@
-"""Reproduce Fig. 5 and Table S8: calibration of threshold decisions.
+"""Reproduce Fig. 4 and Table S8: calibration of threshold decisions.
 
 Uses retained, graded candidates without further merging or normalization.
 An empty candidate list always abstains. Bootstrap samples resample questions;
@@ -152,8 +152,8 @@ def run(results_dir: Path, out_dir: Path, *, include_figure_outputs: bool = True
     data = pd.concat(frames, ignore_index=True)
     out_dir.mkdir(parents=True, exist_ok=True)
     if include_figure_outputs:
-        data.to_csv(out_dir / "F5_ThresholdCalibration.csv", index=False)
-        plot_curves(data, out_dir / "F5_ThresholdCalibration.pdf")
+        data.to_csv(out_dir / "F4_ThresholdCalibration.csv", index=False)
+        plot_curves(data, out_dir / "F4_ThresholdCalibration.pdf")
     if include_table_output:
         rows = []
         for penalty, threshold in PENALTY_THRESHOLDS.items():

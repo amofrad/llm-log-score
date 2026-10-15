@@ -8,7 +8,7 @@ grader): computed figure PDFs and their CSV side-outputs, including relative
 accuracy gains (Fig. 2C) and set-outcome intervals (Table S2), the audit CSVs behind
 Tables S1, S6, and S7, the matched-abstention gaps behind Table S3, the fixed-report
 calculation behind Table S4, token costs (Table S5), threshold calibration
-(Fig. 5 and Table S8),
+(Fig. 4 and Table S8),
 error-controlled decisions on raw reports (Tables S9--S10),
 observed answer overlap, numbered table CSVs,
 the values quoted in the text, and the grader-agreement audit.
