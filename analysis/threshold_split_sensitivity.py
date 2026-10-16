@@ -1,7 +1,7 @@
 """Compare fixed-grid threshold decisions under 50–50 and 70–30 allocations.
 
-Read existing per-question selections and grades; no model or grading calls.
-Only numpy and scipy are required.
+Reproduce the sample-allocation comparison and export Table S10.
+Uses saved reports and correctness grades; no model or grading calls.
 """
 from __future__ import annotations
 
@@ -9,6 +9,9 @@ import argparse
 import csv
 import hashlib
 import json
+import math
+import statistics
+import tempfile
 import platform
 from pathlib import Path
 
@@ -83,7 +86,7 @@ def equal(value, reference):
 
 def load_grader(grader, analysis_dir=None):
     analysis_dir = Path(analysis_dir) if analysis_dir else ROOT / 'results/intermediate'
-    folder = analysis_dir / f'alpha_risk_control_{grader}'
+    folder = analysis_dir / f'threshold_selection_{grader}'
     meta = json.loads((folder/'metadata.json').read_text())
     assert meta['seed'] == SEED and meta['additional_splits'] == REPEATS and meta['delta'] == DELTA
     for entry in meta['inputs']:
@@ -238,7 +241,92 @@ def run(out, analysis_dir=None):
     print(f'Wrote {len(results)} result rows and {len(bands)} bounds to {out}',flush=True)
 
 
-if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out-dir',type=Path,default=ROOT/'results/intermediate/threshold_split_sensitivity')
-    run(parser.parse_args().out_dir)
+
+def summarize_errors(rows):
+    errors=[]
+    for row in rows:
+        n=int(row['common_n_answered'])
+        if n:
+            error=float(row['common_observed_error'])
+            assert math.isclose(error,int(row['common_n_incorrect'])/n)
+            errors.append(error)
+        else:
+            assert row['common_observed_error']==''
+    if not errors:
+        return {'n_partitions_with_test_answers':0,'median_common_test_error':None,
+                'common_test_error_q25':None,'common_test_error_q75':None}
+    median=statistics.median(errors)
+    q25,_,q75=statistics.quantiles(errors,n=4,method='inclusive') if len(errors)>1 else [median]*3
+    return {'n_partitions_with_test_answers':len(errors),'median_common_test_error':median,
+            'common_test_error_q25':q25,'common_test_error_q75':q75}
+
+
+def export_table(source, out, primary_grader='openai'):
+    if primary_grader not in ('openai','gemini'):
+        raise ValueError('Unknown grader: '+primary_grader)
+    meta=json.loads((source/'metadata.json').read_text())
+    assert meta['additional_splits']==100 and meta['common_test_size']==1298
+    assert meta['verification']['original_result_rows_reproduced']==3030
+    with (source/'split_summary.csv').open() as stream: rows=list(csv.DictReader(stream))
+    lookup={(r['model_key'],float(r['alpha']),r['grader'],r['allocation']):r for r in rows}
+    assert len(lookup)==60
+    groups={key:[] for key in lookup}
+    with (source/'all_results.csv').open() as stream:
+        for row in csv.DictReader(stream):
+            if int(row['seed'])==meta['seed']:continue
+            key=(row['model_key'],float(row['alpha']),row['grader'],row['allocation'])
+            groups[key].append(row)
+    assert all(len(group)==len({r['seed'] for r in group})==100 for group in groups.values())
+    records=[]
+    for model in MODELS:
+        for alpha in ALPHAS:
+            record={'model_key':model,'alpha':alpha,'display_grader':primary_grader}
+            for grader in ['openai','gemini']:
+                pair=[lookup[model,alpha,grader,a] for a in ['50-50','70-30']]
+                assert all(int(r['n_splits'])==100 for r in pair)
+                for allocation,r in zip(['50-50','70-30'],pair):
+                    group=groups[model,alpha,grader,allocation]
+                    assert all(int(x['common_n_test'])==1298 for x in group)
+                    summary=summarize_errors(group)
+                    assert summary['n_partitions_with_test_answers']==int(r['n_supported'])
+                    assert math.isclose(statistics.mean(float(x['common_answer_rate']) for x in group),
+                                        float(r['mean_common_answer_rate']),abs_tol=1e-12)
+                    record[f'{grader}_{allocation}_n_supported']=int(r['n_supported'])
+                    record[f'{grader}_{allocation}_mean_common_answer_rate']=float(r['mean_common_answer_rate'])
+                    record.update({f'{grader}_{allocation}_{key}':value for key,value in summary.items()})
+            records.append(record)
+    out.mkdir(parents=True,exist_ok=True)
+    stem='TableS10_SplitSensitivity'
+    with (out/(stem+'.csv')).open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
+    print('Generated '+str(out/(stem+'.csv')))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out-dir", type=Path, default=ROOT / "results/figures")
+    parser.add_argument("--grader", choices=("openai", "gemini"), default="openai",
+                        help="Grader displayed in Table S10; the CSV retains both graders.")
+    parser.add_argument("--analysis-dir", type=Path,
+                        help="Keep intermediate results here; otherwise use a temporary directory.")
+    args = parser.parse_args()
+
+    def reproduce(analysis_dir):
+        from threshold_selection import analysis_complete, run_analysis
+        for grader in GRADERS:
+            folder = analysis_dir / f"threshold_selection_{grader}"
+            if not analysis_complete(folder):
+                run_analysis(grader, folder, repeats=REPEATS)
+        source = analysis_dir / "threshold_split_sensitivity"
+        run(source, analysis_dir=analysis_dir)
+        export_table(source, args.out_dir, primary_grader=args.grader)
+
+    if args.analysis_dir is None:
+        with tempfile.TemporaryDirectory(prefix="rbd-split-") as temporary:
+            reproduce(Path(temporary))
+    else:
+        reproduce(args.analysis_dir)
+
+
+if __name__ == "__main__":
+    main()

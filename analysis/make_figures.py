@@ -790,13 +790,14 @@ def _plot_outcome_tables(
     penalty: float,
     name: str,
     model_keys: list[str] | None = None,
-) -> None:
+) -> pd.DataFrame:
     try:
         matplotlib.font_manager.findfont("Arial", fallback_to_default=False)
     except ValueError as exc:
         raise RuntimeError("Figures 3 and S1 require Arial to match the paper. Install Arial before reproducing them.") from exc
     if model_keys is None:
         model_keys = ACTIVE_MODEL_ORDER
+    totals = {key: max(1.0, float(mat.to_numpy().sum())) for key, mat in matrices.items()}
     # Preserve all three mutually exclusive set outcomes, ordered as displayed.
     matrices = {
         key: pd.DataFrame({
@@ -818,9 +819,9 @@ def _plot_outcome_tables(
                     "mode": mode, "penalty_level": penalty,
                     "penalty_outcome": row, "set_outcome": column,
                     "count_or_expected_count": value,
+                    "percent": 100 * value / totals[key],
                     "row_percent": 100 * value / row_total if row_total else 0.0,
                 })
-    pd.DataFrame(cells).to_csv(OUT / f"{name}_set_outcomes.csv", index=False)
     n_models = len(model_keys)
     fig, axes = plt.subplots(1, n_models, figsize=(max(5.2, 4.6 * n_models), 5.1))
     fig.subplots_adjust(left=.10, right=.947, bottom=.18, top=.88, wspace=.34)
@@ -940,6 +941,7 @@ def _plot_outcome_tables(
     fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", pad_inches=.13)
     plt.close(fig)
     print(f"  wrote {name}.pdf")
+    return pd.DataFrame(cells)
 
 
 def _fig_outcome_table_for_penalty(
@@ -947,13 +949,12 @@ def _fig_outcome_table_for_penalty(
     penalty: float,
     *,
     name: str,
-) -> dict[str, pd.DataFrame]:
-    outputs = {}
+) -> tuple[pd.DataFrame, pd.DataFrame] | None:
     mode = "sample_average"
     model_keys = [key for key in ACTIVE_MODEL_ORDER if penalty in paired[key]["penalties"]]
     if not model_keys:
         print(f"  skipped: no {penalty_label(penalty)} penalty rows")
-        return outputs
+        return None
 
     matrices = {}
     used_counts = {}
@@ -967,30 +968,13 @@ def _fig_outcome_table_for_penalty(
         all_rows.extend(rows)
         print(f"  {key} ({mode}, {penalty_label(penalty)}): n={used}")
     detail = pd.DataFrame(all_rows)
-    detail.to_csv(OUT / f"{name}_long.csv", index=False)
-
-    summary_rows = []
-    for key, mat in matrices.items():
-        total = max(1.0, float(mat.to_numpy().sum()))
-        for penalty_outcome in OUTCOME_KEYS:
-            for log_outcome in OUTCOME_KEYS:
-                value = float(mat.loc[penalty_outcome, log_outcome])
-                summary_rows.append(
-                    {
-                        "model": key,
-                        "model_label": RUNS[key]["label"],
-                        "mode": mode,
-                        "penalty_level": penalty,
-                        "penalty_outcome": penalty_outcome,
-                        "log_top_p_outcome": log_outcome,
-                        "count_or_expected_count": value,
-                        "percent": 100 * value / total,
-                    }
-                )
-    summary = pd.DataFrame(summary_rows)
-    summary.to_csv(OUT / f"{name}.csv", index=False)
-    outputs[f"{mode}_{penalty_tag(penalty)}"] = summary
-    _plot_outcome_tables(
+    detail = detail.rename(columns={"log_top_p_outcome": "set_outcome"})
+    detail["set_outcome"] = detail["set_outcome"].map({
+        "correct": "coverage",
+        "abstain": "miscoverage_with_idk",
+        "incorrect": "miscoverage_without_idk",
+    })
+    summary = _plot_outcome_tables(
         matrices,
         used_counts,
         mode=mode,
@@ -998,23 +982,25 @@ def _fig_outcome_table_for_penalty(
         name=name,
         model_keys=model_keys,
     )
-    return outputs
+    return summary, detail
 
 
-def fig_outcome_tables(paired) -> dict[str, pd.DataFrame]:
+def fig_outcome_tables(paired) -> tuple[pd.DataFrame, pd.DataFrame]:
     print("== Fig. 3 / Fig. S1: answer-or-abstain responses vs three set outcomes ==")
-    outputs = {}
+    summaries, details = [], []
     for penalty in PENALTY_LEVELS:
         name = ("F3_OutcomeTable_L3" if np.isclose(penalty, PRIMARY_PENALTY)
                 else f"FS1_OutcomeTable_{penalty_tag(penalty)}")
-        outputs.update(
-            _fig_outcome_table_for_penalty(
-                paired,
-                penalty,
-                name=name,
-            )
-        )
-    return outputs
+        result = _fig_outcome_table_for_penalty(paired, penalty, name=name)
+        if result is not None:
+            summary, detail = result
+            summaries.append(summary)
+            details.append(detail)
+    summary = pd.concat(summaries, ignore_index=True) if summaries else pd.DataFrame()
+    detail = pd.concat(details, ignore_index=True) if details else pd.DataFrame()
+    summary.to_csv(OUT / "F3_FS1_OutcomeTable.csv", index=False)
+    detail.to_csv(OUT / "F3_FS1_OutcomeTable_by_question.csv", index=False)
+    return summary, detail
 
 
 # Fig. S2: elicitation consistency

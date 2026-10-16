@@ -1,0 +1,82 @@
+model,model_label,mode,penalty_level,penalty_outcome,set_outcome,count_or_expected_count,percent,row_percent
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,coverage,0.16,0.0036985668053629178,3.9215686274509793
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,miscoverage_with_idk,3.8200000000000007,0.08830328247803967,93.62745098039215
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,abstain,miscoverage_without_idk,0.1,0.0023116042533518236,2.450980392156862
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,coverage,2226.680000000003,51.472029588534454,95.56156388137848
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,miscoverage_with_idk,63.54000000000005,1.46879334257975,2.726921591348009
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,correct,miscoverage_without_idk,39.87999999999999,0.921867776236707,1.7115145272735046
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,coverage,558.1600000000001,12.90245030050854,28.022612485063902
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,miscoverage_with_idk,1071.6400000000008,24.772075820619502,53.802050386079074
+gemini35flash,Gemini 3.5 Flash,sample_average,0.0,incorrect,miscoverage_without_idk,362.02000000000004,8.368469717984274,18.17533712885702
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,coverage,0.34,0.0078594544613962,2.7419354838709697
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,miscoverage_with_idk,12.059999999999992,0.2787794729542297,97.25806451612902
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,abstain,miscoverage_without_idk,0.0,0.0,0.0
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,coverage,1155.1000000000004,26.701340730466924,92.04864210123677
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,miscoverage_with_idk,99.48000000000003,2.299583911234395,7.9274512303965325
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,correct,miscoverage_without_idk,0.3,0.006934812760055471,0.023906668366696412
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,coverage,818.5600000000003,18.921867776236695,26.76152115917767
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,miscoverage_with_idk,2209.460000000004,51.0739713361073,72.23479102369622
+sonnet46,Claude Sonnet 4.6,sample_average,0.0,incorrect,miscoverage_without_idk,30.700000000000003,0.70966250577901,1.0036878171261168
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,coverage,2.7000000000000006,0.06241331484049901,4.224030037546927
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,miscoverage_with_idk,58.960000000000115,1.3629218677762325,92.24030037546936
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,abstain,miscoverage_without_idk,2.2600000000000007,0.05224225612575102,3.5356695869837242
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,coverage,567.6399999999999,13.121590383726236,78.54000055344935
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,miscoverage_with_idk,105.58000000000007,2.4405917706888474,14.608296206104557
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,correct,miscoverage_without_idk,49.52000000000004,1.1447064262598194,6.851703240446085
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,coverage,557.66,12.89089227924173,15.756044912328187
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,miscoverage_with_idk,2126.4600000000196,49.15533980582545,60.08069301056146
+deepseekv32maas,DeepSeek V3.2,sample_average,0.0,incorrect,miscoverage_without_idk,855.2200000000029,19.769301895515454,24.16326207711035
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,abstain,coverage,179.96000000000012,4.159963014331946,27.775891341256383
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,abstain,miscoverage_with_idk,440.6799999999999,10.186777623670817,68.0166692390801
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,abstain,miscoverage_without_idk,27.259999999999998,0.6301433194637073,4.207439419663529
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,correct,coverage,2140.040000000004,49.469255663430474,96.19973208425861
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,correct,miscoverage_with_idk,50.04000000000002,1.1567267683772533,2.2494133724118677
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,correct,miscoverage_without_idk,34.500000000000014,0.7975034674063797,1.550854543329525
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,incorrect,coverage,465.0,10.748959778085982,31.991303869227817
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,incorrect,miscoverage_with_idk,648.2799999999999,14.985668053629203,44.600693488909684
+gemini35flash,Gemini 3.5 Flash,sample_average,3.0,incorrect,miscoverage_without_idk,340.2399999999999,7.865002311604245,23.408002641862517
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,abstain,coverage,446.4600000000001,10.320388349514564,26.076443239959826
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,abstain,miscoverage_with_idk,1265.6399999999996,29.256588072122046,73.92238861762026
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,abstain,miscoverage_without_idk,0.02,0.0004623208506703652,0.0011681424199238373
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,correct,coverage,991.92,22.929264909847433,93.51031336023226
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,correct,miscoverage_with_idk,68.44000000000008,1.5820619509939917,6.4519778272182275
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,correct,miscoverage_without_idk,0.39999999999999997,0.009246417013407305,0.03770881254949281
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,incorrect,coverage,535.6200000000002,12.381414701803056,34.48671062120119
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,incorrect,miscoverage_with_idk,986.9200000000005,22.813684697179855,63.5443494385495
+sonnet46,Claude Sonnet 4.6,sample_average,3.0,incorrect,miscoverage_without_idk,30.580000000000002,0.7068885806749884,1.9689399402493035
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,abstain,coverage,549.2599999999998,12.696717521960197,18.747354768243483
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,abstain,miscoverage_with_idk,1826.500000000012,42.22145168747126,62.34213939518071
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,abstain,miscoverage_without_idk,554.0400000000002,12.807212205270424,18.910505836575805
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,correct,coverage,344.70000000000056,7.968099861303735,83.43822618125489
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,correct,miscoverage_with_idk,41.219999999999985,0.9528432732316195,9.977730441518187
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,correct,miscoverage_without_idk,27.199999999999903,0.6287563569116926,6.584043377226926
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,incorrect,coverage,234.0400000000001,5.410078594544601,23.806811246287204
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,incorrect,miscoverage_with_idk,423.27999999999963,9.784558483587572,43.056516255035184
+deepseekv32maas,DeepSeek V3.2,sample_average,3.0,incorrect,miscoverage_without_idk,325.75999999999976,7.530282015718882,33.13667249867762
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,abstain,coverage,250.26000000000005,5.785020804438276,30.568720379146924
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,abstain,miscoverage_with_idk,525.8399999999999,12.15533980582523,64.23022426344848
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,abstain,miscoverage_without_idk,42.58000000000001,0.984281091077207,5.201055357404604
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,correct,coverage,2103.8400000000033,48.63245492371709,96.31291258846905
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,correct,miscoverage_with_idk,44.800000000000004,1.0355987055016171,2.0509252053214153
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,correct,miscoverage_without_idk,35.739999999999995,0.8261673601479419,1.6361622062095396
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,incorrect,coverage,430.9,9.960702727693011,32.571394016357495
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,incorrect,miscoverage_with_idk,568.3600000000002,13.138233934350433,42.96188791630762
+gemini35flash,Gemini 3.5 Flash,sample_average,6.0,incorrect,miscoverage_without_idk,323.6800000000002,7.482200647249189,24.46671806733488
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,abstain,coverage,658.2199999999997,15.215441516412376,29.918274956137555
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,abstain,miscoverage_with_idk,1541.7,35.63800277392509,70.0753615810478
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,abstain,miscoverage_without_idk,0.13999999999999999,0.003236245954692555,0.0063634628146505105
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,correct,coverage,897.1200000000003,20.7378640776699,93.54744525547444
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,correct,miscoverage_with_idk,61.360000000000035,1.4184003698566807,6.398331595411889
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,correct,miscoverage_without_idk,0.52,0.012020342117429491,0.054223149113660045
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,incorrect,coverage,418.6600000000002,9.677762367082757,35.87673745008309
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,incorrect,miscoverage_with_idk,717.9400000000014,16.59593157651413,61.52330025536878
+sonnet46,Claude Sonnet 4.6,sample_average,6.0,incorrect,miscoverage_without_idk,30.340000000000003,0.7013407304669439,2.5999622945481313
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,abstain,coverage,569.4800000000004,13.164123901987955,19.06489993505314
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,abstain,miscoverage_with_idk,1845.8400000000095,42.66851595006946,61.79454045114605
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,abstain,miscoverage_without_idk,571.7400000000009,13.21636615811372,19.140559613800825
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,correct,coverage,336.2600000000002,7.773000462320836,83.87209418337825
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,correct,miscoverage_with_idk,39.53999999999998,0.9140083217753092,9.862316671655185
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,correct,miscoverage_without_idk,25.11999999999994,0.5806749884419758,6.26558914496656
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,incorrect,coverage,222.26000000000025,5.137771613499762,23.694590733673085
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,incorrect,miscoverage_with_idk,405.6199999999996,9.376329172445645,43.2421483550457
+deepseekv32maas,DeepSeek V3.2,sample_average,6.0,incorrect,miscoverage_without_idk,310.14000000000004,7.169209431345337,33.06326091128121

@@ -66,22 +66,16 @@ llm-log-score/
 │   ├── make_tables.py                    Numerical summaries and audits
 │   ├── comparison_uncertainty.py         Figure 2C and Table S2 intervals
 │   ├── paper_tables.py                   Numbered table CSV exports
-│   ├── paper_artifacts.json              Figure numbering and filenames
-│   ├── table_data/                       Method-comparison table data
 │   ├── rho_sensitivity.py                Figure S4 and Table S4
 │   ├── rule_sensitivity.py               Figure S5
 │   ├── threshold_calibration.py          Figure 4 and Table S8
-│   ├── threshold_selection.py            Raw-report parsing and binomial bounds
-│   ├── alpha_risk_control.py             Error-controlled threshold selection
-│   ├── make_alpha_paper_tables.py        Table S9
-│   ├── threshold_split_sensitivity.py    Threshold-selection sample allocations
-│   └── make_split_sensitivity_table.py   Table S10
+│   ├── threshold_selection.py            Error-controlled threshold selection and Table S9
+│   └── threshold_split_sensitivity.py    Sample-allocation comparisons and Table S10
 ├── results/
 │   ├── graded_by_openai/                 Primary grading, including sensitivity runs
 │   ├── graded_by_gemini/                 Second-grader results
 │   └── figures/                         Paper figures and supporting numerical data
-│       ├── tables/                      Tables 1–2 and S1–S11 as CSV
-│       └── artifact_manifest.json       Figure index
+│       └── tables/                      Tables 1 and S1–S11 as CSV
 ├── README.md
 └── requirements.txt
 ```
@@ -130,8 +124,8 @@ Individual components can also be run separately:
 | `comparison_uncertainty.py` | Relative accuracy gains and set-outcome intervals |
 | `rho_sensitivity.py`, `rule_sensitivity.py` | Sensitivity to the omission penalty and scoring instructions |
 | `threshold_calibration.py` | Reported versus observed error among returned answers |
-| `alpha_risk_control.py` | Threshold selection from graded reports and evaluation on held-out questions |
-| `threshold_split_sensitivity.py` | Comparisons of 50–50 and 70–30 sample allocations |
+| `threshold_selection.py` | Threshold selection, held-out evaluation, and Table S9 |
+| `threshold_split_sensitivity.py` | Comparisons of 50–50 and 70–30 sample allocations and Table S10 |
 | `paper_tables.py` | All numbered table CSVs from computed results |
 
 For example, to regenerate the decision outcomes in Table 1:
@@ -140,6 +134,10 @@ For example, to regenerate the decision outcomes in Table 1:
 python analysis/make_tables.py --steps tables
 python analysis/paper_tables.py
 ```
+
+The two threshold-analysis scripts also run independently. Each computes its
+required inputs, exports its table, and removes temporary intermediates.
+Use `--analysis-dir PATH` to retain intermediates for reuse.
 
 Benchmark comparisons merge answer variants using correctness grades and fixed
 string rules. The error-controlled analysis instead selects candidates from
@@ -162,26 +160,41 @@ Filenames follow the numbering in the paper and SI Appendix.
 | Fig. S4 | [FS4_rho_sensitivity.pdf](results/figures/FS4_rho_sensitivity.pdf) |
 | Fig. S5 | [Panel A](results/figures/FS5A_rule_sensitivity.pdf), [Panel B](results/figures/FS5B_rule_outcome_tables.pdf) |
 
-Supporting CSVs are stored alongside the figures. The 13 paper tables are stored
-once, in [`results/figures/tables/`](results/figures/tables/), with their
-sources listed in the [table manifest](results/figures/tables/manifest.json).
-The CSVs retain analysis precision; Table 1 also includes rounded display values.
+Supporting CSVs are stored alongside the figures. Figures 3 and S1 share two
+files, with `penalty_level` identifying L = 0, 3, or 6:
 
-| Paper table | CSV in `results/figures/tables/` | Contents |
-|---|---|---|
-| Table 1 | `Table1_DecisionOutcomes.csv` | RBD and EPP outcomes at each L |
-| Table 2 | `Table2_MethodComparison.csv` | RLCR and the probability-report setup for RBD |
-| Table S1 | `TableS1_LogLoss.csv` | Miscoverage bounds and realized log loss |
-| Table S2 | `TableS2_SetOutcomeIntervals.csv` | Figure 3 row percentages and uncertainty intervals |
-| Table S3 | `TableS3_MatchedAbstention.csv` | Accuracy gains and hallucination reductions |
-| Table S4 | `TableS4_IdealListExtent.csv` | Score-optimal candidate-list sizes |
-| Table S5 | `TableS5_TokenCosts.csv` | Answer-model token use |
-| Table S6 | `TableS6_IDKReliability.csv` | IDK-probability calibration bins |
-| Table S7 | `TableS7_TopReliability.csv` | Top-candidate calibration bins |
-| Table S8 | `TableS8_ThresholdCalibration.csv` | Calibration at decision thresholds |
-| Table S9 | `TableS9_RiskControl.csv` | Selected thresholds and held-out error |
-| Table S10 | `TableS10_SplitSensitivity.csv` | Sensitivity to sample allocation |
-| Table S11 | `TableS11_Models.csv` | Model names and API identifiers |
+- **`F3_FS1_OutcomeTable.csv`** contains cell counts, percentages across all
+  questions (`percent`), and percentages within each EPP outcome row
+  (`row_percent`), for each model and L. Counts average over the 50 EPP responses
+  per question.
+- **`F3_FS1_OutcomeTable_by_question.csv`** contains each question's contribution
+  to those counts (`weight`), with EPP outcomes and top-p set outcomes identified
+  separately.
+
+Tables 1 and S1–S11 are stored once, in
+[`results/figures/tables/`](results/figures/tables/). Numbering follows the main
+text and SI Appendix. CSVs retain analysis precision and may include diagnostic
+columns or additional rows. Table 1 also includes display values rounded by the
+largest-remainder method so each three-outcome group totals 1.000.
+
+Rebuild with `python analysis/reproduce_all.py`, or export already computed
+results with `python analysis/paper_tables.py`. The source column below identifies
+the analysis behind each table; Table S11 uses the shared model configuration.
+
+| Paper table | CSV in `results/figures/tables/` | Contents | Source in `analysis/` |
+|---|---|---|---|
+| Table 1 | `Table1_DecisionOutcomes.csv` | RBD and EPP outcomes at each L | `make_tables.py` |
+| Table S1 | `TableS1_LogLoss.csv` | Miscoverage bounds and realized log loss | `make_tables.py` |
+| Table S2 | `TableS2_SetOutcomeIntervals.csv` | Figure 3 row percentages and uncertainty intervals | `comparison_uncertainty.py` |
+| Table S3 | `TableS3_MatchedAbstention.csv` | Accuracy gains and hallucination reductions | `make_tables.py` |
+| Table S4 | `TableS4_IdealListExtent.csv` | Score-optimal candidate-list sizes | `rho_sensitivity.py` |
+| Table S5 | `TableS5_TokenCosts.csv` | Answer-model token use | `make_tables.py` |
+| Table S6 | `TableS6_IDKReliability.csv` | IDK-probability calibration bins | `make_tables.py` |
+| Table S7 | `TableS7_TopReliability.csv` | Top-candidate calibration bins | `make_tables.py` |
+| Table S8 | `TableS8_ThresholdCalibration.csv` | Calibration at decision thresholds | `threshold_calibration.py` |
+| Table S9 | `TableS9_RiskControl.csv` | Selected thresholds and held-out error | `threshold_selection.py` |
+| Table S10 | `TableS10_SplitSensitivity.csv` | Sensitivity to sample allocation | `threshold_split_sensitivity.py` |
+| Table S11 | `TableS11_Models.csv` | Model names and API identifiers | `common.py` |
 
 ## Collect or grade new responses
 

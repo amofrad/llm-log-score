@@ -32,9 +32,8 @@ import make_tables as mt  # noqa: E402
 import rho_sensitivity as rs  # noqa: E402
 import rule_sensitivity as rules  # noqa: E402
 import threshold_calibration as calibration  # noqa: E402
-import make_alpha_paper_tables as risk_tables  # noqa: E402
+import threshold_selection as selection  # noqa: E402
 import threshold_split_sensitivity as split_sensitivity  # noqa: E402
-import make_split_sensitivity_table as split_table  # noqa: E402
 import comparison_uncertainty as comparisons  # noqa: E402
 
 # Repeated-elicitation runs for Fig. S2 (1,000 questions x 50 replicates)
@@ -106,12 +105,11 @@ def main(argv=None) -> None:
     if not args.skip_tables:
         with tempfile.TemporaryDirectory(prefix="rbd-paper-") as temporary:
             analysis_dir = Path(temporary)
-            risk_tables.run(out_dir, recompute=True, primary_grader=args.grader, analysis_dir=analysis_dir)
+            selection.run(out_dir, recompute=True, primary_grader=args.grader, analysis_dir=analysis_dir)
             sensitivity_dir = analysis_dir / "threshold_split_sensitivity"
             split_sensitivity.run(sensitivity_dir, analysis_dir=analysis_dir)
-            split_table.generate(sensitivity_dir, out_dir, primary_grader=args.grader)
+            split_sensitivity.export_table(sensitivity_dir, out_dir, primary_grader=args.grader)
 
-    shutil.copy2(HERE / "paper_artifacts.json", out_dir / "artifact_manifest.json")
     schematic = mt.REPO_ROOT / "results/figures/F1_Concept.pdf"
     if not args.skip_figures and schematic.resolve() != (out_dir / schematic.name).resolve():
         shutil.copy2(schematic, out_dir / schematic.name)
