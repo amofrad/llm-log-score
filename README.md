@@ -63,9 +63,8 @@ llm-log-score/
 │   ├── common.py                        Data loaders and decision helpers
 │   ├── reproduce_all.py                 Reproduce the paper's computed results
 │   ├── make_figures.py                   Main and supplementary figures
-│   ├── make_tables.py                    Numerical summaries and audits
+│   ├── make_tables.py                    Numerical summaries and numbered table exports
 │   ├── comparison_uncertainty.py         Figure 2C and Table S2 intervals
-│   ├── paper_tables.py                   Numbered table CSV exports
 │   ├── rho_sensitivity.py                Figure S4 and Table S4
 │   ├── rule_sensitivity.py               Figure S5
 │   ├── threshold_calibration.py          Figure 4 and Table S8
@@ -124,19 +123,18 @@ Individual components can also be run separately:
 | Script | Main outputs |
 |---|---|
 | `make_figures.py` | Decision curves, set comparisons, and repeated-report figures |
-| `make_tables.py` | Decision outcomes, calibration summaries, matched-abstention comparisons, and token costs |
+| `make_tables.py` | Decision outcomes, calibration and comparison summaries, token costs, and numbered table exports |
 | `comparison_uncertainty.py` | Relative accuracy gains and set-outcome intervals |
 | `rho_sensitivity.py`, `rule_sensitivity.py` | Sensitivity to the omission penalty and scoring instructions |
 | `threshold_calibration.py` | Reported versus observed error among returned answers |
 | `threshold_selection.py` | Threshold selection, held-out evaluation, and Table S9 |
 | `threshold_split_sensitivity.py` | Comparisons of 50–50 and 70–30 sample allocations and Table S10 |
-| `paper_tables.py` | All numbered table CSVs from computed results |
 
 For example, to regenerate the decision outcomes in Table 1:
 
 ```bash
 python analysis/make_tables.py --steps tables
-python analysis/paper_tables.py
+python analysis/make_tables.py --export-only
 ```
 
 The two threshold-analysis scripts also run independently. Each computes its
@@ -186,7 +184,8 @@ columns or additional rows. Table 1 also includes display values rounded by the
 largest-remainder method so each three-outcome group totals 1.000.
 
 Rebuild with `python analysis/reproduce_all.py`, or export already computed
-results with `python analysis/paper_tables.py`. The source column below identifies
+results with `python analysis/make_tables.py --export-only`. Use `--out-dir PATH`
+to export from another results directory. The source column below identifies
 the analysis behind each table; Table S11 uses the shared model configuration.
 
 | Paper table | CSV in `results/figures/tables/` | Contents | Source in `analysis/` |

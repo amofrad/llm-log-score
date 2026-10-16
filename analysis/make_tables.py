@@ -18,11 +18,14 @@ Steps (run all by default, or select with --steps):
 
 Select the result tree with --grader openai|gemini (default: openai, the
 paper's primary grading). Run: python analysis/make_tables.py
+Use --export-only to organize already computed results as numbered table CSVs
+under --out-dir/tables, without rerunning the analyses.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -508,6 +511,50 @@ def grader_agreement(out_dir: Path) -> None:
     print("wrote", out_dir / "grader_agreement.csv")
 
 
+TABLE_SOURCES = {
+    "Table1_DecisionOutcomes": "Table1_DecisionOutcomes.csv",
+    "TableS1_LogLoss": "theory_audit_realized_log_loss.csv",
+    "TableS2_SetOutcomeIntervals": "set_outcome_intervals.csv",
+    "TableS3_MatchedAbstention": "matched_abstention_gaps.csv",
+    "TableS4_IdealListExtent": "TableS4_IdealListExtent.csv",
+    "TableS5_TokenCosts": "token_costs.csv",
+    "TableS6_IDKReliability": "theory_audit_residual_reliability.csv",
+    "TableS7_TopReliability": "theory_audit_top_reliability.csv",
+    "TableS8_ThresholdCalibration": "TableS8_ThresholdCalibration.csv",
+    "TableS9_RiskControl": "TableS9_RiskControl.csv",
+    "TableS10_SplitSensitivity": "TableS10_SplitSensitivity.csv",
+}
+
+
+def export_numbered_tables(source: Path, *, primary: bool = True) -> None:
+    """Move computed tables to their numbered CSVs and write model information.
+
+    Existing exports are retained when no replacement has been generated.
+    The omission-penalty experiment is included only for the primary grader.
+    """
+    source = Path(source)
+    target = source / "tables"
+    target.mkdir(exist_ok=True)
+    exported = 0
+    for stem in sorted(set(TABLE_SOURCES) | {"TableS11_Models"}):
+        if stem == "TableS4_IdealListExtent" and not primary:
+            continue
+        destination = target / (stem + ".csv")
+        if stem in TABLE_SOURCES:
+            generated = source / TABLE_SOURCES[stem]
+            if generated.exists():
+                shutil.move(generated, destination)
+            elif not destination.exists():
+                raise FileNotFoundError(generated)
+        else:
+            pd.DataFrame([
+                dict(model=common.RUNS[key]["label"], api_identifier=common.RUNS[key]["model_id"])
+                for key in common.MODEL_ORDER
+            ]).to_csv(destination, index=False)
+        exported += 1
+    print(f"Exported {exported} manuscript tables to {target}")
+
+
 STEPS = {
     "audits": audits,
     "gaps": matched_gaps,
@@ -525,10 +572,16 @@ def main(argv=None) -> None:
     parser.add_argument("--grader", choices=["openai", "gemini"], default="openai",
                         help="Which graded result tree to analyze (default: openai).")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--steps", default=",".join(DEFAULT_STEPS),
-                        help=f"Comma-separated subset of: {', '.join(STEPS)}")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--steps", default=",".join(DEFAULT_STEPS),
+                      help=f"Comma-separated subset of: {', '.join(STEPS)}")
+    mode.add_argument("--export-only", action="store_true",
+                      help="Export already computed results from --out-dir as numbered table CSVs.")
     args = parser.parse_args(argv)
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    if args.export_only:
+        export_numbered_tables(args.out_dir, primary=args.grader == "openai")
+        return
     steps = [s.strip() for s in args.steps.split(",") if s.strip()]
     unknown = [s for s in steps if s not in STEPS]
     if unknown:

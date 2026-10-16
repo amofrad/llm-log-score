@@ -115,8 +115,7 @@ def main(argv=None) -> None:
         shutil.copy2(schematic, out_dir / schematic.name)
 
     if not args.skip_tables:
-        from paper_tables import export
-        export(out_dir, primary=args.grader == "openai")
+        mt.export_numbered_tables(out_dir, primary=args.grader == "openai")
 
     print(f"\nDone. Regenerated paper artifacts in {out_dir}")
 
