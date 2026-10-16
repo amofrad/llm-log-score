@@ -61,26 +61,6 @@
     {
       "source": "deepseekv32_consistency/simpleqa_log_consistency_results.jsonl",
       "rows": 50000
-    },
-    {
-      "source": "qwen3_235b/simpleqa_topp_results.jsonl",
-      "rows": 4326
-    },
-    {
-      "source": "qwen3_235b/simpleqa_penalty_results.jsonl",
-      "rows": 4326
-    },
-    {
-      "source": "qwen3_235b_L0/simpleqa_penalty_results.jsonl",
-      "rows": 4326
-    },
-    {
-      "source": "qwen3_235b_L6/simpleqa_penalty_results.jsonl",
-      "rows": 4326
-    },
-    {
-      "source": "qwen3_235b_consistency/simpleqa_log_consistency_results.jsonl",
-      "rows": 50000
     }
   ]
 }

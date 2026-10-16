@@ -672,7 +672,7 @@ def run_penalty_arm(args, examples, effort) -> None:
 def _simpleqa_add_arguments(p: argparse.ArgumentParser) -> None:
     p.add_argument("--models", nargs="+", required=True,
                    help="GCP Vertex model ids (one family per invocation, "
-                        "e.g. claude-sonnet-4-6 OR google/gemini-3.5-flash xai/...).")
+                        "e.g. claude-sonnet-4-6 or google/gemini-3.5-flash).")
     p.add_argument(
         "--num-samples",
         type=int,
@@ -758,8 +758,6 @@ def _simpleqa_main(args: argparse.Namespace) -> None:
 
     effort = engine.normalize_gcp_reasoning_effort(args.gcp_reasoning_effort)
 
-    # A penalty-only run (--skip-log) must not overwrite the directory's
-    # existing rule marker.
     if not args.skip_log:
         results_path = args.out_dir / "simpleqa_topp_results.jsonl"
         partial_path = args.out_dir / "simpleqa_topp_results.partial.jsonl"
@@ -768,7 +766,6 @@ def _simpleqa_main(args: argparse.Namespace) -> None:
         check_resume_compatibility(args.out_dir, results_path, partial_path, rho=rho)
         write_rule_marker(args.out_dir, rho=rho)
 
-    # dataset (deterministic sampling)
     if args.mock:
         mock_n = args.num_samples if args.num_samples is not None else 20
         examples = [
@@ -784,7 +781,6 @@ def _simpleqa_main(args: argparse.Namespace) -> None:
     else:
         examples = load_simpleqa_examples_for_run(args)
 
-    # clients
     answer_client = None
     grader_client = None
     if not args.mock:
@@ -1337,18 +1333,7 @@ def pd_groupby(rows: list[dict[str, Any]], *, keys: tuple[str, ...]):
     for key in sorted(groups):
         yield key, groups[key]
 
-# batch subcommand: generate answer-model responses via GCP batch prediction,
-# inserting them into the same SQLite cache as `run.py simpleqa`; the ordinary
-# runner then grades and summarizes as usual.
-#
-#   python run.py batch prepare --arm log --num-samples 4326 \
-#       --work-dir outputs/gptoss120b_batch/log
-#   python run.py batch submit --plan .../batch_plan.json
-#   # after it succeeds: status / download / import-cache with the same --plan
-#
-# Then run `run.py simpleqa` with the same generation args,
-# --gcp-location us-central1, and --answer-cache-only: answer calls hit the
-# cache while grader calls stay live.
+
 
 DEFAULT_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 DEFAULT_LOCATION = "us-central1"
@@ -1507,17 +1492,11 @@ def _cache_kwargs(
     disable_thinking: bool,
     reasoning_effort: str | None,
 ) -> dict[str, Any]:
-    """Mirror OpenRouterClient.generate cache-key construction exactly."""
+    """Mirror the Vertex client cache-key construction exactly."""
     base_url = engine.gcp_vertex_openai_base_url(project, location)
     request_seed = engine.provider_request_seed(model=model, base_url=base_url, seed=seed)
     request_effort = engine.effective_gcp_reasoning_effort(model, reasoning_effort)
-    request_temperature = (
-        temperature
-        if engine.chat_completion_supports_temperature(
-            base_url=base_url, temperature=temperature
-        )
-        else None
-    )
+    request_temperature = temperature
     kwargs: dict[str, Any] = {
         "model": model,
         "prompt": prompt,
@@ -1588,9 +1567,6 @@ def _generation_specs(
         system_message = engine.simpleqa_log_system_message_for_model(
             args.model, strict_json=True
         )
-        # The ordinary single-report runner uses integer 0, whereas the
-        # consistency runner receives a float from argparse. Cache keys retain
-        # that distinction, so preserve each caller's exact representation.
         temperature = 0 if args.log_repeats == 1 else float(args.log_temperature)
         max_tokens = args.log_max_tokens
         for question_index, example in enumerate(examples):

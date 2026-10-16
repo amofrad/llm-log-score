@@ -11,9 +11,7 @@ Run: python analysis/make_figures.py   (see analysis/reproduce_all.py)
 from __future__ import annotations
 
 import argparse
-from collections import Counter
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -24,7 +22,6 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, Normalize, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.patheffects import withStroke
-from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
 
@@ -59,7 +56,7 @@ PENALTY_COLORS = {0.0: "#111827", 3.0: "crimson", 6.0: "#7c3aed"}
 PENALTY_LINESTYLES = {0.0: "-.", 3.0: "--", 6.0: ":"}
 PENALTY_MARKERS = {0.0: "o", 3.0: "s", 6.0: "^"}
 PENALTY_ALPHA = {0.0: 0.62, 3.0: 0.72, 6.0: 0.78}
-DEFAULT_CONSISTENCY_RUNS = "claudesonnet46_consistency"
+DEFAULT_CONSISTENCY_RUNS = ",".join(RUNS[key]["run"] + "_consistency" for key in MODEL_ORDER)
 
 plt.rcParams.update(
     {
@@ -123,13 +120,6 @@ def configure_run(*, model_keys: list[str], out_dir: Path) -> None:
     ACTIVE_MODEL_ORDER = model_keys
     OUT = Path(out_dir)
     OUT.mkdir(parents=True, exist_ok=True)
-
-
-def model_panel_subplots(*, height: float, sharex: bool = False, sharey: bool = False):
-    n = len(ACTIVE_MODEL_ORDER)
-    fig_width = max(4.8, 4.35 * n)
-    fig, axes = plt.subplots(1, n, figsize=(fig_width, height), sharex=sharex, sharey=sharey)
-    return fig, np.atleast_1d(axes).ravel()
 
 
 def penalty_label(penalty: float) -> str:
@@ -448,40 +438,7 @@ def fig_frontier(paired, relative):
     print("  wrote F2_Frontier.pdf")
 
 
-def _has_empirical_baseline(df: pd.DataFrame) -> bool:
-    return (
-        "empirical_accuracy_overall" in df
-        and df["empirical_accuracy_overall"].notna().any()
-        and "empirical_distribution_json" in df
-        and df["empirical_distribution_json"].notna().any()
-    )
-
-
 # Helpers for parsing sampled EPP responses
-def _json_distribution_items(raw) -> list[dict]:
-    if raw is None:
-        return []
-    if isinstance(raw, float) and np.isnan(raw):
-        return []
-    try:
-        items = json.loads(raw) if isinstance(raw, str) else raw
-    except (TypeError, json.JSONDecodeError):
-        return []
-    if not isinstance(items, list):
-        return []
-    return [item for item in items if isinstance(item, dict)]
-
-
-def _json_list(raw) -> list:
-    if raw is None:
-        return []
-    if isinstance(raw, float) and np.isnan(raw):
-        return []
-    try:
-        items = json.loads(raw) if isinstance(raw, str) else raw
-    except (TypeError, json.JSONDecodeError):
-        return []
-    return items if isinstance(items, list) else []
 
 
 def _positive_float(value, default: float = 0.0) -> float:
@@ -753,38 +710,6 @@ SET_OUTCOME_KEYS = ["coverage", "miscoverage_with_idk", "miscoverage_without_idk
 SET_OUTCOME_LABELS = ["Coverage", "Miscoverage\nwith IDK", "Miscoverage\nwithout IDK"]
 
 
-def _parse_final_text_response(text: str) -> str | None:
-    nonempty_lines = [line.strip() for line in str(text).splitlines() if line.strip()]
-    final_line_pattern = re.compile(
-        r"^\s*(?:#+\s*)?(?:final(?:\s+answer)?|answer)\s*:\s*(.+?)\s*$",
-        re.IGNORECASE,
-    )
-    for line in reversed(nonempty_lines):
-        match = final_line_pattern.match(line.strip().strip("*_`"))
-        if match:
-            value = match.group(1).strip().strip("*_`").strip()
-            return value or None
-    stripped = str(text).strip()
-    return stripped or None
-
-
-def _is_abstain_answer(answer: str | None) -> bool:
-    key = norm_answer(answer or "")
-    return (
-        not key
-        or key in {
-            "abstain",
-            "i don't know",
-            "i do not know",
-            "idk",
-            "not attempted",
-            "unknown",
-            "unsure",
-        }
-        or key.startswith("abstain")
-    )
-
-
 def _log_top_p_outcome(candidates: list[dict], p: float = NOMINAL_P) -> str:
     """Legacy raw keys: correct=coverage, abstain=miscoverage with IDK,
     incorrect=miscoverage without IDK. These keys describe sets, not decisions.
@@ -794,31 +719,6 @@ def _log_top_p_outcome(candidates: list[dict], p: float = NOMINAL_P) -> str:
         return "correct"
     if top.has_idk:
         return "abstain"
-    return "incorrect"
-
-
-def _first_penalty_sample_outcome(row: pd.Series) -> str | None:
-    preview = _json_list(row.get("penalty_sample_response_preview_json"))
-    if not preview:
-        return None
-    answer = _parse_final_text_response(str(preview[0]))
-    if _is_abstain_answer(answer):
-        return "abstain"
-
-    answer_key = norm_answer(answer or "")
-    for item in _json_distribution_items(row.get("penalty_distribution_json")):
-        keys = [norm_answer(item.get("answer", ""))]
-        keys.extend(norm_answer(x) for x in item.get("source_answers", []) if x)
-        if answer_key in keys:
-            grade = str(item.get("grade", "incorrect"))
-            if grade == "correct":
-                return "correct"
-            if grade == "not_attempted":
-                return "abstain"
-            return "incorrect"
-
-    if answer_key and answer_key == norm_answer(row.get("gold_answer", "")):
-        return "correct"
     return "incorrect"
 
 
@@ -850,11 +750,9 @@ def _penalty_log_outcome_tables_for_key(
         if qid not in dpen.index:
             continue
         log_outcome = _log_top_p_outcome(dlog.loc[qid, "candidates"])
-        if mode == "first_sample":
-            penalty_outcome = _first_penalty_sample_outcome(dpen.loc[qid])
-            if penalty_outcome is None:
-                continue
-            table.loc[penalty_outcome, log_outcome] += 1.0
+        weights = _penalty_sample_average_weights(dpen.loc[qid])
+        for penalty_outcome, weight in weights.items():
+            table.loc[penalty_outcome, log_outcome] += weight
             rows.append(
                 {
                     "model": key,
@@ -864,29 +762,10 @@ def _penalty_log_outcome_tables_for_key(
                     "penalty_level": penalty,
                     "penalty_outcome": penalty_outcome,
                     "log_top_p_outcome": log_outcome,
-                    "weight": 1.0,
+                    "weight": weight,
                 }
             )
-            used += 1
-        elif mode == "sample_average":
-            weights = _penalty_sample_average_weights(dpen.loc[qid])
-            for penalty_outcome, weight in weights.items():
-                table.loc[penalty_outcome, log_outcome] += weight
-                rows.append(
-                    {
-                        "model": key,
-                        "model_label": RUNS[key]["label"],
-                        "question_id": qid,
-                        "mode": mode,
-                        "penalty_level": penalty,
-                        "penalty_outcome": penalty_outcome,
-                        "log_top_p_outcome": log_outcome,
-                        "weight": weight,
-                    }
-                )
-            used += 1
-        else:
-            raise ValueError(f"unknown mode: {mode}")
+        used += 1
 
     return table, rows, used
 
@@ -912,6 +791,10 @@ def _plot_outcome_tables(
     name: str,
     model_keys: list[str] | None = None,
 ) -> None:
+    try:
+        matplotlib.font_manager.findfont("Arial", fallback_to_default=False)
+    except ValueError as exc:
+        raise RuntimeError("Figures 3 and S1 require Arial to match the paper. Install Arial before reproducing them.") from exc
     if model_keys is None:
         model_keys = ACTIVE_MODEL_ORDER
     # Preserve all three mutually exclusive set outcomes, ordered as displayed.
@@ -961,8 +844,8 @@ def _plot_outcome_tables(
             for j in range(arr.shape[1]):
                 value = arr[i, j]
                 pct = 100 * value / row_total if row_total > 0 else 0.0
-                value_text = f"{value:.0f}" if mode == "first_sample" else f"{value:.1f}"
-                if mode != "first_sample" and 0 < value < 0.05:
+                value_text = f"{value:.1f}"
+                if 0 < value < 0.05:
                     value_text = "<0.1"
                 pct_text = "<0.1%" if 0 < pct < 0.05 else f"{pct:.1f}%"
                 rgba = cmap(norm(value))
@@ -996,14 +879,14 @@ def _plot_outcome_tables(
         title_effect = [withStroke(linewidth=0.5, foreground="#111827")]
         ax.set_xticks(
             range(len(SET_OUTCOME_KEYS)), SET_OUTCOME_LABELS,
-            fontsize=12.3, fontfamily="Arial" if any(f.name == "Arial" for f in matplotlib.font_manager.fontManager.ttflist) else "DejaVu Sans",
+            fontsize=12.3, fontfamily="Arial",
         )
         for label in ax.get_xticklabels():
             label.set_color("#111827")
         ax.set_yticks(range(len(OUTCOME_KEYS)))
         ax.set_yticklabels([])
         for i, (base_label, row_total) in enumerate(zip(PENALTY_OUTCOME_LABELS, row_totals)):
-            total_text = f"{row_total:.0f}" if mode == "first_sample" else f"{row_total:.1f}"
+            total_text = f"{row_total:.1f}"
             row_label = base_label.replace("\n", " ")
             ax.annotate(
                 row_label,
@@ -1142,17 +1025,6 @@ def member_key(candidate: dict) -> str:
     return norm_answer(text) or text.strip().lower()
 
 
-def pairwise_jaccard(sets: list[set[str]]) -> float:
-    if len(sets) <= 1:
-        return np.nan
-    vals = []
-    for i in range(len(sets)):
-        for j in range(i + 1, len(sets)):
-            union = sets[i] | sets[j]
-            vals.append(1.0 if not union else len(sets[i] & sets[j]) / len(union))
-    return float(np.mean(vals)) if vals else np.nan
-
-
 def report_distribution(candidates: list[dict]) -> dict[str, float]:
     dist: dict[str, float] = {}
     for candidate in candidates:
@@ -1214,16 +1086,6 @@ def upper_triangle_values(matrix: np.ndarray) -> list[float]:
     return matrix[tri].astype(float).tolist()
 
 
-def pairwise_tv_values(distributions: list[dict[str, float]]) -> list[float]:
-    if len(distributions) <= 1:
-        return []
-    arr, _keys = distribution_matrix(distributions)
-    if arr.shape[1] == 0:
-        return []
-    tv = 0.5 * np.abs(arr[:, None, :] - arr[None, :, :]).sum(axis=2)
-    return upper_triangle_values(tv)
-
-
 def pairwise_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
     if len(distributions) <= 1:
         return []
@@ -1231,24 +1093,6 @@ def pairwise_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
     if arr.shape[1] == 0:
         return []
     return upper_triangle_values(pairwise_jsd_matrix_from_array(arr))
-
-
-def consensus_jsd_values(distributions: list[dict[str, float]]) -> list[float]:
-    if not distributions:
-        return []
-    arr, _keys = distribution_matrix(distributions)
-    if arr.shape[1] == 0:
-        return []
-    consensus = arr.mean(axis=0)
-    total = consensus.sum()
-    if total <= 0:
-        return []
-    consensus = consensus / total
-    h = entropy_array(arr)
-    h_consensus = float(entropy_array(consensus))
-    mid = 0.5 * (arr + consensus[None, :])
-    vals = entropy_array(mid) - 0.5 * (h + h_consensus)
-    return np.maximum(0.0, vals).astype(float).tolist()
 
 
 def parse_report_candidates(rec: dict) -> list[dict]:
@@ -1304,8 +1148,6 @@ def load_log_consistency(run_dir_name: str) -> pd.DataFrame:
     rows = []
     for rec in records_by_key.values():
         candidates = parse_report_candidates(rec)
-        top = top_p_set(candidates, NOMINAL_P)
-        top_members = sorted({member_key(c) for c in top.members})
         model_key = model_key_for_id(str(rec["model"])) or str(rec["model"])
         rows.append(
             {
@@ -1313,17 +1155,9 @@ def load_log_consistency(run_dir_name: str) -> pd.DataFrame:
                 "model": rec["model"],
                 "model_key": model_key,
                 "repeat_index": int(rec.get("repeat_index", 0)),
-                "log_temperature": float(rec.get("log_temperature", np.nan)),
                 "candidates": candidates,
-                "log_q_true": float(rec.get("log_q_true", np.nan)),
-                "log_hallucination_mass": float(rec.get("log_hallucination_mass", np.nan)),
-                "log_idk_mass": float(rec.get("log_not_attempted_mass", np.nan)),
                 "log_top_answer": rec.get("log_top_answer"),
                 "log_top_grade": rec.get("log_top_grade"),
-                "log_top_p_set_size": len(top.members),
-                "log_top_p_members": top_members,
-                "parse_failed": str(rec.get("log_parse_status", "")).startswith("malformed"),
-                "log_total_tokens": float(rec.get("log_total_tokens", np.nan)),
             }
         )
     return pd.DataFrame(rows)
@@ -1332,55 +1166,21 @@ def load_log_consistency(run_dir_name: str) -> pd.DataFrame:
 def summarize_log_consistency(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for (model_key, question_id), group in df.groupby(["model_key", "question_id"], sort=False):
-        member_sets = [set(members) for members in group["log_top_p_members"]]
         distributions = [report_distribution(candidates) for candidates in group["candidates"]]
-        tv_values = pairwise_tv_values(distributions)
         jsd_values = pairwise_jsd_values(distributions)
-        consensus_values = consensus_jsd_values(distributions)
         top_keys = [
             member_key({"answer": answer, "grade": grade})
             for answer, grade in zip(group["log_top_answer"], group["log_top_grade"])
         ]
         top_counts = pd.Series(top_keys).value_counts()
-        rows.append(
-            {
-                "model_key": model_key,
-                "model_label": RUNS.get(model_key, {}).get("label", model_key),
-                "question_id": question_id,
-                "n_repeats": len(group),
-                "mean_log_q_true": group["log_q_true"].mean(),
-                "sd_log_q_true": group["log_q_true"].std(ddof=1),
-                "mean_log_hallucination_mass": group["log_hallucination_mass"].mean(),
-                "sd_log_hallucination_mass": group["log_hallucination_mass"].std(ddof=1),
-                "mean_log_idk_mass": group["log_idk_mass"].mean(),
-                "sd_log_idk_mass": group["log_idk_mass"].std(ddof=1),
-                "mean_top_p_set_size": group["log_top_p_set_size"].mean(),
-                "sd_top_p_set_size": group["log_top_p_set_size"].std(ddof=1),
-                "mean_top_p_jaccard": pairwise_jaccard(member_sets),
-                "mean_top_p_set_distance": 1.0 - pairwise_jaccard(member_sets),
-                "mean_pairwise_tv": float(np.mean(tv_values)) if tv_values else np.nan,
-                "median_pairwise_tv": float(np.median(tv_values)) if tv_values else np.nan,
-                "q90_pairwise_tv": float(np.quantile(tv_values, 0.90)) if tv_values else np.nan,
-                "mean_pairwise_jsd": float(np.mean(jsd_values)) if jsd_values else np.nan,
-                "median_pairwise_jsd": float(np.median(jsd_values)) if jsd_values else np.nan,
-                "q90_pairwise_jsd": float(np.quantile(jsd_values, 0.90)) if jsd_values else np.nan,
-                "mean_consensus_jsd": (
-                    float(np.mean(consensus_values)) if consensus_values else np.nan
-                ),
-                "median_consensus_jsd": (
-                    float(np.median(consensus_values)) if consensus_values else np.nan
-                ),
-                "q90_consensus_jsd": (
-                    float(np.quantile(consensus_values, 0.90)) if consensus_values else np.nan
-                ),
-                "top_answer_agreement": float(top_counts.iloc[0] / len(group)) if len(top_counts) else np.nan,
-                "top_answer_disagreement": (
-                    1.0 - float(top_counts.iloc[0] / len(group)) if len(top_counts) else np.nan
-                ),
-                "parse_failure_rate": group["parse_failed"].mean(),
-                "mean_log_total_tokens": group["log_total_tokens"].mean(),
-            }
-        )
+        rows.append({
+            "model_key": model_key,
+            "model_label": RUNS.get(model_key, {}).get("label", model_key),
+            "question_id": question_id,
+            "n_repeats": len(group),
+            "mean_pairwise_jsd": float(np.mean(jsd_values)) if jsd_values else np.nan,
+            "top_answer_agreement": float(top_counts.iloc[0] / len(group)) if len(top_counts) else np.nan,
+        })
     return pd.DataFrame(rows)
 
 
@@ -1688,14 +1488,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--consistency-question-limit",
         type=int,
-        default=None,
-        help="Restrict every model to the same first N questions of the SimpleQA order.",
+        default=1000,
+        help="Restrict every model to the same first N questions (default: 1000).",
     )
     parser.add_argument(
         "--consistency-repeat-limit",
         type=int,
-        default=None,
-        help="Restrict every question to replication indices below N.",
+        default=50,
+        help="Restrict every question to replication indices below N (default: 50).",
     )
     parser.add_argument(
         "--only-consistency",

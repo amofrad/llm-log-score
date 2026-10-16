@@ -82,7 +82,7 @@ def equal(value, reference):
 
 
 def load_grader(grader, analysis_dir=None):
-    analysis_dir = Path(analysis_dir) if analysis_dir else ROOT / 'results/exploratory'
+    analysis_dir = Path(analysis_dir) if analysis_dir else ROOT / 'results/intermediate'
     folder = analysis_dir / f'alpha_risk_control_{grader}'
     meta = json.loads((folder/'metadata.json').read_text())
     assert meta['seed'] == SEED and meta['additional_splits'] == REPEATS and meta['delta'] == DELTA
@@ -166,68 +166,6 @@ def summarize(rows):
     return summaries, paired
 
 
-def pct(v):
-    return '—' if v is None else f'{100*v:.1f}'
-
-
-def make_report(out, rows, summaries, paired):
-    lines = ['# Sensitivity of threshold decisions to a 70–30 split', '',
-        'The primary 50–50 analysis is unchanged. This comparison uses 3,028 questions for threshold selection and 1,298 for testing, versus 2,163 and 2,163. Both allocations use the same question permutation in each split, the same 102 thresholds, confidence 95%, and error limits from 0.20 to 0.40. No new model responses or grades were collected.', '',
-        'All 61,812 original 50–50 bounds and all 3,030 selections/test evaluations were reproduced under both graders across the original split and 100 additional splits. Results below summarize the additional 100 separately from the original split.', '',
-        '## Repeated-split comparison', '',
-        'Qualified counts splits with at least one supported threshold. Answered is the mean percentage answered on the **same 1,298 test questions** under both rules, including zero for unsupported rules. Thus the answer-rate comparison is not due to different test questions. The means are descriptive because the splits overlap. Displayed rates and changes are rounded separately; changes are calculated before rounding.', '']
-    def summary(grader, model, alpha, allocation):
-        return next(r for r in summaries if r['grader']==grader and r['model_key']==model
-                    and r['alpha']==alpha and r['allocation']==allocation)
-    findings = ['## Main findings', '']
-    for model, alpha in [('gemini35flash',.25), ('sonnet46',.30)]:
-        a,b = [summary('openai',model,alpha,k) for k in ALLOCATIONS]
-        aa,bb = [summary('gemini',model,alpha,k) for k in ALLOCATIONS]
-        findings += [f"**{MODELS[model]} at α = {alpha:.2f}.** With the primary grader, qualifying splits increase from {a['n_supported']}/100 to {b['n_supported']}/100, and mean answered percentage on common test questions increases from {pct(a['mean_common_answer_rate'])}% to {pct(b['mean_common_answer_rate'])}%. With the second grader, qualifying splits increase from {aa['n_supported']}/100 to {bb['n_supported']}/100. This is the clearest benefit of providing more threshold-selection data.", '']
-    findings += [
-        '**Some decisions are unchanged.** At α = 0.30 and 0.40, Gemini selects exactly the same threshold under both allocations in every additional split, under both graders. Tighter bounds do not always change the selected decision rule.', '',
-        '**Low error limits remain fragile.** At α = 0.20, Gemini qualifies in only 2/100 splits under either grader with 70–30, and the observed test errors in both qualifying splits exceed 20%. Sonnet at α = 0.25 qualifies in only 7/100 splits with the primary grader and 2/100 with the second. DeepSeek has no qualifying threshold at any tested error limit in any split under either allocation or grader.', '',
-        '**More answers can come with higher error.** In the original split, at α = 0.30, Sonnet’s threshold changes from 0.857 to 0.760 under the primary grader. On the same 1,298 test questions, it answers 57 versus 143 questions (4.4% versus 11.0%), with errors of 19.3% versus 24.5%. Both observed errors are below 30%; the second rule answers more questions. Across additional splits at α = 0.35, Sonnet’s median error on each allocation’s own test set rises from 22.2% to 28.7% as more questions are answered.', '',
-        '**The evaluation tradeoff is visible.** For Gemini at α = 0.30, where the selected threshold is unchanged, the average width of the pointwise 95% test-error interval increases from 6.6 to 8.6 percentage points with the smaller test sample. This is a loss of evaluation precision, not a change in the decision rule.', '',
-        '**Assessment.** Keep 50–50 as the primary analysis and use 70–30 as sensitivity evidence. The results show that selection-sample size materially affects whether a useful threshold can be supported, especially for Gemini at 0.25 and Sonnet at 0.30. They do not establish that 70–30 is universally preferable or that test error should equal the chosen limit.', '',
-        'Occasional support losses also occur. For example, Gemini at α = 0.25 gains support in 31 primary-grader splits but loses it in one; Sonnet at α = 0.30 gains support in 36 and loses it in one. All comparisons are retained in the saved outputs.', '']
-    insert = lines.index('## Repeated-split comparison')
-    lines[insert:insert] = findings
-    for grader,label in GRADERS.items():
-        lines += [f'### {label}', '', '| Model | α | Qualified: 50–50 | Qualified: 70–30 | Answered: 50–50 (%) | Answered: 70–30 (%) | Change (pp) |', '|---|---:|---:|---:|---:|---:|---:|']
-        for model,name in MODELS.items():
-            for alpha in ALPHAS:
-                a,b=[next(r for r in summaries if r['grader']==grader and r['model_key']==model and r['alpha']==alpha and r['allocation']==allocation) for allocation in ALLOCATIONS]
-                delta=b['mean_common_answer_rate']-a['mean_common_answer_rate']
-                lines.append(f"| {name} | {alpha:.2f} | {a['n_supported']}/100 | {b['n_supported']}/100 | {pct(a['mean_common_answer_rate'])} | {pct(b['mean_common_answer_rate'])} | {100*delta:+.1f} |")
-        lines += ['', '| Model | α | Median test error: 50–50 (%) | Median test error: 70–30 (%) | Test errors above α: 50–50 | Test errors above α: 70–30 |', '|---|---:|---:|---:|---:|---:|']
-        for model,name in MODELS.items():
-            for alpha in ALPHAS:
-                a,b=[next(r for r in summaries if r['grader']==grader and r['model_key']==model and r['alpha']==alpha and r['allocation']==allocation) for allocation in ALLOCATIONS]
-                lines.append(f"| {name} | {alpha:.2f} | {pct(a['median_test_error_when_answering'])} | {pct(b['median_test_error_when_answering'])} | {a['n_test_errors_above_alpha']}/{a['n_splits_with_test_answers']} | {b['n_test_errors_above_alpha']}/{b['n_splits_with_test_answers']} |")
-        lines += ['', 'Conditional-error summaries use each allocation’s own test set and only splits with returned answers; 0/0 denotes no evaluable error rate. These test-error fractions are not estimates of the guarantee’s failure probability.', '']
-    lines += ['## Original split: numerical comparison', '', 'The bounds below are from threshold selection; errors and exact pointwise 95% intervals are from each allocation’s own test questions. Thresholds are rounded to three decimals.', '']
-    for grader,label in GRADERS.items():
-        lines += [f'### {label}', '', '| Model | α | Allocation | Threshold | Selection bound (%) | Test answered n (%) | Test error (%) [95% interval] |', '|---|---:|---|---:|---:|---:|---|']
-        for model,name in MODELS.items():
-            for alpha in ALPHAS:
-                for allocation in ALLOCATIONS:
-                    r=next(r for r in rows if r['seed']==SEED and r['grader']==grader and r['model_key']==model and r['alpha']==alpha and r['allocation']==allocation)
-                    threshold='—' if r['threshold'] is None else f"{r['threshold']:.3f}"
-                    error='—' if r['observed_error'] is None else f"{pct(r['observed_error'])} [{pct(r['error_lo'])}, {pct(r['error_hi'])}]"
-                    lines.append(f"| {name} | {alpha:.2f} | {allocation} | {threshold} | {pct(r['selection_upper'])} | {r['n_answered']:,} ({pct(r['answer_rate'])}) | {error} |")
-        lines.append('')
-    lines += ['## Interpretation and reproducibility', '',
-        '- The objective is to support an upper limit on conditional error while answering as many questions as possible. It does not target equality between test error and α.',
-        '- More selection data can tighten bounds, but support and the selected threshold can move in either direction in a particular split. The saved paired comparisons include both gains and losses.',
-        '- Evaluating both rules on common test questions controls test-set composition. The rules can still answer different subsets of those questions.',
-        '- Smaller test sets can make test-error estimates less precise at a fixed threshold. Actual precision also depends on how many answers the selected rule returns.',
-        '- These are overlapping retrospective splits of an already examined benchmark, not independent external replications. The individual risk guarantee does not automatically extend to selecting the allocation with the best observed result.', '',
-        'Reproduce from the repository root with `python3 analysis/threshold_split_sensitivity.py` (requires NumPy and SciPy).', '',
-        'Saved outputs: `all_results.csv`, `all_bounds.csv`, `primary_results.csv`, `split_summary.csv`, `paired_comparisons.csv`, `primary_assignments.csv`, and `metadata.json`.', '']
-    (out/'report.md').write_text('\n'.join(lines))
-
-
 def run(out, analysis_dir=None):
     frames_by_grader, inputs, refs, bound_refs = {}, [], {}, {}
     grid = ids = None
@@ -297,11 +235,10 @@ def run(out, analysis_dir=None):
           'inputs':inputs,'source_sha256':sha(__file__),
           'software':{'python':platform.python_version(),'numpy':np.__version__,'scipy':scipy.__version__}}
     (out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
-    make_report(out,results,summary,paired)
     print(f'Wrote {len(results)} result rows and {len(bands)} bounds to {out}',flush=True)
 
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out-dir',type=Path,default=ROOT/'results/exploratory/threshold_split_sensitivity')
+    parser.add_argument('--out-dir',type=Path,default=ROOT/'results/intermediate/threshold_split_sensitivity')
     run(parser.parse_args().out_dir)

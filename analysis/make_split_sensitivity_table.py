@@ -78,7 +78,7 @@ def generate(source, out, primary_grader='openai'):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source',type=Path,default=ROOT/'results/exploratory/threshold_split_sensitivity')
+    parser.add_argument('--source',type=Path,default=ROOT/'results/intermediate/threshold_split_sensitivity')
     parser.add_argument('--out-dir',type=Path,default=ROOT/'results/figures')
     parser.add_argument('--grader',choices=('openai','gemini'),default='openai',
                         help='Grader displayed in Table S10; the CSV retains both graders.')

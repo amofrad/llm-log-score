@@ -4,3 +4,6 @@ __pycache__/
 .venv/
 results/figures_gemini/
 grades.jsonl
+
+# Temporary outputs from running threshold-analysis components separately
+results/intermediate/

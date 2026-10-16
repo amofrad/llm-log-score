@@ -1,6 +1,6 @@
 """Export every manuscript table as a numbered CSV.
 
-Numerical tables retain the analysis outputs. The method comparison uses a
+Numerical tables retain the analysis outputs in one canonical location. The method comparison uses a
 versioned CSV, and the model table uses the shared model configuration.
 """
 from pathlib import Path
@@ -36,8 +36,23 @@ def export(source, primary=True):
     for stem in stems:
         if stem == 'TableS4_IdealListExtent' and not primary: continue
         if stem in SOURCES:
-            shutil.copy2(source/SOURCES[stem],target/(stem+'.csv'))
-            origin = SOURCES[stem]
+            generated = source / SOURCES[stem]
+            destination = target / (stem + '.csv')
+            if generated.exists():
+                shutil.move(generated, destination)
+            elif not destination.exists():
+                raise FileNotFoundError(generated)
+            if stem in {'Table1_DecisionOutcomes', 'TableS1_LogLoss', 'TableS3_MatchedAbstention',
+                        'TableS5_TokenCosts', 'TableS6_IDKReliability', 'TableS7_TopReliability'}:
+                origin = 'analysis/make_tables.py'
+            else:
+                origin = {
+                    'TableS2_SetOutcomeIntervals': 'analysis/comparison_uncertainty.py',
+                    'TableS4_IdealListExtent': 'analysis/rho_sensitivity.py',
+                    'TableS8_ThresholdCalibration': 'analysis/threshold_calibration.py',
+                    'TableS9_RiskControl': 'analysis/make_alpha_paper_tables.py',
+                    'TableS10_SplitSensitivity': 'analysis/make_split_sensitivity_table.py',
+                }[stem]
         elif stem == 'Table2_MethodComparison':
             shutil.copy2(TABLE_DATA/(stem+'.csv'),target/(stem+'.csv'))
             origin = 'analysis/table_data/'+stem+'.csv'

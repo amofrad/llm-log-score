@@ -1,0 +1,7 @@
+grader,model_key,minimum_supported_alpha,threshold,n_cert_answered,k_cert_incorrect
+openai,gemini35flash,0.2487828812727762,0.91,327,56
+openai,sonnet46,0.2695214682111513,0.89,46,3
+openai,deepseekv32maas,0.7235878593893186,0.8571428571428571,34,15
+gemini,gemini35flash,0.2522398579814878,0.91,327,57
+gemini,sonnet46,0.2695214682111513,0.89,46,3
+gemini,deepseekv32maas,0.7235878593893186,0.8571428571428571,34,15

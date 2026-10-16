@@ -19,7 +19,10 @@ from __future__ import annotations
 import argparse
 import sys
 import shutil
+import tempfile
 from pathlib import Path
+
+import matplotlib as mpl
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -80,28 +83,33 @@ def main(argv=None) -> None:
 
     if args.grader == "openai" and not (args.skip_figures and args.skip_tables):
         sensitivity_tree = mt.tree_for_grader(args.grader)
-        rs.run(
-            sensitivity_tree / "rho_sensitivity",
-            out_dir,
-            include_figure_outputs=not args.skip_figures,
-            include_table_output=not args.skip_tables,
-        )
+        # Match standalone figure styles regardless of earlier plotting settings.
+        with mpl.rc_context(mpl.rcParamsDefault):
+            rs.run(
+                sensitivity_tree / "rho_sensitivity",
+                out_dir,
+                include_figure_outputs=not args.skip_figures,
+                include_table_output=not args.skip_tables,
+            )
         if not args.skip_figures:
-            rules.run(sensitivity_tree / "rule_sensitivity", out_dir)
+            with mpl.rc_context(mpl.rcParamsDefault):
+                rules.run(sensitivity_tree / "rule_sensitivity", out_dir)
 
     if not (args.skip_figures and args.skip_tables):
-        calibration.run(
-            mt.tree_for_grader(args.grader), out_dir,
-            include_figure_outputs=not args.skip_figures,
-            include_table_output=not args.skip_tables,
-        )
+        with mpl.rc_context(mpl.rcParamsDefault):
+            calibration.run(
+                mt.tree_for_grader(args.grader), out_dir,
+                include_figure_outputs=not args.skip_figures,
+                include_table_output=not args.skip_tables,
+            )
 
     if not args.skip_tables:
-        analysis_dir = out_dir / "intermediate" if args.out_dir else mt.REPO_ROOT / "results/exploratory"
-        risk_tables.run(out_dir, recompute=True, primary_grader=args.grader, analysis_dir=analysis_dir)
-        sensitivity_dir = analysis_dir / "threshold_split_sensitivity"
-        split_sensitivity.run(sensitivity_dir, analysis_dir=analysis_dir)
-        split_table.generate(sensitivity_dir, out_dir, primary_grader=args.grader)
+        with tempfile.TemporaryDirectory(prefix="rbd-paper-") as temporary:
+            analysis_dir = Path(temporary)
+            risk_tables.run(out_dir, recompute=True, primary_grader=args.grader, analysis_dir=analysis_dir)
+            sensitivity_dir = analysis_dir / "threshold_split_sensitivity"
+            split_sensitivity.run(sensitivity_dir, analysis_dir=analysis_dir)
+            split_table.generate(sensitivity_dir, out_dir, primary_grader=args.grader)
 
     shutil.copy2(HERE / "paper_artifacts.json", out_dir / "artifact_manifest.json")
     schematic = mt.REPO_ROOT / "results/figures/F1_Concept.pdf"

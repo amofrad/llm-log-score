@@ -1,8 +1,8 @@
 # Analysis (reproducing figures/tables from the shipped graded results)
-numpy>=1.26
-pandas>=2.0.0
-scipy>=1.11
-matplotlib>=3.8.0
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+matplotlib==3.10.9
 
 # Running the data-collection and grading stages from scratch
 datasets>=3.0.0

@@ -1,8 +1,4 @@
-"""Generate SI Table S9 and repository-only partition and grid comparisons.
-
-Use --recompute to rebuild both graders' analysis from the stored responses.
-Without it, read the saved, verified analysis; no model calls are made.
-"""
+"""Generate SI Table S9 from the fixed-grid threshold-selection analysis."""
 from __future__ import annotations
 
 import argparse
@@ -25,67 +21,38 @@ def one(frame, model, alpha, method):
     return rows.iloc[0]
 
 
-def error_summary(frame, model, alpha):
-    rows = frame[(frame.model_key == model) & np.isclose(frame.alpha, alpha, rtol=0, atol=1e-14)]
-    assert len(rows) == rows.seed.nunique() == 100
-    answered = rows[rows.n_answered > 0]
-    assert answered.observed_error.notna().all()
-    assert rows.loc[rows.n_answered == 0, "observed_error"].isna().all()
-    assert np.allclose(answered.observed_error, answered.n_incorrect / answered.n_answered)
-    errors = answered.observed_error
-    return {"n_partitions_with_test_answers": len(errors),
-            "median_test_error": errors.median(),
-            "test_error_q25": errors.quantile(.25),
-            "test_error_q75": errors.quantile(.75)}
-
-
 def run(out_dir=None, recompute=False, primary_grader="openai", analysis_dir=None):
     out_dir = Path(out_dir) if out_dir else ROOT / "results" / "figures"
     out_dir.mkdir(parents=True, exist_ok=True)
-    analysis_dir = Path(analysis_dir) if analysis_dir else ROOT / "results/exploratory"
-    summaries = {}
-    repeated = {}
+    analysis_dir = Path(analysis_dir) if analysis_dir else ROOT / "results/intermediate"
+    minimum_bounds = []
     for grader in ("openai", "gemini"):
         folder = analysis_dir / f"alpha_risk_control_{grader}"
-        if recompute:
+        if recompute or not (folder / "primary_results.csv").exists():
             import alpha_risk_control as arc
             arc.run(grader, folder, repeats=100)
-        summaries[grader] = pd.read_csv(folder / "split_summary.csv", float_precision="round_trip")
-        if not (summaries[grader].n_splits == 100).all():
-            raise ValueError("Publication tables require all 100 additional splits")
-        all_results = pd.read_csv(folder / "all_results.csv", float_precision="round_trip")
+        # Minimum bounds quoted in the SI discussion, including nonqualifying cases.
+        bounds = pd.read_csv(folder / "all_bounds.csv", float_precision="round_trip")
         primary_seed = pd.read_csv(folder / "primary_results.csv", usecols=["seed"]).seed.unique()
         assert len(primary_seed) == 1
-        repeated[grader] = all_results[(all_results.method == "fixed_full")
-                                      & (all_results.representation == "raw")
-                                      & (all_results.seed != primary_seed[0])]
+        bounds = bounds[(bounds.seed == primary_seed[0]) & (bounds.n_cert_answered > 0)]
+        for model, group in bounds.groupby("model_key", sort=False):
+            best = group.sort_values(["risk_upper", "threshold"]).iloc[0]
+            minimum_bounds.append({"grader": grader, "model_key": model,
+                                   "minimum_supported_alpha": best.risk_upper,
+                                   "threshold": best.threshold,
+                                   "n_cert_answered": best.n_cert_answered,
+                                   "k_cert_incorrect": best.k_cert_incorrect})
+    pd.DataFrame(minimum_bounds).to_csv(out_dir / "threshold_selection_summary.csv", index=False)
     primary = pd.read_csv(analysis_dir / f"alpha_risk_control_{primary_grader}" / "primary_results.csv",
                           float_precision="round_trip")
-    records = {8: [], 9: [], 10: []}
+    records = []
     for model in common.MODEL_ORDER:
         for alpha in PAPER_TARGETS:
             row = one(primary, model, alpha, "fixed_full")
-            records[8].append(row.to_dict() | {"grader": primary_grader})
-            full = {g: one(summaries[g], model, alpha, "fixed_full") for g in summaries}
-            errors = {g: error_summary(repeated[g], model, alpha) for g in summaries}
-            for g in summaries:
-                assert errors[g]["n_partitions_with_test_answers"] == full[g].n_supported
-                if full[g].n_supported:
-                    assert np.isclose(errors[g]["median_test_error"], full[g].median_error_when_answering)
-            records[9].append({"model_key": model, "alpha": alpha, "display_grader": primary_grader} | {
-                f"{g}_{key}": full[g][key] for g in full
-                for key in ("n_splits", "n_supported", "mean_answer_rate")} | {
-                f"{g}_{key}": value for g, summary in errors.items() for key, value in summary.items()})
-            paired = {(g, method): one(summaries[g], model, alpha, method)
-                      for g in summaries for method in ("fixed_half", "isotonic_grid")}
-            records[10].append({"model_key": model, "alpha": alpha} | {
-                f"{g}_{method}_{key}": paired[g, method][key]
-                for g, method in paired for key in ("n_splits", "n_supported", "mean_answer_rate", "median_grid_size")})
-
-    for table in records:
-        stem = {8: "TableS9_RiskControl", 9: "RiskControlFullTestPartitions", 10: "RiskControlGridComparison"}[table]
-        pd.DataFrame(records[table]).to_csv(out_dir / f"{stem}.csv", index=False)
-    print(f"Wrote SI Table S9 and repository-only partition and grid comparisons to {out_dir}")
+            records.append(row.to_dict() | {"grader": primary_grader})
+    pd.DataFrame(records).to_csv(out_dir / "TableS9_RiskControl.csv", index=False)
+    print(f"Wrote SI Table S9 to {out_dir}")
 
 
 if __name__ == "__main__":
@@ -93,6 +60,6 @@ if __name__ == "__main__":
     parser.add_argument("--out-dir", type=Path)
     parser.add_argument("--recompute", action="store_true")
     parser.add_argument("--grader", choices=("openai", "gemini"), default="openai",
-                        help="Grader displayed in Table S9 and the full-test partition summary; CSVs retain both graders' partition summaries.")
+                        help="Grader displayed in Table S9.")
     args = parser.parse_args()
     run(args.out_dir, args.recompute, args.grader)

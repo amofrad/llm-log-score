@@ -20,8 +20,7 @@ from typing import Any
 
 os.environ.setdefault("MPLBACKEND", "Agg")
 
-# The grading rubric and answer canonicalization are shared with the grading
-# stage; grading/graders.py is their single source of truth.
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "grading"))
 from graders import (  # noqa: E402
     GRADER_SYSTEM_MESSAGE,
@@ -404,18 +403,6 @@ def retry_delay_seconds(exc: BaseException, attempt: int, base_delay_s: float) -
     return base_delay_s * (2**attempt) + jitter
 
 
-def is_local_base_url(url: str) -> bool:
-    lowered = url.lower()
-    return lowered.startswith(
-        (
-            "http://localhost",
-            "http://127.0.0.1",
-            "http://0.0.0.0",
-            "http://[::1]",
-        )
-    )
-
-
 def normalize_gcp_reasoning_effort(value: str | None) -> str | None:
     if value is None:
         return None
@@ -427,30 +414,13 @@ def normalize_gcp_reasoning_effort(value: str | None) -> str | None:
     return normalized
 
 
-def ollama_api_base_url(url: str) -> str:
-    base = url.rstrip("/")
-    for suffix in ("/v1", "/api"):
-        if base.endswith(suffix):
-            return base[: -len(suffix)]
-    return base
-
-
 def is_gcp_vertex_base_url(url: str) -> bool:
     return "aiplatform.googleapis.com" in url.lower()
-
-
-def is_openai_platform_base_url(url: str) -> bool:
-    return "api.openai.com" in url.lower()
 
 
 def is_gcp_anthropic_model(model: str) -> bool:
     normalized = model.strip().lower()
     return normalized.startswith("claude-") or normalized.startswith("anthropic/claude-")
-
-
-def is_gcp_xai_model(model: str) -> bool:
-    normalized = model.strip().lower()
-    return normalized.startswith("xai/") or normalized.startswith("grok-")
 
 
 def is_gcp_deepseek_model(model: str) -> bool:
@@ -510,20 +480,7 @@ def provider_request_seed(*, model: str, base_url: str, seed: int | None) -> int
     if seed is None:
         return None
     normalized_seed = int(seed) % PROVIDER_SEED_MAX
-    if is_gcp_vertex_base_url(base_url) and is_gcp_xai_model(model):
-        return (normalized_seed % (PROVIDER_SEED_MAX - 1)) + 1
     return normalized_seed
-
-
-def set_chat_completion_token_limit(payload: dict[str, Any], *, base_url: str, max_tokens: int) -> None:
-    token_key = "max_completion_tokens" if is_openai_platform_base_url(base_url) else "max_tokens"
-    payload[token_key] = max_tokens
-
-
-def chat_completion_supports_temperature(*, base_url: str, temperature: float) -> bool:
-    if not is_openai_platform_base_url(base_url):
-        return True
-    return abs(float(temperature) - 1.0) <= 1e-12
 
 
 def gcp_anthropic_model_id(model: str) -> str:
@@ -545,17 +502,14 @@ def gcp_openapi_model_id(model: str) -> str:
         if len(parts) == 4 and parts[2] == "models":
             publisher, model_name = parts[1], parts[3]
             return f"{publisher}/{model_name}"
-    if "/" not in normalized and normalized.lower().startswith("llama-"):
-        return f"meta/{normalized}"
     return normalized
 
 
-class OpenRouterClient:
+class _VertexChatCompletionsClient:
     def __init__(
         self,
-        api_key: str,
         cache: SQLiteCache,
-        base_url: str = "https://openrouter.ai/api/v1",
+        base_url: str,
         cache_only: bool = False,
         timeout_s: int = 120,
         request_delay_s: float = 0.0,
@@ -563,9 +517,7 @@ class OpenRouterClient:
         retry_base_delay_s: float = 5.0,
         disable_thinking: bool = True,
         gcp_reasoning_effort: str | None = None,
-        openai_reasoning_effort: str | None = None,
     ) -> None:
-        self.api_key = api_key
         self.cache = cache
         self.base_url = base_url.rstrip("/")
         self.request_base_url = self.base_url
@@ -576,19 +528,10 @@ class OpenRouterClient:
         self.retry_base_delay_s = retry_base_delay_s
         self.disable_thinking = disable_thinking
         self.gcp_reasoning_effort = gcp_reasoning_effort
-        self.openai_reasoning_effort = openai_reasoning_effort
         self.request_lock = threading.Lock()
         self.last_request_at = 0.0
         self.last_token_usage: dict[str, Any] | None = None
 
-    def _headers(self) -> dict[str, str]:
-        headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
-        if "openrouter.ai" in self.base_url:
-            headers["HTTP-Referer"] = "https://github.com/openai/hallucinations-paper-experiments"
-            headers["X-Title"] = "MMLU-Pro log scoring vs penalty simulation"
-        return headers
 
     def _wait_for_turn(self) -> None:
         if self.request_delay_s <= 0:
@@ -611,7 +554,6 @@ class OpenRouterClient:
         max_tokens: int = 512,
         max_retries: int | None = None,
     ) -> str:
-        use_ollama_native = is_local_base_url(self.base_url)
         request_seed = provider_request_seed(model=model, base_url=self.base_url, seed=seed)
         request_gcp_reasoning_effort = effective_gcp_reasoning_effort(
             model, self.gcp_reasoning_effort
@@ -621,12 +563,7 @@ class OpenRouterClient:
             base_url=self.base_url,
             disable_thinking=self.disable_thinking,
         )
-        request_temperature = (
-            temperature
-            if use_ollama_native
-            or chat_completion_supports_temperature(base_url=self.base_url, temperature=temperature)
-            else None
-        )
+        request_temperature = temperature
         kwargs = {
             "model": model,
             "prompt": prompt,
@@ -637,20 +574,11 @@ class OpenRouterClient:
             "max_tokens": max_tokens,
             "base_url": self.base_url,
             "disable_thinking": self.disable_thinking,
-            "openrouter_reasoning_effort": (
-                "none" if self.disable_thinking and "openrouter.ai" in self.base_url else None
-            ),
-            "gcp_reasoning_effort": (
-                request_gcp_reasoning_effort
-                if is_gcp_vertex_base_url(self.base_url)
-                else None
-            ),
-            "openai_reasoning_effort": (
-                self.openai_reasoning_effort
-                if is_openai_platform_base_url(self.base_url)
-                else None
-            ),
-            "transport": "ollama_native" if use_ollama_native else "openai_chat_completions",
+            # Preserve historical cache keys for the collected responses.
+            "openrouter_reasoning_effort": None,
+            "gcp_reasoning_effort": request_gcp_reasoning_effort,
+            "openai_reasoning_effort": None,
+            "transport": "openai_chat_completions",
         }
         if request_gcp_deepseek_thinking is not None:
             kwargs["gcp_deepseek_thinking"] = request_gcp_deepseek_thinking
@@ -676,50 +604,25 @@ class OpenRouterClient:
             messages.append({"role": "system", "content": system_message})
         messages.append({"role": "user", "content": prompt})
 
-        if use_ollama_native:
-            endpoint = f"{ollama_api_base_url(self.base_url)}/api/chat"
-            payload = {
-                "model": model,
-                "messages": messages,
-                "stream": False,
-                "options": {
-                    "temperature": temperature,
-                    "num_predict": max_tokens,
-                },
-            }
-            if seed is not None:
-                payload["options"]["seed"] = seed
-            if self.disable_thinking:
-                payload["think"] = False
-        else:
-            endpoint = f"{self.request_base_url}/chat/completions"
-            payload = {
-                "model": (
-                    gcp_openapi_model_id(model)
-                    if is_gcp_vertex_base_url(self.base_url)
-                    else model
-                ),
-                "messages": messages,
-            }
-            if request_temperature is not None:
-                payload["temperature"] = request_temperature
-            set_chat_completion_token_limit(payload, base_url=self.base_url, max_tokens=max_tokens)
-            if self.disable_thinking and "openrouter.ai" in self.base_url:
-                payload["reasoning"] = {"effort": "none", "exclude": True}
-                payload["include_reasoning"] = False
-            deepseek_thinking = gcp_deepseek_thinking_value(
-                model=model,
-                base_url=self.base_url,
-                disable_thinking=self.disable_thinking,
-            )
-            if deepseek_thinking is not None:
-                payload["chat_template_kwargs"] = {"thinking": deepseek_thinking}
-            if request_gcp_reasoning_effort and is_gcp_vertex_base_url(self.base_url):
-                payload["reasoning_effort"] = request_gcp_reasoning_effort
-            if self.openai_reasoning_effort and is_openai_platform_base_url(self.base_url):
-                payload["reasoning_effort"] = self.openai_reasoning_effort
-            if request_seed is not None:
-                payload["seed"] = request_seed
+        endpoint = f"{self.request_base_url}/chat/completions"
+        payload = {
+            "model": gcp_openapi_model_id(model),
+            "messages": messages,
+        }
+        if request_temperature is not None:
+            payload["temperature"] = request_temperature
+        payload["max_tokens"] = max_tokens
+        deepseek_thinking = gcp_deepseek_thinking_value(
+            model=model,
+            base_url=self.base_url,
+            disable_thinking=self.disable_thinking,
+        )
+        if deepseek_thinking is not None:
+            payload["chat_template_kwargs"] = {"thinking": deepseek_thinking}
+        if request_gcp_reasoning_effort and is_gcp_vertex_base_url(self.base_url):
+            payload["reasoning_effort"] = request_gcp_reasoning_effort
+        if request_seed is not None:
+            payload["seed"] = request_seed
 
         retry_count = self.max_retries if max_retries is None else max_retries
         last_error: Exception | None = None
@@ -734,25 +637,19 @@ class OpenRouterClient:
                 )
                 response.raise_for_status()
                 data = response.json()
-                if use_ollama_native:
-                    message = data.get("message", {})
-                    content = message.get("content") or ""
-                    reasoning = message.get("thinking") or ""
-                    finish_reason = data.get("done_reason") or data.get("done")
-                else:
-                    if "choices" not in data:
-                        retryable_message = retryable_provider_error_message(data)
-                        if retryable_message is not None:
-                            raise RetryableProviderResponseError(
-                                f"No choices in retryable provider response: {data}",
-                                retry_after_s=retry_after_seconds_from_data(data),
-                            )
-                        raise RuntimeError(f"No choices in response: {data}")
-                    choice = data["choices"][0]
-                    message = choice.get("message", {})
-                    content = message.get("content") or ""
-                    reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
-                    finish_reason = choice.get("finish_reason")
+                if "choices" not in data:
+                    retryable_message = retryable_provider_error_message(data)
+                    if retryable_message is not None:
+                        raise RetryableProviderResponseError(
+                            f"No choices in retryable provider response: {data}",
+                            retry_after_s=retry_after_seconds_from_data(data),
+                        )
+                    raise RuntimeError(f"No choices in response: {data}")
+                choice = data["choices"][0]
+                message = choice.get("message", {})
+                content = message.get("content") or ""
+                reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
+                finish_reason = choice.get("finish_reason")
                 if not str(content).strip():
                     self.last_token_usage = token_usage_from_raw_response(data)
                     if reasoning:
@@ -776,212 +673,6 @@ class OpenRouterClient:
             raise last_error
         raise RuntimeError(f"Generation failed for {model}: {last_error}") from last_error
 
-    def first_token_logprobs(
-        self,
-        *,
-        model: str,
-        prompt: str,
-        system_message: str | None = DEFAULT_SYSTEM_MESSAGE,
-        seed: int | None = None,
-        temperature: float = 1.0,
-        top_logprobs: int = 50,
-        max_retries: int | None = None,
-    ) -> dict[str, Any]:
-        use_ollama_native = is_local_base_url(self.base_url)
-        request_seed = provider_request_seed(model=model, base_url=self.base_url, seed=seed)
-        request_gcp_reasoning_effort = effective_gcp_reasoning_effort(
-            model, self.gcp_reasoning_effort
-        )
-        request_gcp_deepseek_thinking = gcp_deepseek_thinking_cache_value(
-            model=model,
-            base_url=self.base_url,
-            disable_thinking=self.disable_thinking,
-        )
-        request_temperature = (
-            temperature
-            if use_ollama_native
-            or chat_completion_supports_temperature(base_url=self.base_url, temperature=temperature)
-            else None
-        )
-        kwargs = {
-            "model": model,
-            "prompt": prompt,
-            "system_message": system_message,
-            "seed": seed,
-            "temperature": temperature,
-            "request_temperature": request_temperature,
-            "top_logprobs": top_logprobs,
-            "base_url": self.base_url,
-            "disable_thinking": self.disable_thinking,
-            "openrouter_reasoning_effort": (
-                "none" if self.disable_thinking and "openrouter.ai" in self.base_url else None
-            ),
-            "gcp_reasoning_effort": (
-                request_gcp_reasoning_effort
-                if is_gcp_vertex_base_url(self.base_url)
-                else None
-            ),
-            "openai_reasoning_effort": (
-                self.openai_reasoning_effort
-                if is_openai_platform_base_url(self.base_url)
-                else None
-            ),
-            "transport": "ollama_native_logprobs" if use_ollama_native else "openai_chat_completions_logprobs",
-        }
-        if request_gcp_deepseek_thinking is not None:
-            kwargs["gcp_deepseek_thinking"] = request_gcp_deepseek_thinking
-        if request_temperature == temperature:
-            kwargs.pop("request_temperature")
-        if request_seed != seed:
-            kwargs["request_seed"] = request_seed
-        key = cache_key_for_kwargs(kwargs)
-        cached = self.cache.get(key)
-        if cached is not None:
-            return dict(cached)
-        if self.cache_only:
-            raise RuntimeError(f"Cache miss for model={model!r}; cache-only mode is enabled.")
-
-        try:
-            import requests
-        except ImportError as exc:
-            raise RuntimeError("Install requests or run with --mock.") from exc
-
-        messages: list[dict[str, str]] = []
-        if system_message:
-            messages.append({"role": "system", "content": system_message})
-        messages.append({"role": "user", "content": prompt})
-
-        capped_top_logprobs = max(0, min(20, top_logprobs))
-        if use_ollama_native:
-            endpoint = f"{ollama_api_base_url(self.base_url)}/api/chat"
-            payload: dict[str, Any] = {
-                "model": model,
-                "messages": messages,
-                "stream": False,
-                "think": False if self.disable_thinking else None,
-                "logprobs": True,
-                "top_logprobs": capped_top_logprobs,
-                "options": {
-                    "temperature": temperature,
-                    "num_predict": 1,
-                },
-            }
-            if payload["think"] is None:
-                payload.pop("think")
-            if seed is not None:
-                payload["options"]["seed"] = seed
-        else:
-            endpoint = f"{self.request_base_url}/chat/completions"
-            payload = {
-                "model": model,
-                "messages": messages,
-                "logprobs": True,
-                "top_logprobs": capped_top_logprobs,
-            }
-            if request_temperature is not None:
-                payload["temperature"] = request_temperature
-            set_chat_completion_token_limit(payload, base_url=self.base_url, max_tokens=1)
-            if self.disable_thinking and "openrouter.ai" in self.base_url:
-                payload["reasoning"] = {"effort": "none", "exclude": True}
-                payload["include_reasoning"] = False
-            deepseek_thinking = gcp_deepseek_thinking_value(
-                model=model,
-                base_url=self.base_url,
-                disable_thinking=self.disable_thinking,
-            )
-            if deepseek_thinking is not None:
-                payload["chat_template_kwargs"] = {"thinking": deepseek_thinking}
-            if request_gcp_reasoning_effort and is_gcp_vertex_base_url(self.base_url):
-                payload["reasoning_effort"] = request_gcp_reasoning_effort
-            if self.openai_reasoning_effort and is_openai_platform_base_url(self.base_url):
-                payload["reasoning_effort"] = self.openai_reasoning_effort
-            if request_seed is not None:
-                payload["seed"] = request_seed
-
-        def normalize_chat_logprobs(logprobs_payload: Any) -> list[dict[str, Any]]:
-            if not logprobs_payload:
-                return []
-            if isinstance(logprobs_payload, list):
-                return [entry for entry in logprobs_payload if isinstance(entry, dict)]
-            if not isinstance(logprobs_payload, dict):
-                return []
-            content_positions = logprobs_payload.get("content")
-            if isinstance(content_positions, list):
-                return [entry for entry in content_positions if isinstance(entry, dict)]
-            if isinstance(content_positions, dict):
-                return [content_positions]
-            tokens = logprobs_payload.get("tokens")
-            token_logprobs = logprobs_payload.get("token_logprobs")
-            top_logprobs_payload = logprobs_payload.get("top_logprobs")
-            if isinstance(tokens, list) and isinstance(token_logprobs, list):
-                normalized: list[dict[str, Any]] = []
-                for i, token in enumerate(tokens):
-                    top_items: list[dict[str, Any]] = []
-                    if isinstance(top_logprobs_payload, list) and i < len(top_logprobs_payload):
-                        raw_top = top_logprobs_payload[i]
-                        if isinstance(raw_top, dict):
-                            top_items = [
-                                {"token": str(top_token), "logprob": top_logprob}
-                                for top_token, top_logprob in raw_top.items()
-                            ]
-                        elif isinstance(raw_top, list):
-                            top_items = [
-                                item for item in raw_top if isinstance(item, dict)
-                            ]
-                    normalized.append(
-                        {
-                            "token": str(token),
-                            "logprob": token_logprobs[i] if i < len(token_logprobs) else None,
-                            "top_logprobs": top_items,
-                        }
-                    )
-                return normalized
-            return []
-
-        retry_count = self.max_retries if max_retries is None else max_retries
-        last_error: Exception | None = None
-        for attempt in range(retry_count):
-            try:
-                self._wait_for_turn()
-                response = requests.post(
-                    endpoint,
-                    headers=self._headers(),
-                    data=json.dumps(payload),
-                    timeout=self.timeout_s,
-                )
-                response.raise_for_status()
-                data = response.json()
-                if use_ollama_native:
-                    message = data.get("message", {})
-                    content = message.get("content", "")
-                    logprobs = data.get("logprobs") or message.get("logprobs") or []
-                else:
-                    if "choices" not in data:
-                        retryable_message = retryable_provider_error_message(data)
-                        if retryable_message is not None:
-                            raise RetryableProviderResponseError(
-                                f"No choices in retryable provider response: {data}",
-                                retry_after_s=retry_after_seconds_from_data(data),
-                            )
-                        raise RuntimeError(f"No choices in response: {data}")
-                    choice = data["choices"][0]
-                    message = choice.get("message", {})
-                    content = message.get("content", "")
-                    logprobs = normalize_chat_logprobs(choice.get("logprobs"))
-                result = {
-                    "content": content,
-                    "logprobs": logprobs,
-                    "raw": data,
-                }
-                self.cache.set(key, result)
-                return result
-            except Exception as exc:  # noqa: BLE001
-                last_error = exception_with_response_body(exc)
-                if attempt + 1 == retry_count or not should_retry_exception(exc):
-                    break
-                time.sleep(retry_delay_seconds(exc, attempt, self.retry_base_delay_s))
-        raise RuntimeError(f"Logprob generation failed for {model}: {last_error}") from last_error
-
 
 def gcp_vertex_openai_base_url(project: str, location: str) -> str:
     return (
@@ -998,7 +689,7 @@ def gcp_vertex_openai_request_base_url(project: str, location: str) -> str:
     )
 
 
-class GCPVertexClient(OpenRouterClient):
+class GCPVertexClient(_VertexChatCompletionsClient):
     def __init__(
         self,
         *,
@@ -1014,7 +705,6 @@ class GCPVertexClient(OpenRouterClient):
         gcp_reasoning_effort: str | None = None,
     ) -> None:
         super().__init__(
-            api_key="",
             cache=cache,
             base_url=gcp_vertex_openai_base_url(project, location),
             cache_only=cache_only,
@@ -1025,8 +715,6 @@ class GCPVertexClient(OpenRouterClient):
             disable_thinking=disable_thinking,
             gcp_reasoning_effort=gcp_reasoning_effort,
         )
-        # Keep the historical base_url in cache keys while sending online
-        # requests through Vertex's location-specific hostname.
         self.request_base_url = gcp_vertex_openai_request_base_url(project, location)
         self.project = project
         self.location = location
@@ -1217,9 +905,6 @@ class GCPAnthropicVertexClient:
                 time.sleep(retry_delay_seconds(exc, attempt, self.retry_base_delay_s))
         raise RuntimeError(f"Generation failed for {model}: {last_error}") from last_error
 
-    def first_token_logprobs(self, **_kwargs: Any) -> dict[str, Any]:
-        raise RuntimeError("Vertex Claude does not expose first-token logprobs through this client.")
-
 
 def create_gcp_client_for_model(
     *,
@@ -1249,8 +934,6 @@ def create_gcp_client_for_model(
         kwargs["gcp_reasoning_effort"] = gcp_reasoning_effort
     client = client_class(**kwargs)
     if client_class is GCPVertexClient and is_gcp_google_model(model):
-        # Google-hosted Gemini models use the global OpenAPI hostname even
-        # when the experiment records a regional grader location.
         client.request_base_url = gcp_vertex_openai_base_url(project, location)
     return client
 
@@ -1711,10 +1394,6 @@ def parse_simpleqa_topp_response(
                 point_value = 0.0
             extracted.append((normalize_open_answer_text(str(answer)), max(0.0, point_value)))
 
-    # Some APIs follow the schema but put probabilities in the points field.
-    # When the raw total is below the minimum and reading subunit values as
-    # probabilities yields a valid point total, use that reading. Covers mixed
-    # responses like 0.4, 0.3, 0.1, 20.
     raw_total = sum(points for _, points in extracted)
     if raw_total + 1e-9 < PROBABILITY_POINT_TOTAL * top_p:
         probability_scaled = [
@@ -1999,7 +1678,7 @@ def run_simpleqa_log_only_experiment(
     *,
     examples: list[SimpleQAExample],
     models: list[str],
-    answer_client: OpenRouterClient | None,
+    answer_client: GCPVertexClient | GCPAnthropicVertexClient | None,
     grader_client: Any | None,
     grader_model: str,
     use_grader: str,

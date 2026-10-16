@@ -7,8 +7,7 @@ Steps (run all by default, or select with --steps):
                question-level bootstrap (matched_abstention_gaps.csv).
   containment  Observed answer overlap
                (support_containment.csv).
-  tables       Table 1 outcomes (Table1_DecisionOutcomes.csv) and an
-               additional set-source comparison (set_source_comparison.csv).
+  tables       Table 1 decision outcomes (Table1_DecisionOutcomes.csv).
   headline     Machine-readable headline numbers quoted in the text
                (headline_report.json).
   tokens       Average answer-model token cost per question, Table S5
@@ -328,9 +327,7 @@ def support_containment(out_dir: Path) -> None:
     print("wrote", out_dir / "support_containment.csv")
 
 
-# Table 1, SI tables, and an additional set-source comparison
-def _f3(x):
-    return f"{x:.3f}"
+# Table 1 decision outcomes
 
 
 def _rounded_proportions(values):
@@ -348,49 +345,10 @@ def _rounded_proportions(values):
     return [f"{value / 1000:.3f}" for value in units]
 
 
-def _rounded_set_outcomes(metrics):
-    return _rounded_proportions([
-        metrics["strict"],
-        metrics["cov_idk"] - metrics["strict"],
-        1 - metrics["cov_idk"],
-    ])
-
-
 def _rounded_decision_outcomes(metrics):
     return _rounded_proportions([
         metrics["abstain"], metrics["halluc"], metrics["acc"],
     ])
-
-
-def _penalty_set_metrics(dpen):
-    """Top-0.9 set metrics from the penalty sample distribution.
-
-    The residual cell carries penalty_abstain_samples/n only, and IDK mass
-    sums the not_attempted-graded cells.
-    """
-    covers, has_idk, idk_mass = [], [], []
-    for _, r in dpen.iterrows():
-        raw = r.get("penalty_distribution_json")
-        items = json.loads(raw) if isinstance(raw, str) and raw else []
-        cells = [
-            {"answer": str(it.get("answer", "")), "grade": str(it.get("grade", "incorrect")),
-             "probability": float(it.get("probability", 0.0))}
-            for it in items if float(it.get("probability", 0.0)) > 0
-        ]
-        n = max(1, int(r.get("n_samples_requested") or 1))
-        abstain_prob = float(r.get("penalty_abstain_samples") or 0) / n
-        if abstain_prob > 0:
-            cells.append({"answer": "ABSTAIN", "grade": "not_attempted",
-                          "probability": abstain_prob})
-        s = top_p_set(cells, P)
-        covers.append(s.covers)
-        has_idk.append(s.has_idk)
-        idk_mass.append(sum(c["probability"] for c in cells if c["grade"] == "not_attempted"))
-    covers = np.asarray(covers)
-    has_idk = np.asarray(has_idk)
-    return {"cov_idk": float((covers | has_idk).mean()),
-            "strict": float(covers.mean()),
-            "idk_mass": float(np.mean(idk_mass))}
 
 
 def _penalty_decision_rates(dpen):
@@ -422,30 +380,7 @@ def table_exports(out_dir: Path) -> None:
                                           display_incorrect=displayed[1], display_correct=displayed[2]))
     pd.DataFrame(decision_rows).to_csv(out_dir / "Table1_DecisionOutcomes.csv", index=False)
 
-    # Additional analysis retained separately from the manuscript tables.
-    set_rows = []
-    for label, key, _run, _cons in MODELS:
-        covers, has_idk = [], []
-        for cands in logs[label]["candidates"]:
-            chosen = top_p_set(cands, P)
-            covers.append(chosen.covers)
-            has_idk.append(chosen.has_idk)
-        covers = np.asarray(covers); has_idk = np.asarray(has_idk)
-        report = {"cov_idk": (covers | has_idk).mean(), "strict": covers.mean()}
-        distributions = [("Probability report", None, report)] + [
-            ("EPP", L, _penalty_set_metrics(pens[(label, L)])) for L in [0, 3, 6]
-        ]
-        for method, L, metrics in distributions:
-            displayed = _rounded_set_outcomes(metrics)
-            set_rows.append(dict(model=key, model_label=label, method=method, L=L,
-                                 coverage=metrics["strict"],
-                                 miscoverage_with_idk=metrics["cov_idk"]-metrics["strict"],
-                                 miscoverage_without_idk=1-metrics["cov_idk"],
-                                 display_coverage=displayed[0],
-                                 display_miscoverage_with_idk=displayed[1],
-                                 display_miscoverage_without_idk=displayed[2]))
-    pd.DataFrame(set_rows).to_csv(out_dir / "set_source_comparison.csv", index=False)
-    print("Wrote Table1_DecisionOutcomes.csv and set_source_comparison.csv")
+    print("Wrote Table1_DecisionOutcomes.csv")
 
 
 # Results and values quoted in the text

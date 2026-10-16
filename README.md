@@ -20,7 +20,7 @@ correct answer, −L to an incorrect answer, and 0 to abstention.
 
 ## Reproduce the paper results
 
-Use Python 3.10 or newer. The graded responses are included, so reproduction
+Use Python 3.11 or newer. The graded responses are included, so reproduction
 requires no API credentials or new model queries.
 
 ```bash
@@ -31,11 +31,14 @@ python analysis/reproduce_all.py
 Outputs are written to [`results/figures/`](results/figures/), including figure
 PDFs, supporting numerical results, and numbered table CSVs. Figure 1 is a
 supplied schematic; the remaining figures are regenerated from the saved data.
-Bootstrap analyses use fixed random seeds.
+Bootstrap analyses use fixed random seeds. The numerical and plotting packages
+are pinned in `requirements.txt` to the versions used to verify reproduction.
+Figures 3 and S1 require Arial for their column labels; install that font before
+running reproduction. The remaining plots use Matplotlib's bundled fonts.
 
 Useful options:
 
-- `--out-dir PATH`: write the results and intermediate files to another directory.
+- `--out-dir PATH`: write the paper outputs to another directory.
 - `--grader gemini`: repeat the main analyses with the second grader; the
   sensitivity experiments use the primary grader only.
 - `--skip-figures` or `--skip-tables`: regenerate only the requested outputs.
@@ -70,19 +73,15 @@ llm-log-score/
 │   ├── threshold_calibration.py          Figure 4 and Table S8
 │   ├── threshold_selection.py            Raw-report parsing and binomial bounds
 │   ├── alpha_risk_control.py             Error-controlled threshold selection
-│   ├── make_alpha_paper_tables.py        Table S9 and additional comparisons
+│   ├── make_alpha_paper_tables.py        Table S9
 │   ├── threshold_split_sensitivity.py    Threshold-selection sample allocations
-│   ├── make_split_sensitivity_table.py   Table S10
-│   ├── rich_decision_rule.py             Additional report features for decisions
-│   ├── calibration_decisions.py          Calibration and decision-score analyses
-│   └── *_theory.md                      Theoretical details for additional analyses
+│   └── make_split_sensitivity_table.py   Table S10
 ├── results/
 │   ├── graded_by_openai/                 Primary grading, including sensitivity runs
 │   ├── graded_by_gemini/                 Second-grader results
-│   ├── figures/                         Paper figures and supporting numerical data
-│   │   ├── tables/                      Tables 1–2 and S1–S11 as CSV
-│   │   └── artifact_manifest.json       Figure index
-│   └── exploratory/                     Detailed and additional analysis outputs
+│   └── figures/                         Paper figures and supporting numerical data
+│       ├── tables/                      Tables 1–2 and S1–S11 as CSV
+│       └── artifact_manifest.json       Figure index
 ├── README.md
 └── requirements.txt
 ```
@@ -120,6 +119,8 @@ use the same subset and are stored under `rho_sensitivity/` and
 ## Analysis workflow
 
 The reproduction command runs the analyses in order and exports their results.
+Threshold-selection intermediates are computed in a temporary directory and
+removed after the tables are exported.
 Individual components can also be run separately:
 
 | Script | Main outputs |
@@ -133,11 +134,11 @@ Individual components can also be run separately:
 | `threshold_split_sensitivity.py` | Comparisons of 50–50 and 70–30 sample allocations |
 | `paper_tables.py` | All numbered table CSVs from computed results |
 
-For example, to regenerate only the decision-outcome and additional set-comparison
-CSVs:
+For example, to regenerate the decision outcomes in Table 1:
 
 ```bash
 python analysis/make_tables.py --steps tables
+python analysis/paper_tables.py
 ```
 
 Benchmark comparisons merge answer variants using correctness grades and fixed
@@ -161,8 +162,8 @@ Filenames follow the numbering in the paper and SI Appendix.
 | Fig. S4 | [FS4_rho_sensitivity.pdf](results/figures/FS4_rho_sensitivity.pdf) |
 | Fig. S5 | [Panel A](results/figures/FS5A_rule_sensitivity.pdf), [Panel B](results/figures/FS5B_rule_outcome_tables.pdf) |
 
-Supporting CSVs are stored alongside the figures. All 13 paper tables are
-available in [`results/figures/tables/`](results/figures/tables/), with their
+Supporting CSVs are stored alongside the figures. The 13 paper tables are stored
+once, in [`results/figures/tables/`](results/figures/tables/), with their
 sources listed in the [table manifest](results/figures/tables/manifest.json).
 The CSVs retain analysis precision; Table 1 also includes rounded display values.
 

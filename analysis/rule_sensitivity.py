@@ -219,7 +219,7 @@ def make_summary_figure(
 ) -> None:
     """Create the stated-report and graded-outcome panels in Fig. S5A."""
     x = np.arange(len(RULES))
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), sharex=True)
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), sharex=True, dpi=120)
     panels = (
         (
             axes[0],
@@ -284,6 +284,7 @@ def make_summary_figure(
     )
     ticks = [spec.tick for spec in RULES]
     for ax, title, series in panels:
+        ax.spines[["top", "right"]].set_visible(False)
         for label, estimates, color in series:
             values = np.array([estimate for estimate, _, _ in estimates])
             lows = np.array([low for _, low, _ in estimates])

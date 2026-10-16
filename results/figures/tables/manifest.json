@@ -2,7 +2,7 @@
   {
     "table": "Table1_DecisionOutcomes",
     "data": "Table1_DecisionOutcomes.csv",
-    "source": "Table1_DecisionOutcomes.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "Table2_MethodComparison",
@@ -12,7 +12,7 @@
   {
     "table": "TableS10_SplitSensitivity",
     "data": "TableS10_SplitSensitivity.csv",
-    "source": "TableS10_SplitSensitivity.csv"
+    "source": "analysis/make_split_sensitivity_table.py"
   },
   {
     "table": "TableS11_Models",
@@ -22,46 +22,46 @@
   {
     "table": "TableS1_LogLoss",
     "data": "TableS1_LogLoss.csv",
-    "source": "theory_audit_realized_log_loss.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "TableS2_SetOutcomeIntervals",
     "data": "TableS2_SetOutcomeIntervals.csv",
-    "source": "set_outcome_intervals.csv"
+    "source": "analysis/comparison_uncertainty.py"
   },
   {
     "table": "TableS3_MatchedAbstention",
     "data": "TableS3_MatchedAbstention.csv",
-    "source": "matched_abstention_gaps.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "TableS4_IdealListExtent",
     "data": "TableS4_IdealListExtent.csv",
-    "source": "TableS4_IdealListExtent.csv"
+    "source": "analysis/rho_sensitivity.py"
   },
   {
     "table": "TableS5_TokenCosts",
     "data": "TableS5_TokenCosts.csv",
-    "source": "token_costs.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "TableS6_IDKReliability",
     "data": "TableS6_IDKReliability.csv",
-    "source": "theory_audit_residual_reliability.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "TableS7_TopReliability",
     "data": "TableS7_TopReliability.csv",
-    "source": "theory_audit_top_reliability.csv"
+    "source": "analysis/make_tables.py"
   },
   {
     "table": "TableS8_ThresholdCalibration",
     "data": "TableS8_ThresholdCalibration.csv",
-    "source": "TableS8_ThresholdCalibration.csv"
+    "source": "analysis/threshold_calibration.py"
   },
   {
     "table": "TableS9_RiskControl",
     "data": "TableS9_RiskControl.csv",
-    "source": "TableS9_RiskControl.csv"
+    "source": "analysis/make_alpha_paper_tables.py"
   }
 ]
