@@ -5,7 +5,6 @@ Reads every run directory under --runs, collects the unique factual
 penalty-arm samples, grades each pair once with the selected grader, and
 writes a parallel tree under --out with the same directory layout and file
 schema, all grades replaced, and the derived per-record fields recomputed.
-A manifest (GRADING_MANIFEST.json) records the grader and row counts.
 
     python grading/grade.py --grader openai --runs results/graded_by_gemini \\
         --out /tmp/graded_tree
@@ -254,16 +253,14 @@ def main(argv=None) -> None:
     items = collect_items(sources)
     args.out.mkdir(parents=True, exist_ok=True)
     grader = build_grader(args)
+    print(f"Grader: {grader.model}")
     grades = grade_items(items, grader, args.out / "grades.jsonl", args.workers)
 
-    manifest = {"grader": args.grader, "grader_model": grader.model, "sources": []}
     for source in sources:
         rel = source.relative_to(args.runs)
         rel_out = str(rel).replace(".gz", "") + ".gz"
         rows = transform_file(source, args.out / rel_out, grades)
-        manifest["sources"].append({"source": str(rel).replace(".gz", ""), "rows": rows})
         print(f"  wrote {rel_out} ({rows:,} rows)")
-    (args.out / "GRADING_MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"Done. Graded tree at {args.out}")
 
 

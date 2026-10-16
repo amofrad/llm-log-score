@@ -8,8 +8,8 @@ Steps (run all by default, or select with --steps):
   containment  Observed answer overlap
                (support_containment.csv).
   tables       Table 1 decision outcomes (Table1_DecisionOutcomes.csv).
-  headline     Machine-readable headline numbers quoted in the text
-               (headline_report.json).
+  summary      Report and top-0.9 set statistics quoted in the text
+               (report_summary.csv).
   tokens       Average answer-model token cost per question, Table S5
                (token_costs.csv).
   agreement    Grader-agreement audit between the OpenAI-graded and
@@ -384,19 +384,11 @@ def table_exports(out_dir: Path) -> None:
 
 
 # Results and values quoted in the text
-def headline(out_dir: Path) -> None:
-    report = {}
+def report_summary(out_dir: Path) -> None:
+    rows = []
     for _label, key, run, _cons in MODELS:
         label = common.RUNS[key]["label"]
         df = load_run(run)
-        entry = {"tables": {}}
-        for L, t in THRESH.items():
-            dec = df["candidates"].map(lambda c, t=t: common.posthoc_decision(c, t))
-            entry["tables"][f"log_L{L:g}"] = {
-                "abstain": float((dec == "abstain").mean()),
-                "halluc": float((dec == "incorrect").mean()),
-                "acc": float((dec == "correct").mean()),
-            }
         covers, has_idk = [], []
         for cands in df["candidates"]:
             s = top_p_set(cands, P)
@@ -404,26 +396,18 @@ def headline(out_dir: Path) -> None:
             has_idk.append(s.has_idk)
         covers = np.asarray(covers)
         has_idk = np.asarray(has_idk)
-        entry["tables"]["set"] = {
-            "strict": float(covers.mean()),
-            "cov_idk": float((covers | has_idk).mean()),
-            "idk_mass": float(df["log_idk_mass"].mean()),
-            "no_concrete": int((df["n_concrete"] == 0).sum()),
-            "unflagged_miss": float((~covers & ~has_idk).mean()),
-        }
-        entry["penalty"] = {}
-        for L in PENALTIES:
-            dpen = mf.load_penalty_arm(key, L)
-            entry["penalty"][f"pen_L{L:g}"] = _penalty_decision_rates(dpen)
-        report[label] = entry
-    with open(out_dir / "headline_report.json", "w") as f:
-        json.dump(report, f, indent=1)
-    print("== Headline values ==")
-    for label, r in report.items():
-        s = r["tables"]["set"]
-        print(f"{label}: strict={s['strict']:.3f} cov_idk={s['cov_idk']:.3f} "
-              f"idk_mass={s['idk_mass']:.3f} no_concrete={s['no_concrete']} "
-              f"unflagged={s['unflagged_miss']:.3f}")
+        rows.append({
+            "model": key,
+            "model_label": label,
+            "p": P,
+            "coverage": float(covers.mean()),
+            "coverage_or_idk": float((covers | has_idk).mean()),
+            "mean_idk_probability": float(df["log_idk_mass"].mean()),
+            "idk_only_reports": int((df["n_concrete"] == 0).sum()),
+            "miscoverage_without_idk": float((~covers & ~has_idk).mean()),
+        })
+    pd.DataFrame(rows).to_csv(out_dir / "report_summary.csv", index=False)
+    print("Wrote report_summary.csv")
 
 
 # Token costs (Table S5)
@@ -529,11 +513,11 @@ STEPS = {
     "gaps": matched_gaps,
     "containment": support_containment,
     "tables": table_exports,
-    "headline": headline,
+    "summary": report_summary,
     "tokens": token_costs,
     "agreement": grader_agreement,
 }
-DEFAULT_STEPS = ["audits", "gaps", "containment", "tables", "headline", "tokens", "agreement"]
+DEFAULT_STEPS = ["audits", "gaps", "containment", "tables", "summary", "tokens", "agreement"]
 
 
 def main(argv=None) -> None:

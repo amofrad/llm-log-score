@@ -84,8 +84,8 @@ llm-log-score/
 
 The main experiment retains one probability report at ρ = 0.5 and 50 EPP
 responses at each L = 0, 3, and 6 for every question and model. The primary
-grader is GPT-5.6 Terra; Gemini 3.5 Flash provides a second grading using the
-same rubric.
+grader is GPT-5.6 Terra (`gpt-5.6-terra`); Gemini 3.5 Flash
+(`google/gemini-3.5-flash`) provides a second grading using the same rubric.
 
 The following run directories appear under both `results/graded_by_openai/`
 and `results/graded_by_gemini/`:
@@ -105,10 +105,14 @@ Responses are stored as compressed JSONL files:
 - **`simpleqa_log_consistency_results.jsonl.gz`**: repeated probability reports,
   indexed by question and replicate.
 
-The repeated-report experiment uses 50 reports per question on a common
-1,000-question subset. Gemini's omission-penalty and scoring-rule experiments
-use the same subset and are stored under `rho_sensitivity/` and
-`rule_sensitivity/` in the primary grading directory.
+Each main-experiment file contains 4,326 question records. The repeated-report
+figure uses 50 reports per question on a common 1,000-question subset. The saved
+repeated-report files contain 50,000 records for Gemini and DeepSeek and 150,132
+for Sonnet; all saved records are used in the grader-agreement comparison.
+Gemini's omission-penalty and scoring-rule experiments use the same
+1,000-question subset, with one record per question in each condition, and are
+stored under `rho_sensitivity/` and `rule_sensitivity/` in the primary grading
+directory.
 
 ## Analysis workflow
 
@@ -170,6 +174,10 @@ files, with `penalty_level` identifying L = 0, 3, or 6:
 - **`F3_FS1_OutcomeTable_by_question.csv`** contains each question's contribution
   to those counts (`weight`), with EPP outcomes and top-p set outcomes identified
   separately.
+
+`report_summary.csv` records top-0.9 coverage, coverage or IDK, mean IDK
+probability, the number of IDK-only reports, and miscoverage without IDK for each
+model. Decision outcomes are recorded in Table 1.
 
 Tables 1 and S1–S11 are stored once, in
 [`results/figures/tables/`](results/figures/tables/). Numbering follows the main

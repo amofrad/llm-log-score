@@ -4,6 +4,8 @@ Uses retained, graded candidates without further merging or normalization.
 An empty candidate list always abstains. Bootstrap samples resample questions;
 grouping identical (top probability, correctness) pairs is an exact computational
 shortcut for that empirical bootstrap, including empty reports as one category.
+Intervals are pointwise paired 95% percentile intervals. Each model's bootstrap
+seed is BOOTSTRAP_SEED plus its index in common.MODEL_ORDER.
 
 Run: python analysis/threshold_calibration.py [--grader gemini]
 """
@@ -11,7 +13,6 @@ Run: python analysis/threshold_calibration.py [--grader gemini]
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 import matplotlib
@@ -162,16 +163,6 @@ def run(results_dir: Path, out_dir: Path, *, include_figure_outputs: bool = True
             rows.append(part)
         table = pd.concat(rows).sort_values(["model_key", "L"])
         table.to_csv(out_dir / "TableS8_ThresholdCalibration.csv", index=False)
-    metadata = {"bootstrap_draws": draws, "bootstrap_seed": seed,
-                "seed_offset": "model index in common.MODEL_ORDER",
-                "bootstrap_unit": "question (including empty reports)",
-                "intervals": "pointwise paired percentile, 95%",
-                "plot_min_answered": MIN_PLOT_ANSWERS,
-                "processing": "retained graded entries; no further merging or normalization",
-                "model_order": list(common.MODEL_ORDER),
-                "results_dir": str(results_dir.resolve().relative_to(common.REPO_ROOT)) if results_dir.resolve().is_relative_to(common.REPO_ROOT) else str(results_dir.resolve())}
-    (out_dir / "threshold_calibration_metadata.json").write_text(
-        json.dumps(metadata, indent=2) + "\n")
     print(f"Threshold calibration: {out_dir}")
     return data
 
